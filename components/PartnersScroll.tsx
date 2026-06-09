@@ -13,14 +13,14 @@ export function PartnersScroll() {
         Compagnies comparées
       </p>
       <div className="relative">
-        <div className="flex animate-scroll gap-10 whitespace-nowrap">
+        <div className="flex animate-scroll gap-8 whitespace-nowrap sm:gap-12">
           {doubled.map((p, i) => (
             <span
               key={i}
-              className="inline-flex items-center text-base font-bold text-navy/40 transition hover:text-navy"
+              className="inline-flex items-center text-sm font-bold text-navy/40 sm:text-base transition hover:text-navy"
             >
               {p}
-              <span className="ml-10 text-gold/30">·</span>
+              <span className="ml-8 text-gold/30 sm:ml-12">·</span>
             </span>
           ))}
         </div>

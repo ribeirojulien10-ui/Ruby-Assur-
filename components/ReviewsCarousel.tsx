@@ -32,13 +32,13 @@ export function ReviewsCarousel() {
       <div className="container-shell text-center">
         <p className="eyebrow text-gold mb-6">Ce que disent nos clients</p>
         <div
-          className="mx-auto max-w-2xl transition-opacity duration-400"
+          className="mx-auto max-w-2xl px-4 transition-opacity duration-400"
           style={{ opacity: fade ? 1 : 0 }}
         >
-          <div className="flex justify-center gap-1 text-gold text-xl mb-4">
+          <div className="flex justify-center gap-1 text-gold text-lg sm:text-xl mb-4">
             {"★".repeat(review.stars)}
           </div>
-          <p className="text-lg font-medium italic text-white/90">
+          <p className="text-base sm:text-lg font-medium italic text-white/90 leading-7">
             &ldquo;{review.text}&rdquo;
           </p>
           <p className="mt-4 text-sm font-semibold text-gold">— {review.name}</p>
