@@ -3,6 +3,8 @@ import Image from "next/image";
 import { TrustBadges } from "@/components/TrustBadges";
 import { FAQ } from "@/components/FAQ";
 import { BookingButton } from "@/components/BookingEmbed";
+import { PartnersScroll } from "@/components/PartnersScroll";
+import { ReviewsCarousel } from "@/components/ReviewsCarousel";
 import { Home as HomeIcon, Building2, Shield, BarChart3, User, CheckCircle } from "lucide-react";
 import { getProductsByAudience } from "@/lib/products";
 
@@ -93,6 +95,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Bandeau partenaires défilant */}
+      <PartnersScroll />
 
       {/* Choisissez votre profil */}
       <section className="section bg-off-white">
@@ -203,6 +208,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Carrousel avis clients */}
+      <ReviewsCarousel />
 
       {/* FAQ */}
       <section className="section bg-off-white">

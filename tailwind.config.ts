@@ -29,6 +29,15 @@ const config: Config = {
         soft: "0 18px 50px rgba(15, 37, 61, 0.12)",
       },
       borderRadius: { xl: "1rem", "2xl": "1.5rem" },
+      animation: {
+        scroll: "scroll 30s linear infinite",
+      },
+      keyframes: {
+        scroll: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+      },
     },
   },
   plugins: [],
