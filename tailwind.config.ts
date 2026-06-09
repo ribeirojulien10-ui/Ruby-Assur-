@@ -32,6 +32,7 @@ const config: Config = {
       animation: {
         scroll: "scroll 30s linear infinite",
         "scroll-up": "scroll-up 18s linear infinite",
+        "scroll-down": "scroll-down 18s linear infinite",
       },
       keyframes: {
         scroll: {
@@ -41,6 +42,10 @@ const config: Config = {
         "scroll-up": {
           "0%": { transform: "translateY(0)" },
           "100%": { transform: "translateY(-50%)" },
+        },
+        "scroll-down": {
+          "0%": { transform: "translateY(-50%)" },
+          "100%": { transform: "translateY(0)" },
         },
       },
     },

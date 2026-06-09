@@ -5,7 +5,7 @@ import { FAQ } from "@/components/FAQ";
 import { BookingButton } from "@/components/BookingEmbed";
 import { PartnersScroll } from "@/components/PartnersScroll";
 import { ReviewsCarousel } from "@/components/ReviewsCarousel";
-import { HeroReviews } from "@/components/HeroReviews";
+import { HeroReviews, HeroReviewsMobile } from "@/components/HeroReviews";
 import { Home as HomeIcon, Building2, Shield, BarChart3, User, CheckCircle } from "lucide-react";
 import { getProductsByAudience } from "@/lib/products";
 
@@ -43,7 +43,7 @@ export default function Home() {
 
         {/* Texte principal */}
         <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="max-w-[80%] sm:max-w-[50%] lg:max-w-[45%]">
+          <div className="mx-auto text-center sm:mx-0 sm:text-left sm:max-w-[50%] lg:max-w-[45%]">
             <p className="mb-1 font-display text-3xl font-bold sm:text-5xl lg:text-7xl">
               Ruby<span className="text-gold"> Assur'</span>
             </p>
@@ -68,8 +68,12 @@ export default function Home() {
                 Je suis un professionnel
               </Link>
             </div>
-            <div className="mt-6">
+            <div className="mt-6 flex justify-center sm:justify-start">
               <TrustBadges />
+            </div>
+            {/* Avis mobiles — en dessous des badges, centré */}
+            <div className="mt-6 sm:hidden">
+              <HeroReviewsMobile />
             </div>
           </div>
         </div>
