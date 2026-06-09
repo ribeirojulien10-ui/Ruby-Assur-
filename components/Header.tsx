@@ -1,96 +1,47 @@
 "use client";
-
-import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, PhoneCall, X } from "lucide-react";
 import { useState } from "react";
-import { brand, navLinks } from "@/lib/site";
+import { Logo } from "./Logo";
+import { Phone, Menu, X } from "lucide-react";
+
+const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
+const navLinks = [
+  { href: "/", label: "Accueil" },
+  { href: "/particuliers", label: "Particuliers" },
+  { href: "/professionnels", label: "Professionnels" },
+  { href: "/a-propos", label: "À propos" },
+  { href: "/contact", label: "Contact" },
+];
 
 export function Header() {
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
-
   return (
-    <header className="sticky top-0 z-40 border-b border-ruby-line bg-white/95 backdrop-blur">
-      <div className="section-shell flex h-20 items-center justify-between gap-4">
-        <Link href="/" className="focus-ring flex items-center gap-3 rounded-md" onClick={() => setOpen(false)}>
-          <Image
-            src="/images/samoyed-brand.png"
-            alt="Logo Ruby Assur’ avec samoyède"
-            width={52}
-            height={52}
-            className="h-12 w-12 rounded-full border border-ruby-line object-cover"
-            priority
-          />
-          <span className="flex flex-col leading-none">
-            <span className="text-lg font-semibold text-ruby-navy">{brand}</span>
-            <span className="mt-1 text-xs text-slate-600">Courtier en assurances</span>
-          </span>
-        </Link>
-
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`focus-ring rounded-md px-3 py-2 text-sm font-medium transition ${
-                  isActive ? "bg-ruby-frost text-ruby-navy" : "text-slate-700 hover:bg-ruby-frost hover:text-ruby-navy"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+    <header className="sticky top-0 z-40 border-b border-off-gray bg-white/95 backdrop-blur">
+      <div className="container-shell flex h-16 items-center justify-between gap-4">
+        <Link href="/" aria-label="Ruby Assur' — Accueil"><Logo /></Link>
+        <nav className="hidden items-center gap-6 lg:flex">
+          {navLinks.map((l) => (
+            <Link key={l.href} href={l.href} className="text-sm font-medium text-navy/70 transition hover:text-navy">{l.label}</Link>
+          ))}
         </nav>
-
         <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            href="/contact"
-            className="focus-ring inline-flex h-11 items-center justify-center gap-2 rounded-md bg-ruby-navy px-4 text-sm font-semibold text-white transition hover:bg-ruby-ink"
-          >
-            <PhoneCall className="h-4 w-4" aria-hidden="true" />
-            Demander un rappel
-          </Link>
+          <a href={`tel:${phone}`} className="flex items-center gap-1.5 text-sm font-semibold text-navy">
+            <Phone className="h-4 w-4 text-gold" />{phone.replace(/(\d{2})(?=\d)/g, "$1 ").trim()}
+          </a>
+          <Link href="/contact" className="btn-primary text-xs px-4 py-2">Demander un devis</Link>
         </div>
-
-        <button
-          type="button"
-          aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
-          aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
-          className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-md border border-ruby-line bg-white text-ruby-navy lg:hidden"
-        >
-          {open ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+        <button className="lg:hidden p-2 text-navy" onClick={() => setOpen(!open)} aria-label="Menu">
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
-
-      {open ? (
-        <div className="border-t border-ruby-line bg-white lg:hidden">
-          <nav className="section-shell flex flex-col gap-2 py-4" aria-label="Navigation mobile">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="focus-ring rounded-md px-3 py-3 text-sm font-semibold text-ruby-navy hover:bg-ruby-frost"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Link
-              href="/contact"
-              onClick={() => setOpen(false)}
-              className="focus-ring mt-2 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-ruby-navy px-4 text-sm font-semibold text-white"
-            >
-              <PhoneCall className="h-4 w-4" aria-hidden="true" />
-              Demander un rappel
-            </Link>
-          </nav>
+      {open && (
+        <div className="border-t border-off-gray bg-white px-4 py-4 lg:hidden">
+          {navLinks.map((l) => (
+            <Link key={l.href} href={l.href} className="block py-2 text-sm font-medium text-navy" onClick={() => setOpen(false)}>{l.label}</Link>
+          ))}
+          <Link href="/contact" className="btn-primary mt-3 w-full text-center" onClick={() => setOpen(false)}>Demander un devis</Link>
         </div>
-      ) : null}
+      )}
     </header>
   );
 }

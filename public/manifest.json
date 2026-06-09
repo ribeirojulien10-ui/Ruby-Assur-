@@ -1,0 +1,12 @@
+{
+  "name": "Ruby Assur'",
+  "short_name": "Ruby Assur",
+  "description": "Courtier en assurances indépendant",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A1A35",
+  "theme_color": "#0A1A35",
+  "icons": [
+    { "src": "/images/hero-fallback.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

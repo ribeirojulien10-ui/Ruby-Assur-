@@ -1,186 +1,193 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, FileText, MapPin, PhoneCall, ShieldCheck, Sparkles } from "lucide-react";
-import { ContactForm } from "@/components/ContactForm";
-import { brand, legalInfo, reassuranceItems, serviceItems } from "@/lib/site";
+import Image from "next/image";
+import { TrustBadges } from "@/components/TrustBadges";
+import { FAQ } from "@/components/FAQ";
+import { Home as HomeIcon, Building2, Shield, BarChart3, User, CheckCircle } from "lucide-react";
+import { getProductsByAudience } from "@/lib/products";
+
+const particulierProducts = getProductsByAudience("particulier");
+const proProducts = getProductsByAudience("pro");
+
+const homeFaq = [
+  { question: "Qu'est-ce qu'un courtier en assurances ?", answer: "Un courtier est un intermédiaire indépendant qui compare les offres de plusieurs compagnies d'assurance pour trouver la meilleure solution adaptée à votre profil. Contrairement à un agent exclusif, il n'est lié à aucune compagnie." },
+  { question: "Est-ce payant de passer par Ruby Assur' ?", answer: "Non. Le recours à un courtier est totalement gratuit pour vous. Ruby Assur' est rémunéré par les compagnies d'assurance sous forme de commissions, sans surcoût pour le client." },
+  { question: "Combien de temps faut-il pour obtenir un devis ?", answer: "En général, Ruby Assur' vous revient sous 24 à 48 heures après réception de votre demande. Pour certains produits simples (auto, habitation), une réponse peut être apportée le jour même." },
+  { question: "Puis-je changer d'assureur en cours de contrat ?", answer: "Oui, dans la plupart des cas. La loi Hamon (auto, habitation) et la loi Lemoine (emprunteur) permettent de résilier et changer à tout moment après un an de contrat. Ruby Assur' gère les démarches à votre place." },
+  { question: "Ruby Assur' intervient-il uniquement à Soissons ?", answer: "Non. Bien que basé à Pasly (près de Soissons), Ruby Assur' accompagne des clients partout en France grâce aux échanges par téléphone, email et visioconférence." },
+  { question: "Que se passe-t-il en cas de sinistre ?", answer: "Ruby Assur' vous accompagne dans la déclaration et le suivi du sinistre auprès de votre assureur. Avoir un courtier à vos côtés simplifie considérablement les démarches." },
+];
 
 export default function Home() {
   return (
     <>
-      <section className="relative isolate flex min-h-[calc(100svh-120px)] items-center overflow-hidden bg-ruby-navy py-16 text-white sm:py-20">
+      {/* Hero */}
+      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-center overflow-hidden bg-navy py-20 text-white">
         <Image
           src="/images/hero-ruby-assur.png"
-          alt="Conseil en assurance dans un bureau lumineux avec samoyède"
+          alt="Courtier en assurance Ruby Assur'"
           fill
           className="absolute inset-0 -z-20 object-cover object-center"
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 -z-10 bg-ruby-navy/75" aria-hidden="true" />
-        <div className="section-shell">
+        <div className="absolute inset-0 -z-10 bg-navy/75" aria-hidden="true" />
+        <div className="container-shell">
           <div className="max-w-3xl">
-            <p className="eyebrow text-ruby-glacier">Courtier local à Pasly / Soissons</p>
-            <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-              Ruby Assur’, courtier en assurances à Pasly et Soissons
+            <p className="eyebrow text-gold">Courtier indépendant — ORIAS 24007878</p>
+            <h1 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+              Votre assurance,{" "}
+              <span className="text-gold underline decoration-gold/40 underline-offset-4">enfin claire</span>.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/88">
-              Votre courtier vous accompagne pour protéger ce qui compte vraiment, avec un conseil clair,
-              humain et indépendant.
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/80">
+              Ruby Assur' compare les meilleures offres pour vous. Conseil humain, devis gratuit, zéro jargon.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/contact"
-                className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-ruby-navy transition hover:bg-ruby-glacier"
-              >
-                <PhoneCall className="h-4 w-4" aria-hidden="true" />
-                Demander un rappel
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/particuliers" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-navy transition hover:bg-off-white">
+                Je suis un particulier
               </Link>
-              <Link
-                href="/services"
-                className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md border border-white/35 px-5 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                Voir les assurances
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <Link href="/professionnels" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                Je suis un professionnel
               </Link>
             </div>
-            <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/80">
-              {reassuranceItems.map((item) => (
-                <span key={item} className="inline-flex items-center gap-2 rounded-md bg-white/10 px-3 py-2">
-                  <ShieldCheck className="h-4 w-4 text-ruby-glacier" aria-hidden="true" />
-                  {item}
-                </span>
-              ))}
+            <div className="mt-8">
+              <TrustBadges />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-white py-14">
-        <div className="section-shell grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-lg border border-ruby-line bg-ruby-frost">
-            <Image
-              src="/images/samoyed-brand.png"
-              alt="Samoyède, symbole de Ruby Assur’"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 90vw, 380px"
-            />
+      {/* Choisissez votre profil */}
+      <section className="section bg-off-white">
+        <div className="container-shell">
+          <div className="text-center">
+            <p className="eyebrow">Votre profil</p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-navy sm:text-4xl">Choisissez votre profil</h2>
           </div>
-          <div>
-            <p className="eyebrow">Accompagnement humain</p>
-            <h2 className="mt-3 text-3xl font-semibold text-ruby-navy sm:text-4xl">
-              Un interlocuteur de proximité pour vos besoins d’assurance
-            </h2>
-            <p className="mt-5 text-base leading-8 text-slate-700">
-              {brand} est une société de courtage et d’intermédiation en assurances basée à Pasly, près de Soissons.
-              Son rôle est de vous aider à clarifier vos besoins, comparer les pistes adaptées et préparer une
-              décision plus sereine.
-            </p>
-            <p className="mt-4 text-base leading-8 text-slate-700">
-              Chaque situation mérite une analyse spécifique. Les informations présentées sur ce site sont données à
-              titre indicatif et ne remplacent pas une étude personnalisée.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-ruby-frost py-16">
-        <div className="section-shell">
-          <div className="max-w-3xl">
-            <p className="eyebrow">Nos assurances</p>
-            <h2 className="mt-3 text-3xl font-semibold text-ruby-navy sm:text-4xl">
-              Des solutions à étudier pour les particuliers et les professionnels
-            </h2>
-          </div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {serviceItems.map((service) => (
-              <article key={service.title} className="rounded-lg border border-ruby-line bg-white p-5 shadow-sm">
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-md bg-ruby-glacier text-ruby-navy">
-                  <BadgeCheck className="h-5 w-5" aria-hidden="true" />
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            {/* Particuliers */}
+            <div className="card flex flex-col">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy">
+                  <HomeIcon className="h-6 w-6 text-gold" />
                 </div>
-                <h3 className="text-lg font-semibold text-ruby-navy">{service.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-700">{service.description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white py-16">
-        <div className="section-shell grid gap-10 lg:grid-cols-3">
-          <div className="lg:col-span-1">
-            <p className="eyebrow">Pourquoi un courtier</p>
-            <h2 className="mt-3 text-3xl font-semibold text-ruby-navy">Un conseil avant le contrat</h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:col-span-2">
-            {[
-              "Analyser votre besoin réel avant d’étudier les solutions possibles.",
-              "Expliquer les points importants avec des mots simples et concrets.",
-              "Vous accompagner dans les démarches sans promettre de tarif ni d’acceptation automatique.",
-              "Garder un échange humain, local et accessible dans la durée.",
-            ].map((item) => (
-              <div key={item} className="rounded-lg border border-ruby-line bg-ruby-frost p-5">
-                <Sparkles className="h-5 w-5 text-ruby-gold" aria-hidden="true" />
-                <p className="mt-4 text-sm leading-7 text-slate-700">{item}</p>
+                <div>
+                  <p className="font-display text-xl font-bold text-navy">Particuliers</p>
+                  <p className="text-sm text-slate-500">Auto, habitation, santé, emprunteur</p>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-ruby-sand py-16">
-        <div className="section-shell grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
-          <div>
-            <p className="eyebrow">Pasly, Soissons, Aisne</p>
-            <h2 className="mt-3 text-3xl font-semibold text-ruby-navy">Une présence locale pour un conseil plus proche</h2>
-            <p className="mt-5 text-base leading-8 text-slate-700">
-              Basée au {legalInfo.address}, Ruby Assur’ accompagne les habitants et professionnels du secteur de
-              Pasly, Soissons et plus largement de l’Aisne.
-            </p>
-          </div>
-          <div className="rounded-lg border border-ruby-line bg-white p-6 shadow-sm">
-            <div className="flex gap-3">
-              <MapPin className="mt-1 h-5 w-5 shrink-0 text-ruby-gold" aria-hidden="true" />
-              <div>
-                <h3 className="font-semibold text-ruby-navy">Ruby Assur’</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-700">{legalInfo.address}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-700">ORIAS : {legalInfo.orias}</p>
+              <ul className="mt-6 space-y-2">
+                {particulierProducts.slice(0, 4).map(p => (
+                  <li key={p.slug} className="flex items-center gap-2 text-sm text-slate-600">
+                    <CheckCircle className="h-4 w-4 text-gold" />{p.name}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/particuliers" className="btn-primary mt-6 w-full text-center">
+                Voir mes assurances
+              </Link>
+            </div>
+            {/* Professionnels */}
+            <div className="card flex flex-col">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy">
+                  <Building2 className="h-6 w-6 text-gold" />
+                </div>
+                <div>
+                  <p className="font-display text-xl font-bold text-navy">Professionnels</p>
+                  <p className="text-sm text-slate-500">RC Pro, décennale, flotte, multirisque</p>
+                </div>
               </div>
+              <ul className="mt-6 space-y-2">
+                {proProducts.slice(0, 4).map(p => (
+                  <li key={p.slug} className="flex items-center gap-2 text-sm text-slate-600">
+                    <CheckCircle className="h-4 w-4 text-gold" />{p.name}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/professionnels" className="btn-primary mt-6 w-full text-center">
+                Voir mes assurances pro
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-ruby-navy py-12 text-white">
-        <div className="section-shell flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="eyebrow text-ruby-glacier">Réassurance</p>
-            <h2 className="mt-3 text-2xl font-semibold">Courtier inscrit à l’ORIAS sous le numéro {legalInfo.orias}</h2>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-white/75">
-              {legalInfo.status}. Les informations du site sont indicatives et ne remplacent pas une étude personnalisée.
-            </p>
+      {/* Pourquoi Ruby Assur' */}
+      <section className="section bg-white">
+        <div className="container-shell">
+          <div className="text-center">
+            <p className="eyebrow">Nos engagements</p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-navy sm:text-4xl">Pourquoi Ruby Assur' ?</h2>
           </div>
-          <Link
-            href="/mentions-legales"
-            className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold hover:bg-white/10"
-          >
-            <FileText className="h-4 w-4" aria-hidden="true" />
-            Mentions légales
-          </Link>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { icon: Shield, title: "Indépendant", desc: "Aucune compagnie imposée. Ruby Assur' compare librement le marché pour vous." },
+              { icon: BarChart3, title: "Multi-offres", desc: "Comparaison réelle de plusieurs assureurs pour vous obtenir le meilleur rapport qualité/prix." },
+              { icon: User, title: "Humain", desc: "Un vrai interlocuteur, joignable, qui vous connaît et vous accompagne dans la durée." },
+              { icon: CheckCircle, title: "Simple", desc: "Les démarches administratives sont prises en charge. Vous choisissez, on s'occupe du reste." },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="card text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-navy/5">
+                  <Icon className="h-6 w-6 text-gold" />
+                </div>
+                <p className="mt-4 font-display text-lg font-bold text-navy">{title}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="bg-white py-16" id="contact">
-        <div className="section-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-          <div>
-            <p className="eyebrow">Demande de devis ou de rappel</p>
-            <h2 className="mt-3 text-3xl font-semibold text-ruby-navy">Parlons de votre besoin</h2>
-            <p className="mt-5 text-base leading-8 text-slate-700">
-              Décrivez votre situation, le type d’assurance recherché et vos coordonnées. Le formulaire est en mode
-              démonstration pour cette version locale.
-            </p>
+      {/* Comment ça marche */}
+      <section className="section bg-navy text-white">
+        <div className="container-shell">
+          <div className="text-center">
+            <p className="eyebrow text-gold">Processus</p>
+            <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Comment ça marche ?</h2>
           </div>
-          <ContactForm />
+          <div className="mt-12 grid gap-8 sm:grid-cols-3">
+            {[
+              { step: "01", title: "Vous décrivez votre besoin", desc: "En quelques minutes, via le formulaire ou par téléphone. Aucun engagement." },
+              { step: "02", title: "On compare pour vous", desc: "Ruby Assur' analyse les offres du marché et sélectionne les meilleures options pour votre profil." },
+              { step: "03", title: "Vous choisissez en confiance", desc: "Vous recevez un conseil clair, sans jargon, et vous décidez librement." },
+            ].map(({ step, title, desc }) => (
+              <div key={step} className="text-center">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border-2 border-gold/40 bg-white/10 font-display text-xl font-bold text-gold">
+                  {step}
+                </div>
+                <p className="mt-4 font-display text-lg font-bold">{title}</p>
+                <p className="mt-2 text-sm leading-6 text-white/70">{desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-12 text-center">
+            <Link href="/contact" className="btn-gold">Demander un devis gratuit</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="section bg-off-white">
+        <div className="container-shell max-w-3xl">
+          <div className="text-center">
+            <p className="eyebrow">Questions fréquentes</p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-navy sm:text-4xl">On répond à vos questions</h2>
+          </div>
+          <div className="mt-10">
+            <FAQ items={homeFaq} />
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="section bg-navy text-white">
+        <div className="container-shell text-center">
+          <p className="eyebrow text-gold">Prêt à commencer ?</p>
+          <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Obtenez votre devis gratuit aujourd'hui</h2>
+          <p className="mt-4 text-lg text-white/70">Sans engagement, réponse sous 24h.</p>
+          <div className="mt-8">
+            <Link href="/contact" className="btn-gold text-base px-8 py-4">Demander un devis gratuit</Link>
+          </div>
         </div>
       </section>
     </>

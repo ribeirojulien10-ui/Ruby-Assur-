@@ -1,83 +1,59 @@
-import Image from "next/image";
 import Link from "next/link";
-import { Mail, MapPin, ShieldCheck } from "lucide-react";
-import { brand, legalInfo, navLinks, serviceItems } from "@/lib/site";
+import { Logo } from "./Logo";
+import { Phone, Mail, MapPin } from "lucide-react";
+
+const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
+const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "ruby.assur@gmail.com";
+
+const navLinks: [string, string][] = [
+  ["Particuliers", "/particuliers"],
+  ["Professionnels", "/professionnels"],
+  ["À propos", "/a-propos"],
+  ["Contact", "/contact"],
+];
+
+const legalLinks: [string, string][] = [
+  ["Mentions légales", "/mentions-legales"],
+  ["Politique de confidentialité", "/politique-confidentialite"],
+  ["Réclamations", "/reclamations"],
+];
 
 export function Footer() {
   return (
-    <footer className="border-t border-ruby-line bg-ruby-navy text-white">
-      <div className="section-shell grid gap-10 py-12 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
+    <footer className="border-t border-off-gray bg-navy text-white">
+      <div className="container-shell grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <div className="flex items-center gap-3">
-            <Image
-              src="/images/samoyed-brand.png"
-              alt="Logo Ruby Assur’ avec samoyède"
-              width={56}
-              height={56}
-              className="h-14 w-14 rounded-full border border-white/20 object-cover"
-            />
-            <div>
-              <p className="text-xl font-semibold">{brand}</p>
-              <p className="mt-1 text-sm text-white/70">Courtier en assurance, sans maniement de fonds</p>
-            </div>
-          </div>
-          <div className="mt-6 space-y-3 text-sm text-white/75">
-            <p className="flex gap-2">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-ruby-gold" aria-hidden="true" />
-              <span>{legalInfo.address}</span>
-            </p>
-            <p className="flex gap-2">
-              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-ruby-gold" aria-hidden="true" />
-              <span>ORIAS {legalInfo.orias} - {legalInfo.status}</span>
-            </p>
-            <p className="flex gap-2">
-              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-ruby-gold" aria-hidden="true" />
-              <span>Formulaire de contact en mode démonstration</span>
-            </p>
-          </div>
+          <Logo className="text-white [&_span]:text-gold" />
+          <p className="mt-4 text-sm leading-7 text-white/60">
+            Courtier en assurances indépendant, inscrit à l&apos;ORIAS sous le n° 24007878. Basé à Pasly, Soissons.
+          </p>
         </div>
-
         <div>
-          <p className="font-semibold">Navigation</p>
-          <ul className="mt-4 space-y-3 text-sm text-white/75">
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="focus-ring rounded-md hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link href="/mentions-legales" className="focus-ring rounded-md hover:text-white">
-                Mentions légales
-              </Link>
-            </li>
-            <li>
-              <Link href="/reclamations" className="focus-ring rounded-md hover:text-white">
-                Réclamations
-              </Link>
-            </li>
-            <li>
-              <Link href="/politique-confidentialite" className="focus-ring rounded-md hover:text-white">
-                Politique de confidentialité
-              </Link>
-            </li>
-          </ul>
+          <p className="mb-4 text-xs font-bold uppercase tracking-widest text-gold">Navigation</p>
+          {navLinks.map(([l, h]) => (
+            <Link key={h} href={h} className="block py-1 text-sm text-white/70 transition hover:text-white">{l}</Link>
+          ))}
         </div>
-
         <div>
-          <p className="font-semibold">Assurances</p>
-          <ul className="mt-4 space-y-3 text-sm text-white/75">
-            {serviceItems.slice(0, 7).map((service) => (
-              <li key={service.title}>{service.title}</li>
-            ))}
-          </ul>
+          <p className="mb-4 text-xs font-bold uppercase tracking-widest text-gold">Contact</p>
+          <a href={`tel:${phone}`} className="flex items-center gap-2 py-1 text-sm text-white/70 hover:text-white">
+            <Phone className="h-4 w-4 text-gold" />{phone}
+          </a>
+          <a href={`mailto:${email}`} className="flex items-center gap-2 py-1 text-sm text-white/70 hover:text-white">
+            <Mail className="h-4 w-4 text-gold" />{email}
+          </a>
+          <p className="flex items-start gap-2 py-1 text-sm text-white/70">
+            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />44 avenue du Bois Roger, 02200 Pasly
+          </p>
         </div>
-      </div>
-      <div className="border-t border-white/10">
-        <div className="section-shell flex flex-col gap-2 py-5 text-xs text-white/60 md:flex-row md:items-center md:justify-between">
-          <p>{legalInfo.name} - SIREN {legalInfo.siren} - RCS {legalInfo.rcs}</p>
-          <p>Informations données à titre indicatif, sous réserve d’une étude personnalisée.</p>
+        <div>
+          <p className="mb-4 text-xs font-bold uppercase tracking-widest text-gold">Légal</p>
+          {legalLinks.map(([l, h]) => (
+            <Link key={h} href={h} className="block py-1 text-sm text-white/70 transition hover:text-white">{l}</Link>
+          ))}
+          <p className="mt-4 text-xs text-white/40">
+            ORIAS 24007878 — SIREN 933 756 074<br />© {new Date().getFullYear()} Ruby Assur&apos;
+          </p>
         </div>
       </div>
     </footer>
