@@ -22,38 +22,39 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-8 pb-20 text-white sm:pt-12">
+      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-6 pb-16 text-white sm:pt-10 sm:pb-20">
         <Image
           src="/images/hero-ruby-assur.png"
           alt="Courtier en assurance Ruby Assur'"
           fill
-          className="absolute inset-0 -z-20 object-cover object-[center_30%]"
+          className="absolute inset-0 -z-20 object-cover object-[60%_30%] sm:object-[center_30%]"
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 -z-10 bg-navy/55" aria-hidden="true" />
+        <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
         <div className="container-shell">
           <div className="max-w-3xl">
-            <p className="mb-3 font-display text-5xl font-bold sm:text-6xl lg:text-7xl">
+            {/* Titre Ruby Assur' — adapté mobile/tablette/desktop */}
+            <p className="mb-2 font-display text-4xl font-bold sm:text-5xl lg:text-7xl">
               Ruby<span className="text-gold"> Assur'</span>
             </p>
-            <p className="eyebrow text-gold">Courtier indépendant — ORIAS 24007878</p>
-            <h1 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+            <p className="eyebrow text-gold text-[10px] sm:text-xs">Courtier indépendant — ORIAS 24007878</p>
+            <h1 className="mt-3 font-display text-2xl font-bold leading-tight sm:text-4xl lg:text-6xl">
               Votre assurance,{" "}
               <span className="text-gold underline decoration-gold/40 underline-offset-4">enfin claire</span>.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/80">
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/80 sm:text-lg sm:leading-8">
               Ruby Assur' compare les meilleures offres pour vous. Conseil humain, devis gratuit, zéro jargon.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/particuliers" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-navy transition hover:bg-off-white">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link href="/particuliers" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-navy transition hover:bg-off-white">
                 Je suis un particulier
               </Link>
-              <Link href="/professionnels" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+              <Link href="/professionnels" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
                 Je suis un professionnel
               </Link>
             </div>
-            <div className="mt-8">
+            <div className="mt-6">
               <TrustBadges />
             </div>
           </div>
