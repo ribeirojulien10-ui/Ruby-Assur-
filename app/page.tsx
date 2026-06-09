@@ -32,8 +32,8 @@ export default function Home() {
           sizes="100vw"
         />
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
-        {/* Bloc bas gauche */}
-        <div className="absolute bottom-6 left-4 z-10 flex flex-col gap-3 sm:bottom-8 sm:left-6 lg:left-8">
+        {/* Bloc bas gauche — desktop uniquement */}
+        <div className="absolute bottom-6 left-4 z-10 hidden flex-col gap-3 sm:bottom-8 sm:left-6 sm:flex lg:left-8">
           {/* C — Géolocalisation */}
           <div className="flex items-center gap-2 text-xs text-white/70">
             <span>📍</span>
@@ -68,15 +68,15 @@ export default function Home() {
         </div>
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="max-w-[55%] sm:max-w-[50%] lg:max-w-[45%]">
-            <p className="mb-4 font-display text-5xl font-bold sm:text-6xl lg:text-7xl">
+            <p className="mb-2 font-display text-3xl font-bold sm:text-5xl lg:text-7xl">
               Ruby<span className="text-gold"> Assur'</span>
             </p>
-            <p className="eyebrow text-gold">Courtier indépendant — ORIAS 24007878</p>
-            <h1 className="mt-6 font-display text-3xl font-bold leading-snug sm:text-4xl lg:text-5xl">
+            <p className="eyebrow text-gold text-[10px] sm:text-xs">Courtier indépendant — ORIAS 24007878</p>
+            <h1 className="mt-3 font-display text-xl font-bold leading-snug sm:text-4xl lg:text-5xl">
               Votre assurance,{" "}
               <span className="text-gold underline decoration-gold/40 underline-offset-4">enfin claire</span>.
             </h1>
-            <p className="mt-6 text-sm leading-7 text-white/80 sm:text-base sm:leading-8">
+            <p className="mt-3 text-xs leading-6 text-white/80 sm:text-base sm:leading-8">
               Ruby Assur' compare les meilleures offres pour vous. Conseil humain, devis gratuit, zéro jargon.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
