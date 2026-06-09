@@ -22,7 +22,7 @@ export default function ProfessionnelsPage() {
           </p>
         </div>
       </section>
-      <section className="section bg-off-white">
+      <section className="section bg-white">
         <div className="container-shell">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
             {products.map((p) => (
@@ -42,6 +42,14 @@ export default function ProfessionnelsPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+      <section className="section bg-navy text-white text-center">
+        <div className="container-shell">
+          <p className="eyebrow text-gold">Devis gratuit</p>
+          <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Besoin d'un conseil sur mesure ?</h2>
+          <p className="mt-4 text-white/70">Activité, effectif, véhicules : chaque situation est différente. Ruby Assur' analyse et compare pour vous.</p>
+          <Link href="/contact" className="btn-gold mt-8 inline-block">Demander un devis gratuit</Link>
         </div>
       </section>
     </>

@@ -26,7 +26,7 @@ export function ProductPage({ product, audiencePath }: { product: Product; audie
         </div>
       </section>
 
-      {/* Description + Bénéfices */}
+      {/* Description + Bénéfices — blanc */}
       <section className="section bg-white">
         <div className="container-shell grid gap-12 lg:grid-cols-2">
           <div>
@@ -47,14 +47,14 @@ export function ProductPage({ product, audiencePath }: { product: Product; audie
         </div>
       </section>
 
-      {/* Documents */}
-      <section className="section bg-off-white">
+      {/* Documents — navy */}
+      <section className="section bg-navy text-white">
         <div className="container-shell max-w-2xl">
-          <p className="eyebrow">Documents à préparer</p>
-          <h2 className="mt-3 font-display text-2xl font-bold text-navy">Ce dont nous avons besoin</h2>
+          <p className="eyebrow text-gold">Documents à préparer</p>
+          <h2 className="mt-3 font-display text-2xl font-bold">Ce dont nous avons besoin</h2>
           <ul className="mt-6 space-y-3">
             {product.requiredDocuments.map((d) => (
-              <li key={d} className="flex items-center gap-3 rounded-xl border border-off-gray bg-white p-4 text-sm font-medium text-navy shadow-card">
+              <li key={d} className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/8 p-4 text-sm font-medium text-white shadow-card">
                 <FileText className="h-4 w-4 text-gold" />{d}
               </li>
             ))}
@@ -62,7 +62,7 @@ export function ProductPage({ product, audiencePath }: { product: Product; audie
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* FAQ — blanc */}
       <section className="section bg-white">
         <div className="container-shell max-w-2xl">
           <p className="eyebrow">Questions fréquentes</p>
@@ -73,7 +73,7 @@ export function ProductPage({ product, audiencePath }: { product: Product; audie
         </div>
       </section>
 
-      {/* Formulaire */}
+      {/* Formulaire — navy */}
       <section className="section bg-navy" id="devis">
         <div className="container-shell grid gap-12 lg:grid-cols-2 lg:items-start">
           <div className="text-white">
