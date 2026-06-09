@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    domains: ["logo.clearbit.com"],
+  },
   webpack: (config, { dev }) => {
     config.watchOptions = {
       ...(config.watchOptions ?? {}),
