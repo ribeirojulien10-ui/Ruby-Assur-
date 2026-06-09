@@ -25,12 +25,12 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-6 pb-16 text-white sm:pt-10 sm:pb-20">
+      <section className="relative isolate flex min-h-[70svh] items-start overflow-hidden bg-navy pt-6 pb-16 text-white sm:min-h-[calc(100svh-64px)] sm:pt-10 sm:pb-20">
         <Image
           src="/images/hero-ruby-assur.png"
           alt="Courtier en assurance Ruby Assur'"
           fill
-          className="absolute inset-0 -z-20 object-cover object-[60%_30%] sm:object-[center_30%]"
+          className="absolute inset-0 -z-20 object-cover object-[50%_25%] sm:object-[center_30%]"
           priority
           sizes="100vw"
         />
