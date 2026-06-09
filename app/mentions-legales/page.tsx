@@ -29,7 +29,7 @@ export default function LegalPage() {
         <p className="eyebrow">Cadre légal</p>
         <h1 className="mt-3 text-4xl font-semibold text-ruby-navy sm:text-5xl">Mentions légales</h1>
         <p className="mt-5 text-base leading-8 text-slate-700">
-          Les informations ci-dessous identifient Ruby Assur’ et précisent le cadre de cette version locale du site.
+          Les informations ci-dessous identifient Ruby Assur’ en tant qu’intermédiaire en assurance immatriculé.
         </p>
 
         <dl className="mt-10 grid gap-4 sm:grid-cols-2">

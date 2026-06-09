@@ -15,9 +15,8 @@ export default function ClaimsPage() {
         <p className="eyebrow">Réclamations</p>
         <h1 className="mt-3 text-4xl font-semibold text-ruby-navy sm:text-5xl">Une démarche claire en cas d’insatisfaction</h1>
         <p className="mt-5 max-w-3xl text-base leading-8 text-slate-700">
-          Si vous souhaitez formuler une réclamation, vous pouvez préciser votre identité, vos coordonnées, l’objet de
-          votre demande et les éléments utiles à sa compréhension. Cette page pose une structure indicative à finaliser
-          selon les procédures internes et obligations applicables.
+          Si vous souhaitez formuler une réclamation, précisez votre identité, vos coordonnées, l’objet de
+          votre demande et les éléments utiles à sa compréhension. Ruby Assur’ s’engage à vous répondre dans les meilleurs délais.
         </p>
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
