@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { BadgeCheck, MapPin, ShieldCheck, Phone, Mail } from "lucide-react";
 import { brand, legalInfo } from "@/lib/site";
 
@@ -109,15 +108,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 5 — bleu */}
-      <section className="bg-navy py-16 text-white text-center">
-        <div className="section-shell">
-          <p className="eyebrow text-gold">Parlons de votre projet</p>
-          <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Une question ? Un devis ?</h2>
-          <p className="mt-4 text-white/70">Ruby Assur' vous répond en moins de 24h, sans engagement.</p>
-          <Link href="/contact" className="btn-gold mt-8 inline-block">Prendre contact</Link>
-        </div>
-      </section>
     </>
   );
 }
