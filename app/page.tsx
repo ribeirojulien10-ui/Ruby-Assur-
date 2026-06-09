@@ -154,12 +154,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pourquoi Ruby Assur' */}
-      <section className="section bg-white">
+      {/* Pourquoi Ruby Assur' — navy */}
+      <section className="section bg-navy text-white">
         <div className="container-shell">
           <div className="text-center">
-            <p className="eyebrow">Nos engagements</p>
-            <h2 className="mt-3 font-display text-3xl font-bold text-navy sm:text-4xl">Pourquoi Ruby Assur' ?</h2>
+            <p className="eyebrow text-gold">Nos engagements</p>
+            <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Pourquoi Ruby Assur' ?</h2>
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
@@ -168,24 +168,24 @@ export default function Home() {
               { icon: User, title: "Humain", desc: "Un vrai interlocuteur, joignable, qui vous connaît et vous accompagne dans la durée." },
               { icon: CheckCircle, title: "Simple", desc: "Les démarches administratives sont prises en charge. Vous choisissez, on s'occupe du reste." },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="card text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-navy/5">
+              <div key={title} className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center backdrop-blur-sm">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-white/10">
                   <Icon className="h-6 w-6 text-gold" />
                 </div>
-                <p className="mt-4 font-display text-lg font-bold text-navy">{title}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{desc}</p>
+                <p className="mt-4 font-display text-lg font-bold text-white">{title}</p>
+                <p className="mt-2 text-sm leading-6 text-white/65">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Comment ça marche */}
-      <section className="section bg-navy text-white">
+      {/* Comment ça marche — blanc */}
+      <section className="section bg-white">
         <div className="container-shell">
           <div className="text-center">
-            <p className="eyebrow text-gold">Processus</p>
-            <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Comment ça marche ?</h2>
+            <p className="eyebrow">Processus</p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-navy sm:text-4xl">Comment ça marche ?</h2>
           </div>
           <div className="mt-12 grid gap-8 sm:grid-cols-3">
             {[
@@ -194,28 +194,28 @@ export default function Home() {
               { step: "03", title: "Vous choisissez en confiance", desc: "Vous recevez un conseil clair, sans jargon, et vous décidez librement." },
             ].map(({ step, title, desc }) => (
               <div key={step} className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border-2 border-gold/40 bg-white/10 font-display text-xl font-bold text-gold">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border-2 border-gold/40 bg-navy/5 font-display text-xl font-bold text-gold">
                   {step}
                 </div>
-                <p className="mt-4 font-display text-lg font-bold">{title}</p>
-                <p className="mt-2 text-sm leading-6 text-white/70">{desc}</p>
+                <p className="mt-4 font-display text-lg font-bold text-navy">{title}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-500">{desc}</p>
               </div>
             ))}
           </div>
           <div className="mt-12 text-center">
-            <Link href="/contact" className="btn-gold">Demander un devis gratuit</Link>
+            <Link href="/contact" className="btn-primary">Demander un devis gratuit</Link>
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="section bg-off-white">
+      {/* FAQ — navy */}
+      <section className="section bg-navy text-white">
         <div className="container-shell max-w-3xl">
           <div className="text-center">
-            <p className="eyebrow">Questions fréquentes</p>
-            <h2 className="mt-3 font-display text-3xl font-bold text-navy sm:text-4xl">On répond à vos questions</h2>
+            <p className="eyebrow text-gold">Questions fréquentes</p>
+            <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">On répond à vos questions</h2>
           </div>
-          <div className="mt-10">
+          <div className="mt-10 [&_button]:text-white [&_p]:text-white/65 [&_.divide-y]:divide-white/10">
             <FAQ items={homeFaq} />
           </div>
         </div>
