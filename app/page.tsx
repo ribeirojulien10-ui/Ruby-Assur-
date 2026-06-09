@@ -13,7 +13,7 @@ const homeFaq = [
   { question: "Est-ce payant de passer par Ruby Assur' ?", answer: "Non. Le recours à un courtier est totalement gratuit pour vous. Ruby Assur' est rémunéré par les compagnies d'assurance sous forme de commissions, sans surcoût pour le client." },
   { question: "Combien de temps faut-il pour obtenir un devis ?", answer: "En général, Ruby Assur' vous revient sous 24 à 48 heures après réception de votre demande. Pour certains produits simples (auto, habitation), une réponse peut être apportée le jour même." },
   { question: "Puis-je changer d'assureur en cours de contrat ?", answer: "Oui, dans la plupart des cas. La loi Hamon (auto, habitation) et la loi Lemoine (emprunteur) permettent de résilier et changer à tout moment après un an de contrat. Ruby Assur' gère les démarches à votre place." },
-  { question: "Ruby Assur' intervient-il uniquement à Soissons ?", answer: "Non. Bien que basé à Pasly (près de Soissons), Ruby Assur' accompagne des clients partout en France grâce aux échanges par téléphone, email et visioconférence." },
+  { question: "Ruby Assur' intervient-il uniquement dans l'Aisne ?", answer: "Non. Ruby Assur' accompagne des clients dans toute la France grâce aux échanges par téléphone, email et visioconférence." },
   { question: "Que se passe-t-il en cas de sinistre ?", answer: "Ruby Assur' vous accompagne dans la déclaration et le suivi du sinistre auprès de votre assureur. Avoir un courtier à vos côtés simplifie considérablement les démarches." },
 ];
 

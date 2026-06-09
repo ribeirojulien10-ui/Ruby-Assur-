@@ -25,7 +25,7 @@ export function Footer() {
         <div>
           <Logo className="text-white [&_span]:text-gold" />
           <p className="mt-4 text-sm leading-7 text-white/60">
-            Courtier en assurances indépendant, inscrit à l&apos;ORIAS sous le n° 24007878. Basé à Pasly, Soissons.
+            Courtier en assurances indépendant dans l&apos;Aisne, inscrit à l&apos;ORIAS sous le n° 24007878. Intervient dans toute la France.
           </p>
         </div>
         <div>

@@ -82,7 +82,7 @@ export const insuranceOptions = [
 export const reassuranceItems = [
   "Courtier inscrit à l’ORIAS",
   "Conseil personnalisé",
-  "Approche locale Pasly / Soissons",
+  "Courtier indépendant — Aisne",
   "Sans maniement de fonds",
 ];
 
