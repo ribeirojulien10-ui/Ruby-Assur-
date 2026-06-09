@@ -63,20 +63,20 @@ export default function Home() {
         {/* Texte principal */}
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="mx-auto text-center sm:mx-0 sm:text-left sm:max-w-[50%] lg:max-w-[45%]">
-            <p className="font-display text-3xl font-bold leading-none sm:text-5xl lg:text-7xl">
+            <p className="font-display text-5xl font-bold leading-none sm:text-5xl lg:text-7xl">
               Ruby<span className="text-gold"> Assur'</span>
             </p>
-            <p className="mt-2 text-[10px] font-semibold uppercase tracking-widest text-gold/80 sm:text-xs">
+            <p className="mt-2 text-[11px] font-semibold uppercase tracking-widest text-gold/80 sm:text-xs">
               Courtier indépendant — ORIAS 24007878
             </p>
-            <p className="mt-1 text-[11px] italic text-white/60 sm:text-xs">
+            <p className="mt-1 text-xs italic text-white/60">
               "Votre courtier vous répond en moins de 24h."
             </p>
-            <h1 className="mt-4 font-display text-xl font-bold leading-snug sm:text-4xl lg:text-5xl">
+            <h1 className="mt-4 font-display text-2xl font-bold leading-snug sm:text-4xl lg:text-5xl">
               Votre assurance,{" "}
               <span className="text-gold underline decoration-gold/40 underline-offset-4">enfin claire</span>.
             </h1>
-            <p className="mt-3 text-xs leading-6 text-white/80 sm:text-base sm:leading-8">
+            <p className="mt-3 text-sm leading-6 text-white/80 sm:text-base sm:leading-8">
               Ruby Assur' compare les meilleures offres pour vous. Conseil humain, devis gratuit, zéro jargon.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

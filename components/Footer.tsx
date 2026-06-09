@@ -20,7 +20,7 @@ const legalLinks: [string, string][] = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-off-gray bg-navy text-white">
+    <footer className="bg-navy text-white">
       <div className="container-shell grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <Logo className="text-white [&_span]:text-gold" />
