@@ -31,11 +31,16 @@ const config: Config = {
       borderRadius: { xl: "1rem", "2xl": "1.5rem" },
       animation: {
         scroll: "scroll 30s linear infinite",
+        "scroll-up": "scroll-up 18s linear infinite",
       },
       keyframes: {
         scroll: {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
+        },
+        "scroll-up": {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-50%)" },
         },
       },
     },

@@ -41,13 +41,6 @@ export default function Home() {
           <HeroReviews />
         </div>
 
-        {/* Bas centre — Basé dans l'Aisne (desktop uniquement) */}
-        <div className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 sm:block">
-          <p className="text-[11px] text-white/40 tracking-wide">
-            📍 Basé dans l'Aisne · Accompagne toute la France
-          </p>
-        </div>
-
         {/* Texte principal */}
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="max-w-[80%] sm:max-w-[50%] lg:max-w-[45%]">
@@ -81,13 +74,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Bandeau zone d'intervention */}
-      <div className="bg-navy/95 py-3 text-center text-xs text-white/70 border-b border-white/10">
-        <span>📍</span>{" "}
-        <span className="font-medium text-white/90">Basé dans l'Aisne</span>
-        {" · "}Accompagne des clients dans toute la France par téléphone, email et visio
-      </div>
 
       {/* Bandeau partenaires défilant */}
       <PartnersScroll />
