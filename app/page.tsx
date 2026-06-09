@@ -32,16 +32,16 @@ export default function Home() {
           sizes="100vw"
         />
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
-        <div className="container-shell w-full">
-          <p className="mb-2 font-display text-4xl font-bold sm:text-5xl lg:text-7xl xl:text-8xl">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
+          <p className="mb-2 font-display text-4xl font-bold sm:text-6xl lg:text-8xl xl:text-9xl">
             Ruby<span className="text-gold"> Assur'</span>
           </p>
           <p className="eyebrow text-gold text-[10px] sm:text-xs">Courtier indépendant — ORIAS 24007878</p>
-          <h1 className="mt-3 font-display text-2xl font-bold leading-tight sm:text-4xl lg:text-6xl xl:text-7xl">
+          <h1 className="mt-3 font-display text-3xl font-bold leading-tight sm:text-5xl lg:text-7xl xl:text-8xl">
             Votre assurance,{" "}
             <span className="text-gold underline decoration-gold/40 underline-offset-4">enfin claire</span>.
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/80 sm:text-lg sm:leading-8">
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-white/80 sm:text-lg sm:leading-8">
             Ruby Assur' compare les meilleures offres pour vous. Conseil humain, devis gratuit, zéro jargon.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
