@@ -33,7 +33,7 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 bg-navy/55" aria-hidden="true" />
         <div className="container-shell">
           <div className="max-w-3xl">
-            <p className="mb-3 font-display text-2xl font-bold sm:text-3xl">
+            <p className="mb-3 font-display text-5xl font-bold sm:text-6xl lg:text-7xl">
               Ruby<span className="text-gold"> Assur'</span>
             </p>
             <p className="eyebrow text-gold">Courtier indépendant — ORIAS 24007878</p>
