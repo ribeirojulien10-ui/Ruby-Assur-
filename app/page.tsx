@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-6 pb-16 text-white sm:pt-10 sm:pb-24">
+      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-6 pb-20 text-white sm:pt-10 sm:pb-28">
         <Image
           src="/images/hero-ruby-assur.png"
           alt="Courtier en assurance Ruby Assur'"
@@ -36,9 +36,30 @@ export default function Home() {
         />
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
 
-        {/* Bas gauche — avis défilants (desktop uniquement) */}
-        <div className="absolute bottom-8 left-6 z-10 hidden w-72 sm:block lg:left-8">
-          <HeroReviews />
+        {/* Défilé compagnies — bas du hero, fondu gauche/droite/bas */}
+        <div
+          className="absolute bottom-0 left-0 right-0 z-10 pb-3 pt-10"
+          style={{
+            maskImage: "linear-gradient(to bottom, transparent 0%, black 50%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 50%)",
+          }}
+        >
+          <div
+            style={{
+              maskImage: "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
+            }}
+          >
+            <div className="flex animate-scroll items-center gap-10 whitespace-nowrap">
+              {[...["AXA","Generali","Allianz","Groupama","MMA","Maif","Swiss Life","April","Zephyr","Covéa"],
+                 ...["AXA","Generali","Allianz","Groupama","MMA","Maif","Swiss Life","April","Zephyr","Covéa"]
+              ].map((name, i) => (
+                <span key={i} className="text-[11px] font-bold uppercase tracking-widest text-white/35">
+                  {name}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Texte principal */}
@@ -71,8 +92,11 @@ export default function Home() {
             <div className="mt-6 flex justify-center sm:justify-start">
               <TrustBadges />
             </div>
-            {/* Avis mobiles — en dessous des badges, centré */}
-            <div className="mt-6 sm:hidden">
+            {/* Avis — inline sous les badges, desktop + mobile */}
+            <div className="mt-5 hidden sm:block">
+              <HeroReviews />
+            </div>
+            <div className="mt-5 sm:hidden">
               <HeroReviewsMobile />
             </div>
           </div>
