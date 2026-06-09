@@ -1,200 +1,103 @@
 "use client";
 
-import { useState } from "react";
-import { company } from "@/lib/company";
+import { FormEvent, useState } from "react";
+import { CheckCircle2, Send } from "lucide-react";
+import { insuranceOptions } from "@/lib/site";
 
-const types = [
-  "Assurance auto",
-  "Assurance habitation",
-  "Santé / mutuelle",
-  "Prévoyance",
-  "Assurance emprunteur",
-  "Assurance professionnelle",
-  "Multirisque professionnelle",
-  "Responsabilité civile professionnelle",
-  "Autre besoin",
-];
+const inputClass =
+  "focus-ring h-12 w-full rounded-md border border-ruby-line bg-white px-3 text-sm text-ruby-ink shadow-sm outline-none transition placeholder:text-slate-400";
 
-type FormState = {
-  prenom: string;
-  nom: string;
-  email: string;
-  tel: string;
-  type: string;
-  message: string;
-  rgpd: boolean;
-};
+export function ContactForm() {
+  const [submitted, setSubmitted] = useState(false);
 
-const empty: FormState = {
-  prenom: "",
-  nom: "",
-  email: "",
-  tel: "",
-  type: "",
-  message: "",
-  rgpd: false,
-};
-
-export default function ContactForm() {
-  const [form, setForm] = useState<FormState>(empty);
-  const [errors, setErrors] = useState<Record<string, boolean>>({});
-  const [sent, setSent] = useState(false);
-
-  const update =
-    (key: keyof FormState) =>
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
-    ) => {
-      const value =
-        e.target instanceof HTMLInputElement && e.target.type === "checkbox"
-          ? e.target.checked
-          : e.target.value;
-      setForm((f) => ({ ...f, [key]: value }));
-    };
-
-  const validate = () => {
-    const next: Record<string, boolean> = {};
-    if (!form.prenom.trim()) next.prenom = true;
-    if (!form.nom.trim()) next.nom = true;
-    if (!form.email.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
-      next.email = true;
-    if (!form.type) next.type = true;
-    if (!form.message.trim()) next.message = true;
-    if (!form.rgpd) next.rgpd = true;
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    setSent(true);
-
-    const subject = encodeURIComponent(
-      `Demande de devis — ${form.type} — ${form.prenom} ${form.nom}`
-    );
-    const body = encodeURIComponent(
-      `Prénom : ${form.prenom}\n` +
-        `Nom : ${form.nom}\n` +
-        `Email : ${form.email}\n` +
-        `Téléphone : ${form.tel || "-"}\n` +
-        `Type d'assurance : ${form.type}\n\n` +
-        `Message :\n${form.message}`
-    );
-
-    // Démo locale : ouvre la messagerie pré-remplie (aucun back-end requis).
-    setTimeout(() => {
-      window.location.href = `mailto:${company.email}?subject=${subject}&body=${body}`;
-    }, 600);
-  };
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitted(true);
+    event.currentTarget.reset();
+  }
 
   return (
-    <form className="devis" onSubmit={handleSubmit} noValidate>
-      {sent && (
-        <div className="form-ok">
-          Merci, votre demande est prête à être envoyée. Votre messagerie va
-          s&apos;ouvrir — sinon, écrivez-nous directement à l&apos;adresse
-          indiquée. Nous revenons vers vous rapidement.
+    <div className="rounded-lg border border-ruby-line bg-white p-5 shadow-soft sm:p-6">
+      {submitted ? (
+        <div className="mb-5 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <p className="flex items-start gap-2 font-semibold">
+            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            Demande enregistrée en démonstration.
+          </p>
+          <p className="mt-2">
+            Aucun message n’a été envoyé. La structure est prête à être reliée plus tard à une solution email ou à une API.
+          </p>
         </div>
-      )}
+      ) : null}
 
-      <div className="frow">
-        <div className="field">
-          <label>
-            Prénom <span className="req">*</span>
+      <form onSubmit={handleSubmit} className="grid gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="grid gap-2 text-sm font-medium text-ruby-ink">
+            Nom
+            <input className={inputClass} name="lastName" type="text" autoComplete="family-name" required />
           </label>
-          <input
-            type="text"
-            value={form.prenom}
-            onChange={update("prenom")}
-            className={errors.prenom ? "err" : ""}
-          />
-        </div>
-        <div className="field">
-          <label>
-            Nom <span className="req">*</span>
+          <label className="grid gap-2 text-sm font-medium text-ruby-ink">
+            Prénom
+            <input className={inputClass} name="firstName" type="text" autoComplete="given-name" required />
           </label>
-          <input
-            type="text"
-            value={form.nom}
-            onChange={update("nom")}
-            className={errors.nom ? "err" : ""}
-          />
         </div>
-      </div>
 
-      <div className="frow">
-        <div className="field">
-          <label>
-            Email <span className="req">*</span>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="grid gap-2 text-sm font-medium text-ruby-ink">
+            Email
+            <input className={inputClass} name="email" type="email" autoComplete="email" required />
           </label>
-          <input
-            type="email"
-            value={form.email}
-            onChange={update("email")}
-            className={errors.email ? "err" : ""}
-          />
+          <label className="grid gap-2 text-sm font-medium text-ruby-ink">
+            Téléphone
+            <input className={inputClass} name="phone" type="tel" autoComplete="tel" required />
+          </label>
         </div>
-        <div className="field">
-          <label>Téléphone</label>
-          <input type="tel" value={form.tel} onChange={update("tel")} />
-        </div>
-      </div>
 
-      <div className="field">
-        <label>
-          Type d&apos;assurance recherchée <span className="req">*</span>
+        <label className="grid gap-2 text-sm font-medium text-ruby-ink">
+          Type d’assurance recherchée
+          <select className={inputClass} name="insuranceType" required defaultValue="">
+            <option value="" disabled>
+              Sélectionner un besoin
+            </option>
+            {insuranceOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
         </label>
-        <select
-          value={form.type}
-          onChange={update("type")}
-          className={errors.type ? "err" : ""}
+
+        <label className="grid gap-2 text-sm font-medium text-ruby-ink">
+          Message
+          <textarea
+            className="focus-ring min-h-32 w-full rounded-md border border-ruby-line bg-white px-3 py-3 text-sm text-ruby-ink shadow-sm outline-none transition placeholder:text-slate-400"
+            name="message"
+            required
+            placeholder="Décrivez brièvement votre situation ou votre besoin."
+          />
+        </label>
+
+        <label className="flex gap-3 rounded-md bg-ruby-frost p-3 text-sm text-slate-700">
+          <input
+            className="mt-1 h-4 w-4 shrink-0 rounded border-ruby-line text-ruby-navy"
+            name="consent"
+            type="checkbox"
+            required
+          />
+          <span>
+            J’accepte que les informations saisies soient utilisées pour traiter ma demande de rappel. Mode démonstration :
+            aucune donnée n’est envoyée pour l’instant.
+          </span>
+        </label>
+
+        <button
+          type="submit"
+          className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-ruby-navy px-5 text-sm font-semibold text-white transition hover:bg-ruby-ink"
         >
-          <option value="">Sélectionnez…</option>
-          {types.map((t) => (
-            <option key={t}>{t}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="field">
-        <label>
-          Votre message <span className="req">*</span>
-        </label>
-        <textarea
-          value={form.message}
-          onChange={update("message")}
-          placeholder="Décrivez votre besoin en quelques mots…"
-          className={errors.message ? "err" : ""}
-        />
-      </div>
-
-      <div className="consent" style={{ color: errors.rgpd ? "#c0392b" : "" }}>
-        <input
-          type="checkbox"
-          id="rgpd"
-          checked={form.rgpd}
-          onChange={update("rgpd")}
-        />
-        <label htmlFor="rgpd" style={{ fontWeight: 400, margin: 0 }}>
-          J&apos;accepte que mes données soient utilisées pour traiter ma
-          demande, conformément à la{" "}
-          <a href="/confidentialite">politique de confidentialité</a>.{" "}
-          <span className="req">*</span>
-        </label>
-      </div>
-
-      <button
-        type="submit"
-        className="btn btn-primary"
-        style={{ width: "100%", justifyContent: "center" }}
-      >
-        Envoyer ma demande
-      </button>
-      <p className="form-note">Demande sans engagement · Réponse rapide</p>
-    </form>
+          <Send className="h-4 w-4" aria-hidden="true" />
+          Demander un rappel
+        </button>
+      </form>
+    </div>
   );
 }

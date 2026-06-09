@@ -1,86 +1,43 @@
 import type { Metadata } from "next";
-import OriasPill from "@/components/OriasPill";
-import ContactForm from "@/components/ContactForm";
-import { Pin, Mail, Phone, Clock } from "@/components/Icons";
-import { company } from "@/lib/company";
+import { ContactForm } from "@/components/ContactForm";
+import { legalInfo } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Contact & devis — Ruby Assur'",
+  title: "Contact et demande de devis",
   description:
-    "Contactez Ruby Assur', courtier en assurances à Pasly et Soissons. Demandez un devis ou un rappel, sans engagement.",
+    "Contactez Ruby Assur’ à Pasly près de Soissons pour une demande de rappel ou une première orientation en assurance.",
 };
 
-export default function Contact() {
+export default function ContactPage() {
   return (
-    <section className="block">
-      <div className="wrap">
-        <span className="eyebrow">Contact &amp; devis</span>
-        <h2 className="sec-title">Parlons de votre besoin</h2>
-        <p className="sec-intro">
-          Remplissez le formulaire ou contactez-nous directement. Nous revenons
-          vers vous rapidement avec des solutions adaptées.
-        </p>
+    <>
+      <section className="bg-ruby-frost py-16">
+        <div className="section-shell max-w-4xl">
+          <p className="eyebrow">Contact / Demande de devis</p>
+          <h1 className="mt-3 text-4xl font-semibold text-ruby-navy sm:text-5xl">Demander un rappel</h1>
+          <p className="mt-5 text-lg leading-8 text-slate-700">
+            Présentez brièvement votre besoin. Le formulaire est actuellement en mode démonstration et n’envoie aucun email.
+          </p>
+        </div>
+      </section>
 
-        <div className="contact-grid" style={{ marginTop: 46 }}>
-          <div className="contact-info">
-            <div className="ci">
-              <div className="ico">
-                <Pin size={20} />
-              </div>
-              <div>
-                <b>Adresse</b>
-                <span>
-                  {company.addressLine1}
-                  <br />
-                  {company.addressLine2}
-                </span>
-              </div>
+      <section className="bg-white py-16">
+        <div className="section-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+          <aside className="rounded-lg border border-ruby-line bg-ruby-sand p-6">
+            <h2 className="text-xl font-semibold text-ruby-navy">Ruby Assur’</h2>
+            <div className="mt-5 space-y-4 text-sm leading-7 text-slate-700">
+              <p>{legalInfo.address}</p>
+              <p>ORIAS : {legalInfo.orias}</p>
+              <p>{legalInfo.status}</p>
+              <p>
+                Les informations transmises via cette version locale ne sont pas envoyées. Une connexion future pourra
+                être prévue vers Resend, Brevo, Formspree ou une API email.
+              </p>
             </div>
-
-            <div className="ci">
-              <div className="ico">
-                <Mail size={20} />
-              </div>
-              <div>
-                <b>Email</b>
-                <span className="placeholder">
-                  {company.email} — à confirmer
-                </span>
-              </div>
-            </div>
-
-            <div className="ci">
-              <div className="ico">
-                <Phone size={20} />
-              </div>
-              <div>
-                <b>Téléphone</b>
-                <span className="placeholder">
-                  +33 (0)_ __ __ __ __ — à compléter
-                </span>
-              </div>
-            </div>
-
-            <div className="ci">
-              <div className="ico">
-                <Clock size={20} />
-              </div>
-              <div>
-                <b>Zone d&apos;intervention</b>
-                <span>
-                  {company.area} — et au-delà selon les contrats.
-                </span>
-              </div>
-            </div>
-
-            <div style={{ marginTop: 8 }}>
-              <OriasPill />
-            </div>
-          </div>
-
+          </aside>
           <ContactForm />
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
