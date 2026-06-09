@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { QuoteForm } from "@/components/QuoteForm";
-import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { BookingButton } from "@/components/BookingEmbed";
+import { Phone, Mail, MapPin, Clock, CalendarDays } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact — Demande de devis gratuit",
@@ -66,9 +67,23 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-8 rounded-xl border border-off-gray bg-off-white p-4 text-sm text-slate-600">
+            {/* Cal.com — Prise de RDV */}
+            <div className="mt-8 rounded-2xl border border-gold/30 bg-navy/5 p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-navy">
+                  <CalendarDays className="h-5 w-5 text-gold" />
+                </div>
+                <div>
+                  <p className="font-semibold text-navy">Prendre rendez-vous</p>
+                  <p className="text-xs text-slate-500">Choisissez un créneau directement</p>
+                </div>
+              </div>
+              <BookingButton label="Choisir un créneau" className="w-full justify-center" />
+            </div>
+
+            <div className="mt-4 rounded-xl border border-off-gray bg-off-white p-4 text-sm text-slate-600">
               <p className="font-semibold text-navy">ORIAS 24007878</p>
-              <p className="mt-1">SIRU 933 756 074 — SASU Ruby Assur'</p>
+              <p className="mt-1">SIREN 933 756 074 — SASU Ruby Assur'</p>
             </div>
           </div>
           <div className="rounded-2xl border border-off-gray bg-white p-6 shadow-card">
