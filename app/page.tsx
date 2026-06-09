@@ -16,7 +16,7 @@ export default function Home() {
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 -z-10 bg-ruby-navy/62" aria-hidden="true" />
+        <div className="absolute inset-0 -z-10 bg-ruby-navy/75" aria-hidden="true" />
         <div className="section-shell">
           <div className="max-w-3xl">
             <p className="eyebrow text-ruby-glacier">Courtier local à Pasly / Soissons</p>

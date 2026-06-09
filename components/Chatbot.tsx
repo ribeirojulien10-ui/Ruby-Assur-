@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircle, PawPrint, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { chatReplies, chatSuggestions, type ChatSuggestion } from "@/lib/site";
 
@@ -11,7 +11,7 @@ type ChatMessage = {
 };
 
 const welcomeMessage =
-  "Bonjour 👋 Je suis l’assistant Ruby Assur’. Je peux vous aider à identifier le type d’assurance dont vous avez besoin ou vous orienter vers une demande de rappel.";
+  "Wouaf ! 🐾 Moi c’est Flocon, le samoyède de Ruby Assur’. Je suis là pour vous orienter vers la bonne assurance. Posez-moi votre question !";
 
 export function Chatbot() {
   const [open, setOpen] = useState(false);
@@ -51,10 +51,10 @@ export function Chatbot() {
         >
           <div className="flex items-center justify-between gap-3 border-b border-ruby-line bg-ruby-navy px-4 py-3 text-white">
             <div className="flex items-center gap-2">
-              <PawPrint className="h-5 w-5 text-ruby-gold" aria-hidden="true" />
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-xl" aria-hidden="true">🐕</span>
               <div>
-                <p className="text-sm font-semibold">Assistant Ruby Assur’</p>
-                <p className="text-xs text-white/70">Démonstration locale</p>
+                <p className="text-sm font-semibold">Flocon — Ruby Assur’</p>
+                <p className="text-xs text-white/70">Samoyède assistant</p>
               </div>
             </div>
             <button
@@ -108,12 +108,12 @@ export function Chatbot() {
 
       <button
         type="button"
-        aria-label={open ? "Fermer l’assistant Ruby Assur’" : "Ouvrir l’assistant Ruby Assur’"}
+        aria-label={open ? "Fermer Flocon" : "Ouvrir Flocon, l’assistant Ruby Assur’"}
         onClick={() => setOpen((value) => !value)}
         className="focus-ring flex h-14 min-w-14 items-center justify-center gap-2 rounded-full bg-ruby-navy px-4 font-semibold text-white shadow-soft transition hover:bg-ruby-ink"
       >
-        <MessageCircle className="h-5 w-5" aria-hidden="true" />
-        <span className="hidden text-sm sm:inline">Assistant</span>
+        <span className="text-xl" aria-hidden="true">🐾</span>
+        <span className="hidden text-sm sm:inline">Flocon</span>
       </button>
     </div>
   );
