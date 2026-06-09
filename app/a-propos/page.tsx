@@ -19,7 +19,7 @@ export default function AboutPage() {
               src="/images/hero-ruby-assur.png"
               alt="Espace de conseil Ruby Assur’"
               fill
-              className="object-cover"
+              className="object-cover object-bottom"
               sizes="(max-width: 1024px) 100vw, 480px"
               priority
             />
