@@ -30,9 +30,12 @@ export default function Home() {
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 -z-10 bg-navy/75" aria-hidden="true" />
+        <div className="absolute inset-0 -z-10 bg-navy/55" aria-hidden="true" />
         <div className="container-shell">
           <div className="max-w-3xl">
+            <p className="mb-3 font-display text-2xl font-bold sm:text-3xl">
+              Ruby<span className="text-gold"> Assur'</span>
+            </p>
             <p className="eyebrow text-gold">Courtier indépendant — ORIAS 24007878</p>
             <h1 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
               Votre assurance,{" "}
