@@ -8,6 +8,11 @@ const reviews = [
   { name: "Sophie M.", text: "Enfin un courtier qui explique clairement." },
   { name: "Pierre L.", text: "Excellent pour mon assurance décennale." },
   { name: "Camille D.", text: "Devis gratuit, sans pression. Très à l'écoute." },
+  { name: "Lucas B.", text: "J'ai économisé sur mon assurance auto sans rien sacrifier." },
+  { name: "Nathalie F.", text: "Super accompagnement pour notre assurance emprunteur." },
+  { name: "Karim A.", text: "RC Pro souscrite en 2 jours, impeccable." },
+  { name: "Julie M.", text: "On m'a expliqué chaque garantie, sans jargon." },
+  { name: "Romain C.", text: "Vraiment disponible, même le soir. Je recommande." },
 ];
 
 const doubled = [...reviews, ...reviews];
@@ -59,11 +64,12 @@ export function HeroReviewsMobile() {
   const [pair, setPair] = useState(0);
   const [visible, setVisible] = useState(true);
 
-  // pair 0 → avis 0+1, pair 1 → avis 2+3, pair 2 → avis 4+0
   const pairs = [
     [reviews[0], reviews[1]],
     [reviews[2], reviews[3]],
-    [reviews[4], reviews[0]],
+    [reviews[4], reviews[5]],
+    [reviews[6], reviews[7]],
+    [reviews[8], reviews[9]],
   ];
 
   useEffect(() => {
