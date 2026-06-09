@@ -44,10 +44,10 @@ export default function Home() {
         {/* Texte principal */}
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="mx-auto text-center sm:mx-0 sm:text-left sm:max-w-[50%] lg:max-w-[45%]">
-            <p className="mb-1 font-display text-3xl font-bold sm:text-5xl lg:text-7xl">
+            <p className="font-display text-3xl font-bold sm:text-5xl lg:text-7xl leading-none">
               Ruby<span className="text-gold"> Assur'</span>
             </p>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-gold/80 sm:text-xs">
+            <p className="mt-2 text-[10px] font-semibold uppercase tracking-widest text-gold/80 sm:text-xs">
               Courtier indépendant — ORIAS 24007878
             </p>
             <p className="mt-1 text-[11px] text-white/60 italic sm:text-xs">
