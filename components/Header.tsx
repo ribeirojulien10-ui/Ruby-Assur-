@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Logo } from "./Logo";
+import { BookingButton } from "./BookingEmbed";
 import { Phone, Menu, X } from "lucide-react";
 
 const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
@@ -29,6 +30,7 @@ export function Header() {
             <Phone className="h-4 w-4 text-gold" />{phone.replace(/(\d{2})(?=\d)/g, "$1 ").trim()}
           </a>
           <Link href="/contact" className="btn-primary text-xs px-4 py-2">Demander un devis</Link>
+          <BookingButton label="Prendre RDV" className="text-xs px-4 py-2" />
         </div>
         <button className="lg:hidden p-2 text-navy" onClick={() => setOpen(!open)} aria-label="Menu">
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
