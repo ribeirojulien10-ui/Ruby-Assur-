@@ -4,6 +4,7 @@ import { TrustBadges } from "@/components/TrustBadges";
 import { FAQ } from "@/components/FAQ";
 import { BookingButton } from "@/components/BookingEmbed";
 import { PartnersScroll } from "@/components/PartnersScroll";
+import { ReviewsCarousel } from "@/components/ReviewsCarousel";
 import { Home as HomeIcon, Building2, Shield, BarChart3, User, CheckCircle } from "lucide-react";
 import { getProductsByAudience } from "@/lib/products";
 
@@ -35,11 +36,6 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
         {/* Bloc bas gauche — desktop uniquement */}
         <div className="absolute bottom-6 left-4 z-10 hidden flex-col gap-3 sm:bottom-8 sm:left-6 sm:flex lg:left-8">
-          {/* C — Géolocalisation */}
-          <div className="flex items-center gap-2 text-xs text-white/70">
-            <span>📍</span>
-            <span>Basé dans l'Aisne · Accompagne toute la France</span>
-          </div>
           {/* B — Processus condensé */}
           <div className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
             <span className="text-xs text-white/90">1. Vous décrivez</span>
@@ -94,6 +90,13 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Bandeau zone d'intervention */}
+      <div className="bg-navy/95 py-3 text-center text-xs text-white/70 border-b border-white/10">
+        <span>📍</span>{" "}
+        <span className="font-medium text-white/90">Basé dans l'Aisne</span>
+        {" · "}Accompagne des clients dans toute la France par téléphone, email et visio
+      </div>
 
       {/* Bandeau partenaires défilant */}
       <PartnersScroll />
@@ -179,6 +182,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Avis clients */}
+      <ReviewsCarousel />
 
       {/* Comment ça marche */}
       <section className="section bg-navy text-white">

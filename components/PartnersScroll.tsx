@@ -1,58 +1,35 @@
 "use client";
 
-import Image from "next/image";
-
 const partners = [
-  { name: "AXA", domain: "axa.fr" },
-  { name: "Generali", domain: "generali.fr" },
-  { name: "Allianz", domain: "allianz.fr" },
-  { name: "Groupama", domain: "groupama.fr" },
-  { name: "MMA", domain: "mma.fr" },
-  { name: "Maif", domain: "maif.fr" },
-  { name: "Swiss Life", domain: "swisslife.fr" },
-  { name: "April", domain: "april.fr" },
-  { name: "Zephyr", domain: "zephyr-assurances.fr" },
-  { name: "Covéa", domain: "covea.fr" },
+  { name: "AXA", color: "#00008F" },
+  { name: "Generali", color: "#c8102e" },
+  { name: "Allianz", color: "#003781" },
+  { name: "Groupama", color: "#007A3D" },
+  { name: "MMA", color: "#e4002b" },
+  { name: "Maif", color: "#005792" },
+  { name: "Swiss Life", color: "#b40000" },
+  { name: "April", color: "#e30613" },
+  { name: "Zephyr", color: "#1a3c6e" },
+  { name: "Covéa", color: "#003865" },
 ];
 
-const names = [...partners, ...partners];
-const logos = [...partners, ...partners];
+const doubled = [...partners, ...partners];
 
 export function PartnersScroll() {
   return (
-    <div className="overflow-hidden bg-white py-6 border-y border-off-gray">
-      <p className="text-center text-xs font-bold uppercase tracking-widest text-gold mb-5">
+    <div className="overflow-hidden bg-white py-8 border-y border-off-gray">
+      <p className="text-center text-xs font-bold uppercase tracking-widest text-gold mb-6">
         Compagnies comparées
       </p>
-
-      {/* Logos défilants */}
-      <div className="relative overflow-hidden mb-4">
-        <div className="flex animate-scroll gap-10 whitespace-nowrap items-center">
-          {logos.map((p, i) => (
-            <div key={i} className="inline-flex h-8 w-20 shrink-0 items-center justify-center grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition">
-              <Image
-                src={`https://logo.clearbit.com/${p.domain}`}
-                alt={p.name}
-                width={80}
-                height={32}
-                className="object-contain max-h-8"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
-                unoptimized
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Noms défilants en dessous */}
       <div className="relative overflow-hidden">
-        <div className="flex animate-scroll gap-8 whitespace-nowrap" style={{ animationDuration: "20s", animationDirection: "reverse" }}>
-          {names.map((p, i) => (
-            <span key={i} className="inline-flex items-center text-xs font-semibold text-navy/30">
+        <div className="flex animate-scroll items-center gap-8 whitespace-nowrap">
+          {doubled.map((p, i) => (
+            <span
+              key={i}
+              className="inline-flex h-10 items-center rounded-lg border border-gray-100 px-4 text-sm font-bold shadow-sm transition hover:shadow-md"
+              style={{ color: p.color, borderColor: `${p.color}22`, background: `${p.color}08` }}
+            >
               {p.name}
-              <span className="ml-8 text-gold/20">·</span>
             </span>
           ))}
         </div>
