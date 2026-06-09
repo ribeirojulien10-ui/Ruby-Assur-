@@ -12,7 +12,6 @@ const reviews = [
 
 const doubled = [...reviews, ...reviews];
 
-/* ─── Carte liquid glass ─── */
 function ReviewCard({ name, text }: { name: string; text: string }) {
   return (
     <div
@@ -22,8 +21,7 @@ function ReviewCard({ name, text }: { name: string; text: string }) {
         backdropFilter: "blur(24px) saturate(180%)",
         WebkitBackdropFilter: "blur(24px) saturate(180%)",
         border: "1px solid rgba(255,255,255,0.18)",
-        boxShadow:
-          "inset 0 1px 0 rgba(255,255,255,0.22), 0 4px 24px rgba(0,0,0,0.18)",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), 0 4px 24px rgba(0,0,0,0.18)",
       }}
     >
       <span className="shrink-0 text-[#C9A24B] text-xs mt-0.5">★★★★★</span>
@@ -35,14 +33,16 @@ function ReviewCard({ name, text }: { name: string; text: string }) {
   );
 }
 
-/* ─── Version desktop : défilement vers le bas en continu ─── */
+/* ─── Desktop : scroll vertical vers le bas ─── */
 export function HeroReviews() {
   return (
     <div
-      className="relative h-56 w-72"
+      className="w-72"
       style={{
-        maskImage: "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
-        WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
+        maskImage: "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
+        WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
+        height: "180px",
+        overflow: "hidden",
       }}
     >
       <div className="animate-scroll-down flex flex-col gap-3">
@@ -54,30 +54,37 @@ export function HeroReviews() {
   );
 }
 
-/* ─── Version mobile : rotation avec fondu ─── */
+/* ─── Mobile : 2 avis en fondu alterné ─── */
 export function HeroReviewsMobile() {
-  const [current, setCurrent] = useState(0);
+  const [pair, setPair] = useState(0);
   const [visible, setVisible] = useState(true);
+
+  // pair 0 → avis 0+1, pair 1 → avis 2+3, pair 2 → avis 4+0
+  const pairs = [
+    [reviews[0], reviews[1]],
+    [reviews[2], reviews[3]],
+    [reviews[4], reviews[0]],
+  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
       setVisible(false);
       setTimeout(() => {
-        setCurrent((p) => (p + 1) % reviews.length);
+        setPair((p) => (p + 1) % pairs.length);
         setVisible(true);
       }, 450);
-    }, 3500);
+    }, 3800);
     return () => clearInterval(timer);
   }, []);
 
-  const r = reviews[current];
-
   return (
     <div
-      className="transition-opacity duration-500 mx-auto max-w-xs"
+      className="flex flex-col gap-3 transition-opacity duration-500"
       style={{ opacity: visible ? 1 : 0 }}
     >
-      <ReviewCard name={r.name} text={r.text} />
+      {pairs[pair].map((r, i) => (
+        <ReviewCard key={i} name={r.name} text={r.text} />
+      ))}
     </div>
   );
 }

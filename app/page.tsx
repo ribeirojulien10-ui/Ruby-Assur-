@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-6 pb-20 text-white sm:pt-10 sm:pb-28">
+      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-6 pb-16 text-white sm:pt-10 sm:pb-20">
         <Image
           src="/images/hero-ruby-assur.png"
           alt="Courtier en assurance Ruby Assur'"
@@ -36,42 +36,40 @@ export default function Home() {
         />
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
 
-        {/* Défilé compagnies — bas du hero, fondu gauche/droite/bas */}
+        {/* Avis desktop — absolu, centré verticalement entre badges et compagnies */}
+        <div className="absolute bottom-20 left-6 z-10 hidden sm:block lg:left-8">
+          <HeroReviews />
+        </div>
+
+        {/* Compagnies défilantes — tout en bas, scroll infini */}
         <div
-          className="absolute bottom-0 left-0 right-0 z-10 pb-3 pt-10"
+          className="absolute bottom-0 left-0 right-0 z-10 overflow-hidden py-3"
           style={{
-            maskImage: "linear-gradient(to bottom, transparent 0%, black 50%)",
-            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 50%)",
+            maskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
           }}
         >
-          <div
-            style={{
-              maskImage: "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
-            }}
-          >
-            <div className="flex animate-scroll items-center gap-10 whitespace-nowrap">
-              {[...["AXA","Generali","Allianz","Groupama","MMA","Maif","Swiss Life","April","Zephyr","Covéa"],
-                 ...["AXA","Generali","Allianz","Groupama","MMA","Maif","Swiss Life","April","Zephyr","Covéa"]
-              ].map((name, i) => (
-                <span key={i} className="text-[11px] font-bold uppercase tracking-widest text-white/35">
-                  {name}
-                </span>
-              ))}
-            </div>
+          <div className="flex animate-scroll items-center gap-12 whitespace-nowrap">
+            {["AXA","Generali","Allianz","Groupama","MMA","Maif","Swiss Life","April","Zephyr","Covéa",
+              "AXA","Generali","Allianz","Groupama","MMA","Maif","Swiss Life","April","Zephyr","Covéa"
+            ].map((name, i) => (
+              <span key={i} className="text-[11px] font-bold uppercase tracking-widest text-white/30">
+                {name}
+              </span>
+            ))}
           </div>
         </div>
 
         {/* Texte principal */}
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="mx-auto text-center sm:mx-0 sm:text-left sm:max-w-[50%] lg:max-w-[45%]">
-            <p className="font-display text-3xl font-bold sm:text-5xl lg:text-7xl leading-none">
+            <p className="font-display text-3xl font-bold leading-none sm:text-5xl lg:text-7xl">
               Ruby<span className="text-gold"> Assur'</span>
             </p>
             <p className="mt-2 text-[10px] font-semibold uppercase tracking-widest text-gold/80 sm:text-xs">
               Courtier indépendant — ORIAS 24007878
             </p>
-            <p className="mt-1 text-[11px] text-white/60 italic sm:text-xs">
+            <p className="mt-1 text-[11px] italic text-white/60 sm:text-xs">
               "Votre courtier vous répond en moins de 24h."
             </p>
             <h1 className="mt-4 font-display text-xl font-bold leading-snug sm:text-4xl lg:text-5xl">
@@ -89,13 +87,10 @@ export default function Home() {
                 Je suis un professionnel
               </Link>
             </div>
-            <div className="mt-6 flex justify-center sm:justify-start">
+            <div className="mt-5">
               <TrustBadges />
             </div>
-            {/* Avis — inline sous les badges, desktop + mobile */}
-            <div className="mt-5 hidden sm:block">
-              <HeroReviews />
-            </div>
+            {/* 2 avis mobile — juste sous les badges, s'arrête avant les compagnies */}
             <div className="mt-5 sm:hidden">
               <HeroReviewsMobile />
             </div>
