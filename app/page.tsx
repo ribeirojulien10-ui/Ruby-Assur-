@@ -26,7 +26,7 @@ export default function Home() {
           src="/images/hero-ruby-assur.png"
           alt="Courtier en assurance Ruby Assur'"
           fill
-          className="absolute inset-0 -z-20 object-cover object-center"
+          className="absolute inset-0 -z-20 object-cover object-[center_30%]"
           priority
           sizes="100vw"
         />
