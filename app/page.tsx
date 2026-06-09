@@ -5,6 +5,7 @@ import { FAQ } from "@/components/FAQ";
 import { BookingButton } from "@/components/BookingEmbed";
 import { PartnersScroll } from "@/components/PartnersScroll";
 import { ReviewsCarousel } from "@/components/ReviewsCarousel";
+import { HeroReviews } from "@/components/HeroReviews";
 import { Home as HomeIcon, Building2, Shield, BarChart3, User, CheckCircle } from "lucide-react";
 import { getProductsByAudience } from "@/lib/products";
 
@@ -24,7 +25,7 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-6 pb-16 text-white sm:pt-10 sm:pb-20">
+      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-6 pb-16 text-white sm:pt-10 sm:pb-24">
         <Image
           src="/images/hero-ruby-assur.png"
           alt="Courtier en assurance Ruby Assur'"
@@ -34,49 +35,39 @@ export default function Home() {
           sizes="100vw"
         />
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
-        {/* Bloc bas gauche — desktop uniquement */}
-        <div className="absolute bottom-6 left-4 z-10 hidden flex-col gap-3 sm:bottom-8 sm:left-6 sm:flex lg:left-8">
-          {/* B — Processus condensé */}
-          <div className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
-            <span className="text-xs text-white/90">1. Vous décrivez</span>
-            <span className="text-white/40">→</span>
-            <span className="text-xs text-white/90">2. On compare</span>
-            <span className="text-white/40">→</span>
-            <span className="text-xs text-white/90">3. Vous choisissez</span>
-          </div>
-          {/* A — Compagnies */}
-          <div className="flex flex-wrap items-center gap-2">
-            {["AXA", "Generali", "April", "Zephyr", "Allianz"].map((c) => (
-              <span key={c} className="rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-xs font-semibold text-white/80 backdrop-blur-sm">
-                {c}
-              </span>
-            ))}
-            <span className="text-xs text-white/50">& +</span>
-          </div>
-          {/* Citation */}
-          <p className="max-w-xs rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-medium italic text-white/90 backdrop-blur-sm">
-            "Votre courtier vous répond en moins de 24h."
-          </p>
-          {/* Avis */}
-          <div className="flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 backdrop-blur-sm">
-            <div className="flex text-gold text-sm">★★★★★</div>
-            <p className="text-xs text-white/80"><span className="font-semibold text-white">Marie T.</span> — "Très professionnel, réponse rapide"</p>
-          </div>
+
+        {/* Bas gauche — avis défilants (desktop uniquement) */}
+        <div className="absolute bottom-8 left-6 z-10 hidden w-72 sm:block lg:left-8">
+          <HeroReviews />
         </div>
+
+        {/* Bas centre — Basé dans l'Aisne (desktop uniquement) */}
+        <div className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 sm:block">
+          <p className="text-[11px] text-white/40 tracking-wide">
+            📍 Basé dans l'Aisne · Accompagne toute la France
+          </p>
+        </div>
+
+        {/* Texte principal */}
         <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="max-w-[55%] sm:max-w-[50%] lg:max-w-[45%]">
-            <p className="mb-2 font-display text-3xl font-bold sm:text-5xl lg:text-7xl">
+          <div className="max-w-[80%] sm:max-w-[50%] lg:max-w-[45%]">
+            <p className="mb-1 font-display text-3xl font-bold sm:text-5xl lg:text-7xl">
               Ruby<span className="text-gold"> Assur'</span>
             </p>
-            <p className="eyebrow text-gold text-[10px] sm:text-xs">Courtier indépendant — ORIAS 24007878</p>
-            <h1 className="mt-3 font-display text-xl font-bold leading-snug sm:text-4xl lg:text-5xl">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-gold/80 sm:text-xs">
+              Courtier indépendant — ORIAS 24007878
+            </p>
+            <p className="mt-1 text-[11px] text-white/60 italic sm:text-xs">
+              "Votre courtier vous répond en moins de 24h."
+            </p>
+            <h1 className="mt-4 font-display text-xl font-bold leading-snug sm:text-4xl lg:text-5xl">
               Votre assurance,{" "}
               <span className="text-gold underline decoration-gold/40 underline-offset-4">enfin claire</span>.
             </h1>
             <p className="mt-3 text-xs leading-6 text-white/80 sm:text-base sm:leading-8">
               Ruby Assur' compare les meilleures offres pour vous. Conseil humain, devis gratuit, zéro jargon.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link href="/particuliers" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-navy transition hover:bg-off-white">
                 Je suis un particulier
               </Link>
@@ -84,7 +75,7 @@ export default function Home() {
                 Je suis un professionnel
               </Link>
             </div>
-            <div className="mt-8">
+            <div className="mt-6">
               <TrustBadges />
             </div>
           </div>
