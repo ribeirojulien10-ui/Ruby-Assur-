@@ -1,0 +1,28 @@
+COMMENT CHANGER L'IMAGE DU HERO (le grand bandeau d'accueil)
+============================================================
+
+Par défaut, le site affiche un fond illustré original :
+  hero-fallback.svg  (ciel navy + silhouette de Soissons + samoyède)
+
+➜ POUR METTRE UNE VRAIE PHOTO À LA PLACE :
+
+1. Placez votre image dans ce dossier (public/images/) et nommez-la EXACTEMENT :
+       hero.jpg
+   (formats acceptés : .jpg ou .png — si .png, voir l'astuce plus bas)
+
+2. C'est tout. Au rechargement de la page, la photo remplace l'illustration.
+   (le texte blanc reste lisible : un voile sombre est appliqué par-dessus)
+
+➜ ASTUCE — réutiliser la photo du site "Codex" que vous aviez :
+   Cette image se trouve probablement dans l'ancien dossier, ici :
+       ruby-assur-next/public/images/hero-ruby-assur.png
+   Copiez-la dans CE dossier et renommez-la "hero.jpg"
+   (le navigateur l'affichera quand même ; ou gardez .png et voir ci-dessous).
+
+➜ SI VOTRE FICHIER EST EN .PNG (et pas .jpg) :
+   Ouvrez le fichier  app/globals.css  cherchez la ligne contenant
+       url("/images/hero.jpg")
+   et remplacez  hero.jpg  par  hero.png
+
+Conseils image : format paysage, au moins 1600px de large, sujet plutôt
+à DROITE (le texte s'affiche à gauche). Poids < 500 Ko idéalement.
