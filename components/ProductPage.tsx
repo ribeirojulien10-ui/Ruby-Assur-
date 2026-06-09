@@ -87,18 +87,6 @@ export function ProductPage({ product, audiencePath }: { product: Product; audie
         </div>
       </section>
 
-      {/* 6 — bleu */}
-      <section className="section bg-navy text-white text-center">
-        <div className="container-shell">
-          <p className="eyebrow text-gold">Prêt à démarrer ?</p>
-          <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Une question sur ce contrat ?</h2>
-          <p className="mt-4 text-white/70">Ruby Assur' vous répond en moins de 24h, sans engagement.</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link href="/contact" className="btn-gold">Demander un devis gratuit</Link>
-            <BookingButton label="Prendre rendez-vous" className="border-white/30 text-white hover:bg-white/10" />
-          </div>
-        </div>
-      </section>
     </>
   );
 }
