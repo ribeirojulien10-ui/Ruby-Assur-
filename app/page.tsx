@@ -34,9 +34,33 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
         {/* Bloc bas gauche */}
         <div className="absolute bottom-6 left-4 z-10 flex flex-col gap-3 sm:bottom-8 sm:left-6 lg:left-8">
+          {/* C — Géolocalisation */}
+          <div className="flex items-center gap-2 text-xs text-white/70">
+            <span>📍</span>
+            <span>Basé dans l'Aisne · Accompagne toute la France</span>
+          </div>
+          {/* B — Processus condensé */}
+          <div className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
+            <span className="text-xs text-white/90">1. Vous décrivez</span>
+            <span className="text-white/40">→</span>
+            <span className="text-xs text-white/90">2. On compare</span>
+            <span className="text-white/40">→</span>
+            <span className="text-xs text-white/90">3. Vous choisissez</span>
+          </div>
+          {/* A — Compagnies */}
+          <div className="flex flex-wrap items-center gap-2">
+            {["AXA", "Generali", "April", "Zephyr", "Allianz"].map((c) => (
+              <span key={c} className="rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-xs font-semibold text-white/80 backdrop-blur-sm">
+                {c}
+              </span>
+            ))}
+            <span className="text-xs text-white/50">& +</span>
+          </div>
+          {/* Citation */}
           <p className="max-w-xs rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-medium italic text-white/90 backdrop-blur-sm">
             "Votre courtier vous répond en moins de 24h."
           </p>
+          {/* Avis */}
           <div className="flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 backdrop-blur-sm">
             <div className="flex text-gold text-sm">★★★★★</div>
             <p className="text-xs text-white/80"><span className="font-semibold text-white">Marie T.</span> — "Très professionnel, réponse rapide"</p>
