@@ -32,6 +32,16 @@ export default function Home() {
           sizes="100vw"
         />
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
+        {/* Bloc bas gauche */}
+        <div className="absolute bottom-6 left-4 z-10 flex flex-col gap-3 sm:bottom-8 sm:left-6 lg:left-8">
+          <p className="max-w-xs rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-medium italic text-white/90 backdrop-blur-sm">
+            "Votre courtier vous répond en moins de 24h."
+          </p>
+          <div className="flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 backdrop-blur-sm">
+            <div className="flex text-gold text-sm">★★★★★</div>
+            <p className="text-xs text-white/80"><span className="font-semibold text-white">Marie T.</span> — "Très professionnel, réponse rapide"</p>
+          </div>
+        </div>
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="max-w-[55%] sm:max-w-[50%] lg:max-w-[45%]">
             <p className="mb-4 font-display text-5xl font-bold sm:text-6xl lg:text-7xl">
