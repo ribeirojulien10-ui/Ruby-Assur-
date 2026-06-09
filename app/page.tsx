@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-16 pb-20 text-white sm:pt-24">
+      <section className="relative isolate flex min-h-[calc(100svh-64px)] items-start overflow-hidden bg-navy pt-8 pb-20 text-white sm:pt-12">
         <Image
           src="/images/hero-ruby-assur.png"
           alt="Courtier en assurance Ruby Assur'"
