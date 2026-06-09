@@ -42,6 +42,7 @@ export function Header() {
             <Link key={l.href} href={l.href} className="block py-2 text-sm font-medium text-navy" onClick={() => setOpen(false)}>{l.label}</Link>
           ))}
           <Link href="/contact" className="btn-primary mt-3 w-full text-center" onClick={() => setOpen(false)}>Demander un devis</Link>
+          <div className="mt-2"><BookingButton label="Prendre RDV" className="w-full justify-center" /></div>
         </div>
       )}
     </header>

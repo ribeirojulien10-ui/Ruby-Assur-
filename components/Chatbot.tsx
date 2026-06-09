@@ -100,10 +100,10 @@ export function Chatbot() {
         type="button"
         aria-label={open ? "Fermer l’assistant" : "Ouvrir l’assistant"}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-14 items-center gap-2.5 rounded-full bg-navy px-5 text-sm font-semibold text-white shadow-elevated transition hover:bg-navy-accent"
+        className="flex h-14 items-center gap-2.5 rounded-full bg-navy px-4 text-sm font-semibold text-white shadow-elevated transition hover:bg-navy-accent sm:px-5"
       >
         {open ? <X className="h-5 w-5" /> : <MessageCircle className="h-5 w-5" />}
-        <span>{open ? "Fermer" : "Un conseil ?"}</span>
+        <span className="hidden sm:inline">{open ? "Fermer" : "Un conseil ?"}</span>
       </button>
     </div>
   );
