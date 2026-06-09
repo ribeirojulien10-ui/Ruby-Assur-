@@ -38,17 +38,13 @@ function ReviewCard({ name, text }: { name: string; text: string }) {
 /* ─── Version desktop : défilement vers le bas en continu ─── */
 export function HeroReviews() {
   return (
-    <div className="relative h-56 overflow-hidden w-72">
-      {/* fondu haut — se fond dans le hero */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-14"
-        style={{ background: "linear-gradient(to bottom, #0A1A35 0%, transparent 100%)" }}
-      />
-      {/* fondu bas */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-14"
-        style={{ background: "linear-gradient(to top, #0A1A35 0%, transparent 100%)" }}
-      />
+    <div
+      className="relative h-56 w-72"
+      style={{
+        maskImage: "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
+        WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
+      }}
+    >
       <div className="animate-scroll-down flex flex-col gap-3">
         {doubled.map((r, i) => (
           <ReviewCard key={i} name={r.name} text={r.text} />
