@@ -74,7 +74,7 @@ export function ProductPage({ product, audiencePath }: { product: Product; audie
       </section>
 
       {/* 5 — blanc */}
-      <section className="section bg-off-white" id="devis">
+      <section className="section bg-off-white border-t border-off-gray" id="devis">
         <div className="container-shell grid gap-12 lg:grid-cols-2 lg:items-start">
           <div>
             <p className="eyebrow">Demande de devis</p>
