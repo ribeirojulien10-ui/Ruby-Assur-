@@ -98,9 +98,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Bandeau partenaires défilant */}
-      <PartnersScroll />
-
       {/* Choisissez votre profil */}
       <section className="section bg-off-white">
         <div className="container-shell">
@@ -183,9 +180,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Avis clients */}
-      <ReviewsCarousel />
-
       {/* Comment ça marche */}
       <section className="section bg-navy text-white">
         <div className="container-shell">
@@ -227,21 +221,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Final */}
-      <section className="section bg-navy text-white">
-        <div className="container-shell text-center">
-          <p className="eyebrow text-gold">Prêt à commencer ?</p>
-          <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Obtenez votre devis gratuit aujourd'hui</h2>
-          <p className="mt-4 text-lg text-white/70">Sans engagement, réponse sous 24h.</p>
-          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link href="/contact" className="btn-gold text-base px-8 py-4">
-              Demander un devis
-            </Link>
-            <BookingButton label="Prendre rendez-vous" className="border-white/30 text-white hover:bg-white/10 text-base px-8 py-4" />
-          </div>
-          <p className="mt-4 text-sm text-white/40">Choisissez ce qui vous convient le mieux</p>
-        </div>
-      </section>
     </>
   );
 }
