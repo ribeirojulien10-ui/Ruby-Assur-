@@ -73,15 +73,15 @@ export function ProductPage({ product, audiencePath }: { product: Product; audie
         </div>
       </section>
 
-      {/* Formulaire — navy */}
-      <section className="section bg-navy" id="devis">
+      {/* Formulaire — blanc */}
+      <section className="section bg-white" id="devis">
         <div className="container-shell grid gap-12 lg:grid-cols-2 lg:items-start">
-          <div className="text-white">
-            <p className="eyebrow text-gold">Demande de devis</p>
-            <h2 className="mt-3 font-display text-3xl font-bold">Obtenez votre devis {product.name} gratuit</h2>
-            <p className="mt-4 leading-8 text-white/70">Ruby Assur' compare les offres et vous revient rapidement. Gratuit, sans engagement.</p>
+          <div>
+            <p className="eyebrow">Demande de devis</p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-navy">Obtenez votre devis {product.name} gratuit</h2>
+            <p className="mt-4 leading-8 text-slate-600">Ruby Assur' compare les offres et vous revient rapidement. Gratuit, sans engagement.</p>
           </div>
-          <div className="rounded-2xl bg-white p-6">
+          <div className="rounded-2xl border border-off-gray bg-off-white p-6">
             <QuoteForm />
           </div>
         </div>
