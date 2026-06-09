@@ -18,7 +18,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b border-off-gray bg-white/95 backdrop-blur">
-      <div className="container-shell flex h-16 items-center justify-between gap-4">
+      <div className="flex h-16 w-full items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" aria-label="Ruby Assur' — Accueil"><Logo /></Link>
         <nav className="hidden items-center gap-4 lg:flex">
           {navLinks.map((l) => (
