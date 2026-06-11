@@ -13,7 +13,6 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://rubyassur.fr"),
   title: { default: "Ruby Assur' — Courtier en assurances dans l'Aisne", template: "%s | Ruby Assur'" },
   description: "Ruby Assur', courtier en assurances indépendant, ORIAS 24007878. Assurance auto, habitation, mutuelle, RC Pro, décennale. Devis gratuit et sans engagement.",
-  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
