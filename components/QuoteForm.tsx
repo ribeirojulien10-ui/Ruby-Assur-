@@ -10,10 +10,13 @@ export function QuoteForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    // TODO: brancher /api/quote quand le backend est prêt
-    await new Promise((r) => setTimeout(r, 800));
+    const res = await fetch("/api/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
     setLoading(false);
-    setSubmitted(true);
+    if (res.ok) setSubmitted(true);
   }
 
   if (submitted) {
