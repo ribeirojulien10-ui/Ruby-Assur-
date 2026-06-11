@@ -5,7 +5,7 @@ import { Phone, Mail, MapPin, Clock, CalendarDays } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact — Demande de devis gratuit",
-  description: "Contactez Ruby Assur' à Pasly pour une demande de devis gratuit en assurance auto, habitation, mutuelle, RC Pro et plus. Réponse sous 24h.",
+  description: "Contactez Ruby Assur' pour une demande de devis gratuit en assurance auto, habitation, mutuelle, RC Pro et plus. Réponse sous 24h.",
 };
 
 const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
@@ -48,15 +48,6 @@ export default function ContactPage() {
                   <p className="font-semibold">{email}</p>
                 </div>
               </a>
-              <div className="flex items-start gap-3 text-slate-700">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy/5">
-                  <MapPin className="h-5 w-5 text-gold" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-gold">Adresse</p>
-                  <p className="font-semibold">44 avenue du Bois Roger<br />02200 Pasly (Soissons)</p>
-                </div>
-              </div>
               <div className="flex items-center gap-3 text-slate-700">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-navy/5">
                   <Clock className="h-5 w-5 text-gold" />

@@ -6,7 +6,7 @@ import { serviceItems } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Services et assurances",
   description:
-    "Découvrez les accompagnements Ruby Assur’ : assurance auto, habitation, mutuelle santé, prévoyance, emprunteur et assurances professionnelles à Pasly et Soissons.",
+    "Découvrez les accompagnements Ruby Assur’ : assurance auto, habitation, mutuelle santé, prévoyance, emprunteur et assurances professionnelles dans toute la France.",
 };
 
 const icons = [Car, Home, HeartPulse, Umbrella, ShieldCheck, BriefcaseBusiness, BriefcaseBusiness, ShieldCheck];

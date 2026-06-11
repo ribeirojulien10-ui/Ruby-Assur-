@@ -3,7 +3,7 @@ import { legalInfo } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Mentions légales",
-  description: "Mentions légales de Ruby Assur’, courtier en assurance à Pasly, RCS Soissons, ORIAS 24007878.",
+  description: "Mentions légales de Ruby Assur’, courtier en assurance indépendant, RCS Soissons, ORIAS 24007878.",
 };
 
 const entries = [

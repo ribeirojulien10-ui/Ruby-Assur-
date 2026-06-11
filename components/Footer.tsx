@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail } from "lucide-react";
 
 const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
 const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "ruby.assur@gmail.com";
@@ -42,9 +42,6 @@ export function Footer() {
           <a href={`mailto:${email}`} className="flex items-center gap-2 py-1 text-sm text-white/70 hover:text-white">
             <Mail className="h-4 w-4 text-gold" />{email}
           </a>
-          <p className="flex items-start gap-2 py-1 text-sm text-white/70">
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />44 avenue du Bois Roger, 02200 Pasly
-          </p>
         </div>
         <div>
           <p className="mb-4 text-xs font-bold uppercase tracking-widest text-gold">Légal</p>

@@ -109,5 +109,5 @@ export const chatReplies: Record<ChatSuggestion, string> = {
   "Quels documents préparer ?":
     "Selon votre demande, préparez idéalement vos coordonnées, le type d’assurance recherché, votre contrat actuel si vous en avez un, et quelques éléments sur votre situation. Ruby Assur’ précisera ensuite les pièces utiles.",
   "Où est située Ruby Assur’ ?":
-    "Ruby Assur’ est basée au 44 avenue du Bois Roger, 02200 Pasly, à proximité de Soissons dans l’Aisne.",
+    "Ruby Assur’ est un courtier en assurances basé dans l’Aisne, à proximité de Soissons.",
 };

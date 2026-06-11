@@ -5,7 +5,7 @@ import { ArrowRight, Handshake, ListChecks, MapPinned, MessagesSquare } from "lu
 export const metadata: Metadata = {
   title: "Pourquoi choisir Ruby Assur’",
   description:
-    "Pourquoi choisir Ruby Assur’ : conseil humain, proximité Pasly Soissons, analyse des besoins et accompagnement personnalisé.",
+    "Pourquoi choisir Ruby Assur’ : conseil humain, courtier indépendant dans l’Aisne, analyse des besoins et accompagnement personnalisé.",
 };
 
 const reasons = [
@@ -21,7 +21,7 @@ const reasons = [
   },
   {
     title: "Une relation de proximité",
-    text: "Ruby Assur’ s’appuie sur un ancrage local à Pasly, près de Soissons, pour garder un échange simple et direct.",
+    text: "Ruby Assur’ s’appuie sur un ancrage local dans l’Aisne pour garder un échange simple et direct.",
     icon: MapPinned,
   },
   {
