@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
-import { Phone, Mail } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook } from "lucide-react";
 
 const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
 const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "ruby.assur@gmail.com";
@@ -42,6 +42,12 @@ export function Footer() {
           <a href={`mailto:${email}`} className="flex items-center gap-2 py-1 text-sm text-white/70 hover:text-white">
             <Mail className="h-4 w-4 text-gold" />{email}
           </a>
+          <a href="https://www.facebook.com/rubyassur" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-1 text-sm text-white/70 hover:text-white">
+            <Facebook className="h-4 w-4 text-gold" />Ruby Assur' sur Facebook
+          </a>
+          <p className="flex items-center gap-2 py-1 text-sm text-white/70">
+            <MapPin className="h-4 w-4 shrink-0 text-gold" />Aisne · Toute la France
+          </p>
         </div>
         <div>
           <p className="mb-4 text-xs font-bold uppercase tracking-widest text-gold">Légal</p>

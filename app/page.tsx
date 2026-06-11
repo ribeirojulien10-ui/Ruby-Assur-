@@ -100,50 +100,58 @@ export default function Home() {
             <p className="eyebrow">Votre profil</p>
             <h2 className="mt-3 font-display text-3xl font-bold text-navy sm:text-4xl">Choisissez votre profil</h2>
           </div>
-          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+          <div className="mt-12 grid gap-8 lg:grid-cols-2">
             {/* Particuliers */}
-            <div className="card flex flex-col">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy">
-                  <HomeIcon className="h-6 w-6 text-gold" />
-                </div>
-                <div>
-                  <p className="font-display text-xl font-bold text-navy">Particuliers</p>
-                  <p className="text-sm text-slate-500">Auto, habitation, santé, emprunteur</p>
+            <div className="relative overflow-hidden rounded-2xl border border-off-gray bg-white shadow-sm flex flex-col">
+              <div className="bg-navy px-8 py-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
+                    <HomeIcon className="h-7 w-7 text-gold" />
+                  </div>
+                  <div>
+                    <p className="font-display text-2xl font-bold text-white">Particuliers</p>
+                    <p className="text-sm text-white/60">Solutions pour tous les profils</p>
+                  </div>
                 </div>
               </div>
-              <ul className="mt-6 space-y-2">
-                {particulierProducts.slice(0, 4).map(p => (
-                  <li key={p.slug} className="flex items-center gap-2 text-sm text-slate-600">
-                    <CheckCircle className="h-4 w-4 text-gold" />{p.name}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/particuliers" className="btn-primary mt-6 w-full text-center">
-                Voir mes assurances
-              </Link>
+              <div className="flex flex-col flex-1 px-8 py-6">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+                  {["Auto / Moto / Trottinette", "Tous profils (malussé, sinistré…)", "Mutuelle Santé", "Assurance Animaux", "Habitation / PNO / Scolaire", "Assurance Emprunteur"].map(item => (
+                    <div key={item} className="flex items-center gap-2 text-sm text-slate-700">
+                      <CheckCircle className="h-3.5 w-3.5 shrink-0 text-gold" />{item}
+                    </div>
+                  ))}
+                </div>
+                <Link href="/particuliers" className="btn-primary mt-8 w-full text-center">
+                  Découvrir les offres particuliers
+                </Link>
+              </div>
             </div>
             {/* Professionnels */}
-            <div className="card flex flex-col">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy">
-                  <Building2 className="h-6 w-6 text-gold" />
-                </div>
-                <div>
-                  <p className="font-display text-xl font-bold text-navy">Professionnels</p>
-                  <p className="text-sm text-slate-500">RC Pro, décennale, flotte, multirisque</p>
+            <div className="relative overflow-hidden rounded-2xl border border-off-gray bg-white shadow-sm flex flex-col">
+              <div className="bg-navy px-8 py-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
+                    <Building2 className="h-7 w-7 text-gold" />
+                  </div>
+                  <div>
+                    <p className="font-display text-2xl font-bold text-white">Professionnels</p>
+                    <p className="text-sm text-white/60">Artisans, TPE, commerçants, indépendants</p>
+                  </div>
                 </div>
               </div>
-              <ul className="mt-6 space-y-2">
-                {proProducts.slice(0, 4).map(p => (
-                  <li key={p.slug} className="flex items-center gap-2 text-sm text-slate-600">
-                    <CheckCircle className="h-4 w-4 text-gold" />{p.name}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/professionnels" className="btn-primary mt-6 w-full text-center">
-                Voir mes assurances pro
-              </Link>
+              <div className="flex flex-col flex-1 px-8 py-6">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+                  {["RC Pro", "Décennale", "Multirisque Pro", "Négoce Automobile", "Santé & Prévoyance Pro", "Autres risques"].map(item => (
+                    <div key={item} className="flex items-center gap-2 text-sm text-slate-700">
+                      <CheckCircle className="h-3.5 w-3.5 shrink-0 text-gold" />{item}
+                    </div>
+                  ))}
+                </div>
+                <Link href="/professionnels" className="btn-primary mt-8 w-full text-center">
+                  Découvrir les offres professionnelles
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -3,10 +3,10 @@ import { getProductBySlug } from "@/lib/products";
 import { ProductPage } from "@/components/ProductPage";
 import { notFound } from "next/navigation";
 
-export const metadata: Metadata = { title: "Habitation / PNO / Scolaire" };
+export const metadata: Metadata = { title: "Négoce Automobile" };
 
 export default function Page() {
-  const product = getProductBySlug("assurance-habitation");
+  const product = getProductBySlug("negoce-automobile");
   if (!product) notFound();
-  return <ProductPage product={product} audiencePath="/particuliers" />;
+  return <ProductPage product={product} audiencePath="/professionnels" />;
 }

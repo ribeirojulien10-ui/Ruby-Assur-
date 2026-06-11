@@ -19,7 +19,7 @@ export default function ParticuliersPage() {
           <p className="eyebrow text-gold">Particuliers</p>
           <h1 className="mt-3 font-display text-4xl font-bold sm:text-5xl">Vos assurances personnelles</h1>
           <p className="mt-4 max-w-2xl text-lg text-white/75">
-            Auto, habitation, santé, emprunteur : Ruby Assur' compare les offres du marché pour vous proposer la couverture la plus adaptée à votre situation.
+            Auto, moto, habitation, santé, animaux, emprunteur… Tous profils acceptés, même les situations complexes. Ruby Assur' compare et trouve la solution adaptée.
           </p>
         </div>
       </section>
