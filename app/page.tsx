@@ -36,8 +36,8 @@ export default function Home() {
         />
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
 
-        {/* Avis desktop — absolu, centré verticalement entre badges et compagnies */}
-        <div className="absolute bottom-20 left-6 z-10 hidden sm:block lg:left-8">
+        {/* Avis desktop — uniquement sur grands écrans pour éviter le chevauchement */}
+        <div className="absolute bottom-20 left-8 z-10 hidden xl:block">
           <HeroReviews />
         </div>
 
@@ -90,8 +90,8 @@ export default function Home() {
             <div className="mt-5">
               <TrustBadges />
             </div>
-            {/* 2 avis mobile — juste sous les badges, s'arrête avant les compagnies */}
-            <div className="mt-5 sm:hidden">
+            {/* Avis — mobile + tablette + petit laptop (masqués seulement sur xl+) */}
+            <div className="mt-5 xl:hidden">
               <HeroReviewsMobile />
             </div>
           </div>
