@@ -3,14 +3,13 @@
 const partners = [
   { name: "AXA", color: "#00008F" },
   { name: "Generali", color: "#c8102e" },
-  { name: "Allianz", color: "#003781" },
-  { name: "Groupama", color: "#007A3D" },
-  { name: "MMA", color: "#e4002b" },
-  { name: "Maif", color: "#005792" },
   { name: "Swiss Life", color: "#b40000" },
+  { name: "CMAM", color: "#005792" },
+  { name: "Wakam", color: "#1a1a2e" },
+  { name: "Fidelidad", color: "#003865" },
   { name: "April", color: "#e30613" },
-  { name: "Zephyr", color: "#1a3c6e" },
-  { name: "Covéa", color: "#003865" },
+  { name: "Solly Azar", color: "#0057a8" },
+  { name: "Zéphyr", color: "#1a3c6e" },
 ];
 
 const doubled = [...partners, ...partners];

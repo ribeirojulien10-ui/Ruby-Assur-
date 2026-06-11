@@ -36,11 +36,6 @@ export default function Home() {
         />
         <div className="absolute inset-0 -z-10 bg-navy/60 sm:bg-navy/55" aria-hidden="true" />
 
-        {/* Avis desktop — uniquement sur grands écrans pour éviter le chevauchement */}
-        <div className="absolute bottom-20 left-8 z-10 hidden xl:block">
-          <HeroReviews />
-        </div>
-
         {/* Compagnies défilantes — tout en bas, scroll infini */}
         <div
           className="absolute bottom-0 left-0 right-0 z-10 overflow-hidden py-3"
@@ -50,8 +45,8 @@ export default function Home() {
           }}
         >
           <div className="flex animate-scroll items-center gap-12 whitespace-nowrap">
-            {["AXA","Generali","Allianz","Groupama","MMA","Maif","Swiss Life","April","Zephyr","Covéa",
-              "AXA","Generali","Allianz","Groupama","MMA","Maif","Swiss Life","April","Zephyr","Covéa"
+            {["AXA","Generali","Swiss Life","CMAM","Wakam","Fidelidad","April","Solly Azar","Zéphyr",
+              "AXA","Generali","Swiss Life","CMAM","Wakam","Fidelidad","April","Solly Azar","Zéphyr"
             ].map((name, i) => (
               <span key={i} className="text-[11px] font-bold uppercase tracking-widest text-white/30">
                 {name}
@@ -90,8 +85,8 @@ export default function Home() {
             <div className="mt-5">
               <TrustBadges />
             </div>
-            {/* Avis — mobile + tablette + petit laptop (masqués seulement sur xl+) */}
-            <div className="mt-5 xl:hidden">
+            {/* Avis — tous écrans, inline sous les badges */}
+            <div className="mt-5">
               <HeroReviewsMobile />
             </div>
           </div>
