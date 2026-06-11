@@ -82,7 +82,7 @@ export function ProductPage({ product, audiencePath }: { product: Product; audie
             <p className="mt-4 leading-8 text-slate-600">Ruby Assur' compare les offres et vous revient rapidement. Gratuit, sans engagement.</p>
           </div>
           <div className="rounded-2xl border border-off-gray bg-white p-6">
-            <QuoteForm />
+            <QuoteForm defaultInsurance={product.slug} />
           </div>
         </div>
       </section>

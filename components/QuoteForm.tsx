@@ -2,10 +2,10 @@
 import { useState } from "react";
 import { products } from "@/lib/products";
 
-export function QuoteForm() {
+export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string }) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ firstName: "", lastName: "", phone: "", email: "", insurance: "", message: "" });
+  const [form, setForm] = useState({ firstName: "", lastName: "", phone: "", email: "", insurance: defaultInsurance, message: "" });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,7 +35,7 @@ export function QuoteForm() {
         <input required placeholder="Nom *" value={form.lastName} onChange={e => setForm({...form, lastName: e.target.value})} className="rounded-xl border border-off-gray px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy" />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <input required type="tel" placeholder="Téléphone *" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className="rounded-xl border border-off-gray px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy" />
+        <input type="tel" placeholder="Téléphone (optionnel)" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className="rounded-xl border border-off-gray px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy" />
         <input required type="email" placeholder="Email *" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="rounded-xl border border-off-gray px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy" />
       </div>
       <select required value={form.insurance} onChange={e => setForm({...form, insurance: e.target.value})} className="w-full rounded-xl border border-off-gray px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy">
