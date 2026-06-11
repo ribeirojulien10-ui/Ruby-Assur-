@@ -24,9 +24,8 @@ export const company = {
   oriasDate: "22/11/2024",
   area: "Pasly, Soissons et l'Aisne",
 
-  // TODO — à confirmer avant mise en ligne
-  email: "contact@rubyassur.fr", // adresse provisoire, à confirmer
-  phone: "", // à compléter
+  email: "contact@rubyassur.fr",
+  phone: "0671551931",
 };
 
 export const taglines = {
