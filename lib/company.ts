@@ -22,7 +22,7 @@ export const company = {
   orias: "24007878",
   oriasStatus: "Courtier en assurance, sans maniement de fonds",
   oriasDate: "22/11/2024",
-  area: "Pasly, Soissons et l'Aisne",
+  area: "Soissons et l'Aisne",
 
   email: "contact@rubyassur.fr",
   phone: "0671551931",
@@ -32,5 +32,5 @@ export const taglines = {
   primary:
     "Un conseil clair, humain et indépendant pour mieux protéger ce qui compte pour vous.",
   hero:
-    "Ruby Assur', votre courtier en assurances à Pasly et Soissons, vous accompagne pour trouver des solutions adaptées à vos besoins personnels et professionnels.",
+    "Ruby Assur', votre courtier en assurances dans l'Aisne, vous accompagne pour trouver des solutions adaptées à vos besoins personnels et professionnels.",
 };
