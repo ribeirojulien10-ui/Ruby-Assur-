@@ -9,7 +9,7 @@ const partners = [
   { name: "Fidelidad", color: "#003865" },
   { name: "April", color: "#e30613" },
   { name: "Solly Azar", color: "#0057a8" },
-  { name: "Zéphyr", color: "#1a3c6e" },
+  { name: "Zéphir", color: "#1a3c6e" },
 ];
 
 const doubled = [...partners, ...partners];

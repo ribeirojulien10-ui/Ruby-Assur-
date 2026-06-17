@@ -45,8 +45,8 @@ export default function Home() {
           }}
         >
           <div className="flex animate-scroll items-center gap-12 whitespace-nowrap">
-            {["AXA","Generali","Swiss Life","CMAM","Wakam","Fidelidad","April","Solly Azar","Zéphyr",
-              "AXA","Generali","Swiss Life","CMAM","Wakam","Fidelidad","April","Solly Azar","Zéphyr"
+            {["AXA","Generali","Swiss Life","CMAM","Wakam","Fidelidad","April","Solly Azar","Zéphir",
+              "AXA","Generali","Swiss Life","CMAM","Wakam","Fidelidad","April","Solly Azar","Zéphir"
             ].map((name, i) => (
               <span key={i} className="text-[11px] font-bold uppercase tracking-widest text-white/30">
                 {name}
