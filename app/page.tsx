@@ -65,7 +65,7 @@ export default function Home() {
               Courtier indépendant — ORIAS 24007878
             </p>
             <p className="mt-1 text-xs italic text-white/60">
-              "Votre courtier vous répond en moins de 2h."
+              "Votre courtier vous répond en moins de 24h."
             </p>
             <h1 className="mt-4 font-display text-2xl font-bold leading-snug sm:text-4xl lg:text-5xl">
               Votre assurance,{" "}
