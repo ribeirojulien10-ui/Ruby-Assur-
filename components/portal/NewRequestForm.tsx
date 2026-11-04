@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { ArrowRight, Mail, MessageCircle, Plus, Trash2 } from "lucide-react";
 import { createRequestAction } from "@/app/espace-pro/actions";
-import { LIMITS } from "@/lib/portal/config";
+import { DEFAULT_LINK_TTL_DAYS, LINK_TTL_CHOICES } from "@/lib/portal/constants";
 import { mailtoLink, whatsappLink } from "@/lib/portal/messages";
 import { slugifyKey } from "@/lib/portal/rules";
 import type { TemplateView } from "@/lib/portal/admin";
@@ -22,9 +22,11 @@ interface Row {
 interface Q { key: string; label: string }
 
 const uid = () => crypto.randomUUID();
+// Clés déterministes au rendu initial (un identifiant aléatoire provoquerait une erreur d'hydratation) ;
+// les lignes ajoutées ensuite par l'utilisateur reçoivent un identifiant unique.
 const toRows = (t?: TemplateView): Row[] =>
-  (t?.items ?? []).map((i) => ({
-    key: uid(),
+  (t?.items ?? []).map((i, n) => ({
+    key: `${t?.id ?? "t"}-${n}`,
     label: i.label,
     instructions: i.instructions ?? "",
     required: i.required,
@@ -52,7 +54,7 @@ export function NewRequestForm({
   const [rows, setRows] = useState<Row[]>(() => toRows(forSlug[0]));
   const [questions, setQuestions] = useState<Q[]>(forSlug[0]?.questions ?? []);
   const [instructions, setInstructions] = useState(forSlug[0]?.instructions ?? "");
-  const [ttl, setTtl] = useState<number>(LIMITS.defaultLinkTtlDays);
+  const [ttl, setTtl] = useState<number>(DEFAULT_LINK_TTL_DAYS);
   const [error, setError] = useState("");
   const [result, setResult] = useState<{ id: string; link: string } | null>(null);
   const [pending, start] = useTransition();
@@ -239,7 +241,7 @@ export function NewRequestForm({
           <div>
             <label className={lab} htmlFor="ttl">Le lien expire après</label>
             <select id="ttl" value={ttl} onChange={(e) => setTtl(Number(e.target.value))} className="field">
-              {LIMITS.linkTtlChoices.map((d) => <option key={d} value={d}>{d} jours</option>)}
+              {LINK_TTL_CHOICES.map((d) => <option key={d} value={d}>{d} jours</option>)}
             </select>
           </div>
         </div>

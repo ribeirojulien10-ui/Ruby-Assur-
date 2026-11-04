@@ -81,6 +81,7 @@ export function HeaderNav({ menus, phone }: { menus: NavMenu[]; phone: string })
   const active = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
+    <>
     <header
       ref={root}
       className={`sticky top-0 z-50 border-b transition-[background,box-shadow,border-color] duration-300 ${
@@ -169,11 +170,14 @@ export function HeaderNav({ menus, phone }: { menus: NavMenu[]; phone: string })
         </button>
       </div>
 
-      {/* Tiroir mobile : une vraie page de navigation, pas un menu desktop réduit */}
+    </header>
+
+      {/* Tiroir mobile : une vraie page de navigation, pas un menu desktop réduit.
+          Rendu HORS de l'en-tête : un parent avec backdrop-filter piégerait le positionnement fixe. */}
       {mobile && (
         <div
           id="menu-mobile"
-          className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-40 flex animate-fade flex-col overflow-y-auto bg-paper lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-[60] flex animate-fade flex-col overflow-y-auto bg-paper lg:hidden"
         >
           <nav aria-label="Navigation mobile" className="flex-1 px-gutter pb-6 pt-4">
             {menus.map((m) => (
@@ -215,6 +219,6 @@ export function HeaderNav({ menus, phone }: { menus: NavMenu[]; phone: string })
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

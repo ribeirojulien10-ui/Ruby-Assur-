@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { Link2, Mail, MessageCircle, RefreshCcw, ShieldOff, TimerReset } from "lucide-react";
 import { extendLinkAction, regenerateLinkAction, revokeLinkAction } from "@/app/espace-pro/actions";
-import { LIMITS } from "@/lib/portal/config";
+import { DEFAULT_LINK_TTL_DAYS, LINK_TTL_CHOICES } from "@/lib/portal/constants";
 import { mailtoLink, whatsappLink } from "@/lib/portal/messages";
 import { fmtDate } from "@/lib/portal/ui";
 import { CopyButton } from "./CopyButton";
@@ -27,7 +27,7 @@ export function LinkPanel({
   insuranceName: string;
 }) {
   const [current, setCurrent] = useState(link);
-  const [days, setDays] = useState<number>(LIMITS.defaultLinkTtlDays);
+  const [days, setDays] = useState<number>(DEFAULT_LINK_TTL_DAYS);
   const [msg, setMsg] = useState("");
   const [confirm, setConfirm] = useState<"regen" | "revoke" | null>(null);
   const [pending, start] = useTransition();
@@ -73,7 +73,7 @@ export function LinkPanel({
             <div className="flex flex-wrap items-center gap-2">
               <label className="sr-only" htmlFor="ext">Durée de prolongation</label>
               <select id="ext" value={days} onChange={(e) => setDays(Number(e.target.value))} className="field !w-auto !py-2 text-[0.88rem]">
-                {LIMITS.linkTtlChoices.map((d) => <option key={d} value={d}>{d} jours</option>)}
+                {LINK_TTL_CHOICES.map((d) => <option key={d} value={d}>{d} jours</option>)}
               </select>
               <button type="button" disabled={pending} className="btn-outline btn-sm" onClick={() => run(() => extendLinkAction(requestId, days))}>
                 <TimerReset className="h-4 w-4" aria-hidden="true" /> Prolonger

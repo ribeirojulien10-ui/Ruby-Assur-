@@ -16,7 +16,7 @@ export function TemplateEditor({ template, insurances }: { template: TemplateVie
   const [instructions, setInstructions] = useState(template?.instructions ?? "");
   const [questions, setQuestions] = useState(template?.questions ?? []);
   const [rows, setRows] = useState<Row[]>(
-    (template?.items ?? []).map((i) => ({ key: uid(), label: i.label, instructions: i.instructions ?? "", required: i.required, formats: i.formats ?? [], conditionQuestion: i.conditionQuestion ?? "", conditionEquals: (i.conditionEquals ?? "yes") as "yes" | "no" })),
+    (template?.items ?? []).map((i, n) => ({ key: `${template?.id ?? "new"}-${n}`, label: i.label, instructions: i.instructions ?? "", required: i.required, formats: i.formats ?? [], conditionQuestion: i.conditionQuestion ?? "", conditionEquals: (i.conditionEquals ?? "yes") as "yes" | "no" })),
   );
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [pending, start] = useTransition();

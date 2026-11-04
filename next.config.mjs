@@ -10,11 +10,26 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
 ];
 
+// Zones privées du portail : jamais de cache, jamais d'indexation, le lien client n'est pas transmis via le Referer.
+const privateHeaders = [
+  { key: "Cache-Control", value: "private, no-store, max-age=0" },
+  { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+  { key: "Referrer-Policy", value: "no-referrer" },
+];
+
 const nextConfig = {
   reactStrictMode: true,
   agentRules: false,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      { source: "/documents/:path*", headers: privateHeaders },
+      { source: "/espace-pro/:path*", headers: privateHeaders },
+      { source: "/espace-pro", headers: privateHeaders },
+      { source: "/api/portal/:path*", headers: privateHeaders },
+      { source: "/api/espace-pro/:path*", headers: privateHeaders },
+      { source: "/api/auth/:path*", headers: privateHeaders },
+    ];
   },
   // Pages doublons non liées dans le site : redirigées vers leur version à jour
   // (évite le contenu dupliqué et l'affichage de textes brouillon / de l'adresse).

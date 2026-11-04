@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { Check, RefreshCcw, Trash2 } from "lucide-react";
 import { removeItemAction, reviewItemAction, setItemRequiredAction } from "@/app/espace-pro/actions";
-import { REJECT_REASONS } from "@/lib/portal/config";
+import { REJECT_REASONS } from "@/lib/portal/constants";
 import type { ItemState } from "@/lib/portal/types";
 
 export function ReviewControls({ requestId, itemId, state, required, hasFiles, closed }: { requestId: string; itemId: string; state: ItemState; required: boolean; hasFiles: boolean; closed: boolean }) {
