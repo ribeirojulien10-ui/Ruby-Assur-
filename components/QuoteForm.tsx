@@ -3,6 +3,9 @@ import { useState, useRef } from "react";
 import { products } from "@/lib/products";
 import { Paperclip, X } from "lucide-react";
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
+const PHONE_RE = /^0[0-9]{9}$/;
+
 const inputCls = "rounded-xl border border-off-gray px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy w-full";
 
 export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string }) {
@@ -10,15 +13,28 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ firstName: "", lastName: "", phone: "", email: "", insurance: defaultInsurance, message: "" });
   const [files, setFiles] = useState<File[]>([]);
+  const [phoneError, setPhoneError] = useState("");
+  const [fileError, setFileError] = useState("");
+  const [submitError, setSubmitError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   function addFiles(incoming: FileList | null) {
     if (!incoming) return;
     const next = [...files];
+    const rejected: string[] = [];
     Array.from(incoming).forEach(f => {
+      if (f.size > MAX_FILE_SIZE) {
+        rejected.push(f.name);
+        return;
+      }
       if (!next.find(x => x.name === f.name)) next.push(f);
     });
     setFiles(next);
+    setFileError(
+      rejected.length > 0
+        ? `Fichier trop volumineux (10 Mo max) : ${rejected.join(", ")}`
+        : ""
+    );
   }
 
   function removeFile(name: string) {
@@ -27,13 +43,33 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitError("");
+
+    const cleanPhone = form.phone.replace(/[\s.\-]/g, "");
+    if (!PHONE_RE.test(cleanPhone)) {
+      setPhoneError("Numéro invalide : 10 chiffres commençant par 0 (ex. 06 12 34 56 78).");
+      return;
+    }
+    setPhoneError("");
+
     setLoading(true);
-    const fd = new FormData();
-    Object.entries(form).forEach(([k, v]) => fd.append(k, v));
-    files.forEach(f => fd.append("files", f));
-    const res = await fetch("/api/quote", { method: "POST", body: fd });
-    setLoading(false);
-    if (res.ok) setSubmitted(true);
+    try {
+      const fd = new FormData();
+      Object.entries({ ...form, phone: cleanPhone }).forEach(([k, v]) => fd.append(k, v));
+      files.forEach(f => fd.append("files", f));
+      const honeypot = (e.currentTarget as HTMLFormElement).elements.namedItem("website") as HTMLInputElement | null;
+      fd.append("website", honeypot?.value ?? "");
+      const res = await fetch("/api/quote", { method: "POST", body: fd });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setSubmitError("Une erreur est survenue. Réessayez ou appelez le 06 71 55 19 31.");
+      }
+    } catch {
+      setSubmitError("Une erreur est survenue. Réessayez ou appelez le 06 71 55 19 31.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (submitted) {
@@ -47,12 +83,22 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Honeypot anti-spam : invisible pour les humains */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: 1, height: 1, overflow: "hidden" }}>
+        <label>
+          Ne pas remplir
+          <input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" />
+        </label>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <input required placeholder="Prénom *" value={form.firstName} onChange={e => setForm({...form, firstName: e.target.value})} className={inputCls} />
         <input required placeholder="Nom *" value={form.lastName} onChange={e => setForm({...form, lastName: e.target.value})} className={inputCls} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <input required type="tel" placeholder="Téléphone *" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className={inputCls} />
+        <div>
+          <input required type="tel" inputMode="tel" autoComplete="tel" placeholder="Téléphone *" value={form.phone} onChange={e => { setForm({...form, phone: e.target.value}); if (phoneError) setPhoneError(""); }} aria-invalid={phoneError ? true : undefined} className={inputCls} />
+          {phoneError && <p role="alert" className="mt-1.5 text-xs text-red-600">{phoneError}</p>}
+        </div>
         <input required type="email" placeholder="Email *" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className={inputCls} />
       </div>
       <select required value={form.insurance} onChange={e => setForm({...form, insurance: e.target.value})} className={inputCls}>
@@ -91,12 +137,14 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
             ))}
           </ul>
         )}
+        {fileError && <p role="alert" className="mt-1.5 text-xs text-red-600">{fileError}</p>}
         <p className="mt-1.5 text-xs text-slate-400">PDF, JPG, PNG acceptés — 10 Mo max par fichier</p>
       </div>
 
       <button type="submit" disabled={loading} className="btn-primary w-full py-3.5">
         {loading ? "Envoi…" : "Envoyer ma demande"}
       </button>
+      {submitError && <p role="alert" className="text-center text-sm text-red-600">{submitError}</p>}
       <p className="text-center text-xs text-slate-400">Gratuit, sans engagement. Réponse sous 24h.</p>
     </form>
   );
