@@ -3,6 +3,9 @@ import Link from "next/link";
 import { ArrowRight, ClipboardCheck, MailCheck, MessageSquareWarning } from "lucide-react";
 import { legalInfo } from "@/lib/site";
 
+const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
+const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contact@rubyassur.fr";
+
 export const metadata: Metadata = {
   title: "Réclamations",
   description: "Informations sur le traitement des réclamations pour Ruby Assur’, courtier en assurance indépendant.",
@@ -47,7 +50,7 @@ export default function ClaimsPage() {
         <div className="mt-10 rounded-lg border border-ruby-line bg-ruby-sand p-6">
           <h2 className="text-xl font-semibold text-ruby-navy">Coordonnées</h2>
           <p className="mt-3 text-sm leading-7 text-slate-700">
-            {legalInfo.name} - {legalInfo.address}
+            {legalInfo.name} — par e-mail : <a href={`mailto:${email}`} className="font-semibold text-ruby-navy underline">{email}</a> ou par téléphone : <a href={`tel:${phone}`} className="font-semibold text-ruby-navy underline">{phone.replace(/(\d{2})(?=\d)/g, "$1 ")}</a>
           </p>
           <Link
             href="/contact"

@@ -15,6 +15,15 @@ const nextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // Pages doublons non liées dans le site : redirigées vers leur version à jour
+  // (évite le contenu dupliqué et l'affichage de textes brouillon / de l'adresse).
+  async redirects() {
+    return [
+      { source: "/confidentialite", destination: "/politique-confidentialite", permanent: true },
+      { source: "/pourquoi-nous", destination: "/pourquoi-choisir-ruby-assur", permanent: true },
+      { source: "/nos-assurances", destination: "/services", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

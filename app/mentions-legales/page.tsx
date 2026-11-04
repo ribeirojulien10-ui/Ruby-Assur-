@@ -21,6 +21,9 @@ const entries = [
   ["Statut", legalInfo.status],
   ["Capital social", legalInfo.capital],
   ["TVA", legalInfo.vat],
+  ["Directeur de la publication", legalInfo.president],
+  ["Hébergeur du site", "Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis"],
+  ["Autorité de contrôle", "Autorité de contrôle prudentiel et de résolution (ACPR), 4 place de Budapest, CS 92459, 75436 Paris Cedex 09"],
 ];
 
 export default function LegalPage() {
@@ -41,6 +44,11 @@ export default function LegalPage() {
             </div>
           ))}
         </dl>
+
+        <p className="mt-6 text-sm leading-7 text-slate-700">
+          Vous pouvez vérifier l&apos;immatriculation de Ruby Assur&apos; sur le registre officiel des intermédiaires en assurance :{" "}
+          <a href="https://www.orias.fr" target="_blank" rel="noopener noreferrer" className="font-semibold text-ruby-navy underline">www.orias.fr</a>.
+        </p>
 
         <div className="mt-10 rounded-lg border border-ruby-line bg-ruby-sand p-5 text-sm leading-7 text-slate-700">
           <p>
