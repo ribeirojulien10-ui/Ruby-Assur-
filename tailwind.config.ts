@@ -21,8 +21,8 @@ const config: Config = {
         ivory: { DEFAULT: "#F6F1E7", deep: "#ECE4D2", soft: "#FAF7F0" },
         paper: "#FCFAF6",
         // Or champagne (texte sur fond clair : utiliser `champagne-ink`)
-        champagne: { DEFAULT: "#C9A96B", light: "#E6D3A9", deep: "#A98846", ink: "#7A5F25" },
-        ink: { DEFAULT: "#16202F", soft: "#364255", muted: "#5B6679", faint: "#8A93A3" },
+        champagne: { DEFAULT: "#C9A96B", light: "#E6D3A9", deep: "#94742F", ink: "#7A5F25" },
+        ink: { DEFAULT: "#16202F", soft: "#364255", muted: "#5B6679", faint: "#5F6A7D" },
         line: { DEFAULT: "#E3DAC6", cool: "#DDE3EC", dark: "rgb(255 255 255 / 0.12)" },
         // États (portail) : toujours accompagnés d'un libellé et d'une icône
         ok: { DEFAULT: "#1E7A4C", soft: "#E3F2EA" },
