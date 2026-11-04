@@ -80,6 +80,7 @@ export function NewRequestForm({
         clientId: clientMode === "existing" ? clientId : undefined,
         newClient: clientMode === "new" ? nc : undefined,
         insuranceSlug: slug,
+        title: tpl?.name, // le client voit le nom du modèle choisi (ex. « Moto », « PNO »)
         instructions,
         questions,
         linkTtlDays: ttl,

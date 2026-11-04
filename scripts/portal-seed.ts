@@ -97,9 +97,38 @@ const ref = (slug: string): TemplateItemInput[] => {
 const links: string[] = [];
 const note = (label: string, token: string) => links.push(`${label}\n  ${ctx.baseUrl}/documents/${token}\n`);
 
+/** Un dossier de démonstration PAR modèle de documents (pour comparer ce que voit le client et Julien). */
+async function seedProducts() {
+  const old = all<{ id: string }>(ctx.db, "SELECT r.id FROM requests r JOIN clients c ON c.id = r.client_id WHERE c.full_name LIKE 'Démo — Test %'");
+  for (const { id } of old) await deleteRequestPermanently(ctx, seedAdmin, id);
+  ctx.db.exec("DELETE FROM clients WHERE full_name LIKE 'Démo — Test %'");
+  const out: string[] = [];
+  for (const t of listTemplates(ctx, seedAdmin)) {
+    const r = createRequest(ctx, seedAdmin, {
+      isDemo: true,
+      newClient: { fullName: `Démo — Test ${t.name}`, email: "test.produit@example.invalid", phone: "0600000000" },
+      insuranceSlug: t.insuranceSlug,
+      title: t.name,
+      instructions: t.instructions || undefined,
+      items: t.items.map((i) => ({ label: i.label, instructions: i.instructions, required: i.required, formats: i.formats })),
+    });
+    // un seul document déposé (le premier) : permet de voir l'état « Reçu » à côté des « À fournir »
+    const first = getItemsOf(r.id)[0];
+    await put(r.token, first.id, "document-fictif.pdf", fakePdf(first.label));
+    out.push(`${t.name}\n  ${ctx.baseUrl}/documents/${r.token}\n`);
+  }
+  fs.writeFileSync(path.join(dataDir(), "demo-links-produits.txt"), `UN DOSSIER FICTIF PAR PRODUIT\n\n${out.join("\n")}`, { mode: 0o600 });
+  console.log(`✔ ${out.length} dossiers de test (un par produit). Liens : ${path.join(dataDir(), "demo-links-produits.txt")}`);
+}
+
 async function main() {
   const reset = process.argv.includes("--reset-demo");
   await authReady();
+  if (process.argv.includes("--products")) {
+    resetDefaultTemplates(ctx);
+    await seedProducts();
+    return;
+  }
 
   // 1) Compte administrateur local
   const exists = get<{ id: string }>(ctx.db, 'SELECT id FROM "user" WHERE email = ?', ADMIN_EMAIL);

@@ -4,7 +4,7 @@ import { FilePlus2, Search } from "lucide-react";
 import { Progress } from "@/components/portal/Progress";
 import { LinkBadge, StatusBadge } from "@/components/portal/StatusBadge";
 import { requireAdmin } from "@/lib/auth-guard";
-import { getProductBySlug, products } from "@/lib/products";
+import { products } from "@/lib/products";
 import { listRequests, type ListFilters } from "@/lib/portal/admin";
 import { defaultContext } from "@/lib/portal/context";
 import { STATUS_LABEL } from "@/lib/portal/rules";
@@ -100,7 +100,7 @@ export default async function DossiersPage({ searchParams }: { searchParams: Pro
                       <Link href={`/espace-pro/dossiers/${r.id}`} className="font-semibold text-night underline-offset-4 hover:underline">{r.clientName}</Link>
                       {r.linkState !== "active" && r.status !== "closed" && <span className="mt-1 block"><LinkBadge state={r.linkState} /></span>}
                     </td>
-                    <td className="px-5 py-4 text-ink-soft">{getProductBySlug(r.insuranceSlug)?.name ?? r.insuranceName}</td>
+                    <td className="px-5 py-4 text-ink-soft">{r.insuranceName}</td>
                     <td className="px-5 py-4 text-ink-muted">{fmtDate(r.createdAt)}</td>
                     <td className="px-5 py-4"><Progress done={r.received} total={r.expected} compact /></td>
                     <td className="px-5 py-4"><StatusBadge status={r.status} /></td>

@@ -319,7 +319,8 @@ function toListRow(ctx: PortalContext, r: RequestRow & { full_name: string }): R
     id: r.id,
     clientName: r.full_name,
     insuranceSlug: r.insurance_slug,
-    insuranceName: getProductBySlug(r.insurance_slug)?.name ?? r.insurance_slug,
+    // Nom du MODÈLE choisi (ex. « Moto », « PNO ») : il distingue des produits qui partagent une même page du site.
+    insuranceName: r.title || (getProductBySlug(r.insurance_slug)?.name ?? r.insurance_slug),
     title: r.title,
     createdAt: r.created_at,
     lastActivityAt: r.last_activity_at,
@@ -420,7 +421,7 @@ export function getRequestDetail(ctx: PortalContext, admin: AdminSession | null,
   return {
     request: { ...request, token_hash: null, token_enc: null }, // jamais exposé à l'interface
     client,
-    insuranceName: getProductBySlug(request.insurance_slug)?.name ?? request.insurance_slug,
+    insuranceName: request.title || (getProductBySlug(request.insurance_slug)?.name ?? request.insurance_slug),
     status: deriveStatus(request, items),
     linkState: linkStateOf(request, ctx.now()),
     items: items.map((i) => ({ ...i, files: files.filter((f) => f.item_id === i.id), applicable: applicableIds.has(i.id) })),

@@ -278,7 +278,7 @@ export function ClientPortal({ token, initial }: { token: string; initial: Clien
     <div>
       <p className="eyebrow">Espace documents</p>
       <h1 className="display mt-3 text-display-md text-night">
-        Votre dossier <em>{view.insuranceName.toLowerCase()}</em>
+        Votre dossier <em>{view.title}</em>
       </h1>
       <p className="mt-4 text-[1.02rem] leading-7 text-ink-soft">
         Bonjour{view.firstName ? ` ${view.firstName}` : ""},<br />
