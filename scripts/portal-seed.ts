@@ -110,7 +110,9 @@ async function seedProducts() {
       insuranceSlug: t.insuranceSlug,
       title: t.name,
       instructions: t.instructions || undefined,
-      items: t.items.map((i) => ({ label: i.label, instructions: i.instructions, required: i.required, formats: i.formats })),
+      questions: t.questions,
+      fields: t.fields,
+      items: t.items.map((i) => ({ label: i.label, instructions: i.instructions, required: i.required, formats: i.formats, conditionQuestion: i.conditionQuestion, conditionEquals: i.conditionEquals })),
     });
     // un seul document déposé (le premier) : permet de voir l'état « Reçu » à côté des « À fournir »
     const first = getItemsOf(r.id)[0];

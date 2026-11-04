@@ -37,7 +37,7 @@ export async function deliverOutbox(ctx: PortalContext, send: Sender = resendSen
     try {
       await send({
         to,
-        subject: "Ruby Assur' — un dossier est complet en pièces",
+        subject: "Ruby Assur' — un dossier est prêt à être examiné",
         text: `Un dossier est prêt à être examiné.\n\nOuvrez votre espace professionnel (connexion requise) :\n${ctx.baseUrl.replace(/\/$/, "")}/espace-pro/dossiers/${n.request_ref}\n`,
       });
       run(ctx.db, "UPDATE outbox SET sent_at = ? WHERE id = ?", iso(ctx), n.id);

@@ -1,4 +1,4 @@
-import type { ItemRow, ItemState, Question, RequestRow, RequestStatus } from "./types";
+import type { InfoField, ItemRow, ItemState, Question, RequestRow, RequestStatus } from "./types";
 
 /** Règles métier PURES (sans accès base) : faciles à tester et sans effet de bord. */
 
@@ -9,11 +9,13 @@ export const ITEM_STATE_LABEL: Record<ItemState, string> = {
   validated: "Validé",
 };
 
+// Vocabulaire volontairement sans « complet » : en début de processus (étude / devis), un dossier n'est jamais
+// « complet » ; on distingue seulement ce qui attend le client, ce qui est en cours et ce que Julien doit examiner.
 export const STATUS_LABEL: Record<RequestStatus, string> = {
-  incomplete: "Incomplet",
-  complete: "Complet en pièces",
-  to_review: "À vérifier",
-  validated: "Validé",
+  incomplete: "En attente du client",
+  complete: "En cours",
+  to_review: "À examiner",
+  validated: "Pièces validées",
   closed: "Terminé",
 };
 
@@ -40,13 +42,32 @@ export function applicableItems<T extends Pick<ItemRow, "condition_question" | "
   return items.filter((i) => isApplicable(i, answers));
 }
 
-/** Questions dont la réponse conditionne au moins une pièce et qui n'ont pas encore de réponse. */
+/** Questions « oui/non » dont la réponse conditionne au moins une pièce et qui n'ont pas encore de réponse.
+ *  Les cases à cocher n'en font pas partie : décochées, elles valent « non ». */
 export function unansweredQuestions(
   questions: Question[],
   items: Pick<ItemRow, "condition_question">[],
   answers: Answers,
 ): Question[] {
-  return questions.filter((q) => items.some((i) => i.condition_question === q.key) && !answers[q.key]);
+  return questions.filter(
+    (q) => q.type !== "checkbox" && items.some((i) => i.condition_question === q.key) && !answers[q.key],
+  );
+}
+
+/** Réponses effectives : les cases à cocher non cochées valent « non ». */
+export function answersOf(req: Pick<RequestRow, "questions" | "answers">): Answers {
+  const questions = parseJson<Question[]>(req.questions, []);
+  const saved = parseJson<Answers>(req.answers, {});
+  const out: Answers = {};
+  for (const q of questions) if (q.type === "checkbox") out[q.key] = "no";
+  return { ...out, ...saved };
+}
+
+export type Info = Record<string, string>;
+
+/** Informations OBLIGATOIRES encore vides. */
+export function missingInfo(fields: InfoField[], info: Info): InfoField[] {
+  return fields.filter((f) => f.required && !(info[f.key] ?? "").trim());
 }
 
 export interface Progress {
@@ -85,18 +106,23 @@ export function computeProgress(items: ItemRow[], answers: Answers): Progress {
  *  - incomplete : il manque au moins une pièce obligatoire, ou une pièce est à remplacer,
  *                 ou une question conditionnelle attend encore sa réponse
  *  - validated  : toutes les pièces obligatoires sont validées par Julien
- *  - to_review  : complet en pièces ET le client a confirmé son envoi
- *  - complete   : complet en pièces, en attente de la confirmation du client
+ *  - to_review  : pièces reçues ET le client a confirmé son envoi (« À examiner »)
+ *  - complete   : pièces demandées reçues, en attente de la confirmation du client (« En cours »)
  */
 export function deriveStatus(
-  req: Pick<RequestRow, "closed_at" | "submitted_at" | "questions" | "answers">,
+  req: Pick<RequestRow, "closed_at" | "submitted_at" | "questions" | "answers"> & Partial<Pick<RequestRow, "fields" | "info">>,
   items: ItemRow[],
 ): RequestStatus {
   if (req.closed_at) return "closed";
-  const answers = parseJson<Answers>(req.answers, {});
+  const answers = answersOf(req);
   const questions = parseJson<Question[]>(req.questions, []);
   const p = computeProgress(items, answers);
-  const blocked = p.missing.length > 0 || p.toReplace.length > 0 || unansweredQuestions(questions, items, answers).length > 0;
+  const infoMissing = missingInfo(parseJson<InfoField[]>(req.fields, []), parseJson<Info>(req.info, {}));
+  const blocked =
+    p.missing.length > 0 ||
+    p.toReplace.length > 0 ||
+    infoMissing.length > 0 ||
+    unansweredQuestions(questions, items, answers).length > 0;
   if (blocked) return "incomplete";
   if (p.requiredTotal > 0 && p.requiredValidated === p.requiredTotal) return "validated";
   return req.submitted_at ? "to_review" : "complete";

@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import { ArrowDown, ArrowUp, Plus, Save, Trash2 } from "lucide-react";
 import { deleteTemplateAction, saveTemplateAction } from "@/app/espace-pro/actions";
 import { slugifyKey } from "@/lib/portal/rules";
+import type { InfoField } from "@/lib/portal/types";
+import { FieldsEditor } from "./FieldsEditor";
 import type { TemplateView } from "@/lib/portal/admin";
 
 interface Row { key: string; label: string; instructions: string; required: boolean; formats: string[]; conditionQuestion: string; conditionEquals: "yes" | "no" }
@@ -14,7 +16,8 @@ export function TemplateEditor({ template, insurances }: { template: TemplateVie
   const [slug, setSlug] = useState(template?.insuranceSlug ?? insurances[0].slug);
   const [description, setDescription] = useState(template?.description ?? "");
   const [instructions, setInstructions] = useState(template?.instructions ?? "");
-  const [questions, setQuestions] = useState(template?.questions ?? []);
+  const [questions, setQuestions] = useState<{ key: string; label: string; type?: "yesno" | "checkbox" }[]>(template?.questions ?? []);
+  const [fields, setFields] = useState<InfoField[]>(template?.fields ?? []);
   const [rows, setRows] = useState<Row[]>(
     (template?.items ?? []).map((i, n) => ({ key: `${template?.id ?? "new"}-${n}`, label: i.label, instructions: i.instructions ?? "", required: i.required, formats: i.formats ?? [], conditionQuestion: i.conditionQuestion ?? "", conditionEquals: (i.conditionEquals ?? "yes") as "yes" | "no" })),
   );
@@ -32,6 +35,7 @@ export function TemplateEditor({ template, insurances }: { template: TemplateVie
         description,
         instructions,
         questions,
+        fields,
         items: rows.map((x) => ({ label: x.label, instructions: x.instructions, required: x.required, formats: x.formats.length ? x.formats : undefined, conditionQuestion: x.conditionQuestion || null, conditionEquals: x.conditionQuestion ? x.conditionEquals : null })),
       });
       setMsg(r.ok ? { ok: true, text: "Modèle enregistré." } : { ok: false, text: r.error });
@@ -66,7 +70,7 @@ export function TemplateEditor({ template, insurances }: { template: TemplateVie
                 <div className="mt-2 flex flex-wrap items-center gap-2 pl-8 text-[0.82rem] text-ink-muted">
                   Demander seulement si
                   <select value={r.conditionQuestion} onChange={(e) => patch(r.key, { conditionQuestion: e.target.value })} className="field !w-auto !py-1 text-[0.82rem]" aria-label="Condition"><option value="">— toujours —</option>{questions.map((q) => <option key={q.key} value={q.key}>{q.label}</option>)}</select>
-                  {r.conditionQuestion && <select value={r.conditionEquals} onChange={(e) => patch(r.key, { conditionEquals: e.target.value as "yes" | "no" })} className="field !w-auto !py-1 text-[0.82rem]" aria-label="Réponse"><option value="yes">oui</option><option value="no">non</option></select>}
+                  {r.conditionQuestion && <select value={r.conditionEquals} onChange={(e) => patch(r.key, { conditionEquals: e.target.value as "yes" | "no" })} className="field !w-auto !py-1 text-[0.82rem]" aria-label="Réponse">{questions.find((q) => q.key === r.conditionQuestion)?.type === "checkbox" ? (<><option value="yes">case cochée</option><option value="no">case non cochée</option></>) : (<><option value="yes">oui</option><option value="no">non</option></>)}</select>}
                 </div>
               )}
             </li>
@@ -77,6 +81,11 @@ export function TemplateEditor({ template, insurances }: { template: TemplateVie
           <button type="button" className="btn-outline btn-sm" onClick={() => { const l = window.prompt("Question oui/non posée au client :"); if (l?.trim()) setQuestions((q) => [...q, { key: slugifyKey(l), label: l.trim() }]); }}><Plus className="h-4 w-4" aria-hidden="true" /> Question conditionnelle</button>
         </div>
         {questions.length > 0 && <ul className="mt-2 text-[0.82rem] text-ink-muted">{questions.map((q) => <li key={q.key}>« {q.label} » <button type="button" className="text-danger underline" onClick={() => { setQuestions((x) => x.filter((y) => y.key !== q.key)); setRows((x) => x.map((r) => (r.conditionQuestion === q.key ? { ...r, conditionQuestion: "" } : r))); }}>supprimer</button></li>)}</ul>}
+      </div>
+
+      <div>
+        <p className="text-[0.85rem] font-semibold text-night">Informations que le client peut saisir</p>
+        <div className="mt-2"><FieldsEditor fields={fields} onChange={setFields} /></div>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">

@@ -18,9 +18,9 @@ export default async function DashboardPage() {
   const demo = (get<{ c: number }>(ctx.db, "SELECT COUNT(*) c FROM requests WHERE is_demo = 1")?.c ?? 0) > 0;
 
   const cards = [
-    { href: "/espace-pro/dossiers?status=incomplete", n: d.counts.incomplete, label: "Dossiers incomplets", hint: "Des pièces manquent", icon: CircleDashed },
-    { href: "/espace-pro/dossiers?status=complete", n: d.counts.complete, label: "Complets en pièces", hint: "En attente de confirmation du client", icon: Inbox },
-    { href: "/espace-pro/dossiers?status=to_review", n: d.counts.to_review, label: "À vérifier", hint: "Confirmés par le client", icon: FileSearch },
+    { href: "/espace-pro/dossiers?status=incomplete", n: d.counts.incomplete, label: "En attente du client", hint: "Pièces ou informations manquantes", icon: CircleDashed },
+    { href: "/espace-pro/dossiers?status=complete", n: d.counts.complete, label: "En cours", hint: "Pièces reçues, envoi pas encore confirmé", icon: Inbox },
+    { href: "/espace-pro/dossiers?status=to_review", n: d.counts.to_review, label: "À examiner", hint: "Envoi confirmé par le client", icon: FileSearch },
     { href: "/espace-pro/dossiers?missing=1", n: d.counts.toReplace, label: "Documents à remplacer", hint: "En attente du client", icon: RefreshCcw },
     { href: "/espace-pro/dossiers?status=closed", n: d.counts.closed, label: "Terminés", hint: "Dossiers clôturés", icon: Lock },
   ];

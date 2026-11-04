@@ -22,9 +22,12 @@
 `templates` / `template_items` (checklists modifiables par Julien), `uploads` (autorisations de téléversement à usage unique),
 `events` (historique), `reminders` (relances), `outbox` (notifications), `audit_log` (trace anonyme des suppressions).
 
-**Statuts** (le statut d'un dossier est **toujours dérivé** de l'état réel des pièces, jamais stocké) :
-pièce : À fournir → Reçu → (Validé | À remplacer) ; dossier : Incomplet → Complet en pièces → À vérifier (le client a confirmé) → Validé → Terminé.
+**Statuts** (le statut d'un dossier est **toujours dérivé** de l'état réel, jamais stocké) :
+pièce : À fournir → Reçu → (Validé | À remplacer) ; dossier : En attente du client → En cours (pièces reçues) → À examiner (le client a confirmé) → Pièces validées → Terminé.
+Le vocabulaire ne parle volontairement pas de dossier « complet » : en début de processus (étude, devis) un dossier ne l'est jamais. Julien est prévenu quand le **client confirme son envoi**.
 *Recevoir un fichier ne veut pas dire le valider : seul Julien valide.*
+
+**Informations saisies par le client** : chaque modèle peut définir des champs (texte, nombre, date, choix…) ; les valeurs sont enregistrées sur la demande. Un champ « obligatoire » vide maintient le dossier « en attente du client ». **Cases à cocher** : par ex. « C'est ma première assurance » rend le relevé d'information non demandé.
 
 ## 3. Stockage : comparaison et recommandation
 

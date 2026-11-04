@@ -23,7 +23,10 @@ import {
   parseJson,
   firstName,
   slugifyKey,
+  answersOf,
+  missingInfo,
   type Answers,
+  type Info,
 } from "./rules";
 import { decryptToken, encryptToken } from "./secret";
 import {
@@ -33,6 +36,7 @@ import {
   type ClientRow,
   type EventRow,
   type FileRow,
+  type InfoField,
   type ItemRow,
   type Question,
   type RequestRow,
@@ -63,6 +67,7 @@ export interface TemplateInput {
   description?: string;
   instructions?: string;
   questions?: Question[];
+  fields?: InfoField[];
   items: TemplateItemInput[];
 }
 export interface TemplateView extends TemplateInput {
@@ -79,11 +84,12 @@ const cleanFormats = (f?: string[]): string[] => {
 function insertDefaultTemplates(ctx: PortalContext) {
   DEFAULT_TEMPLATES.forEach((t, ti) => {
     const id = newId();
-    run(ctx.db, "INSERT INTO templates(id, insurance_slug, name, description, instructions, questions, is_default, sort, updated_at) VALUES (?,?,?,?,?,?,?,?,?)",
-      id, t.insuranceSlug, t.name, t.description, t.instructions ?? null, "[]", 1, ti, iso(ctx));
+    run(ctx.db, "INSERT INTO templates(id, insurance_slug, name, description, instructions, questions, fields, is_default, sort, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
+      id, t.insuranceSlug, t.name, t.description, t.instructions ?? null, JSON.stringify(cleanQuestions(t.questions)), JSON.stringify(cleanFields(t.fields)), 1, ti, iso(ctx));
     t.items.forEach((it, i) => {
-      run(ctx.db, "INSERT INTO template_items(id, template_id, label, instructions, required, sort, allowed_formats) VALUES (?,?,?,?,?,?,?)",
-        newId(), id, it.label, it.instructions ?? null, it.required ? 1 : 0, i, cleanFormats(it.formats).join(","));
+      run(ctx.db, "INSERT INTO template_items(id, template_id, label, instructions, required, sort, allowed_formats, condition_question, condition_equals) VALUES (?,?,?,?,?,?,?,?,?)",
+        newId(), id, it.label, it.instructions ?? null, it.required ? 1 : 0, i, cleanFormats(it.formats).join(","),
+        it.conditionQuestion ?? null, it.conditionQuestion ? (it.conditionEquals ?? "yes") : null);
     });
   });
 }
@@ -108,7 +114,7 @@ export function resetDefaultTemplates(ctx: PortalContext) {
 export function listTemplates(ctx: PortalContext, admin: AdminSession | null): TemplateView[] {
   assertAdmin(admin);
   ensureDefaultTemplates(ctx);
-  const ts = all<{ id: string; insurance_slug: string; name: string; description: string | null; instructions: string | null; questions: string; is_default: number }>(
+  const ts = all<{ id: string; insurance_slug: string; name: string; description: string | null; instructions: string | null; questions: string; fields: string; is_default: number }>(
     ctx.db, "SELECT * FROM templates ORDER BY sort, name");
   return ts.map((t) => ({
     id: t.id,
@@ -117,6 +123,7 @@ export function listTemplates(ctx: PortalContext, admin: AdminSession | null): T
     description: t.description ?? "",
     instructions: t.instructions ?? "",
     questions: parseJson<Question[]>(t.questions, []),
+    fields: parseJson<InfoField[]>((t as { fields?: string }).fields, []),
     isDefault: !!t.is_default,
     items: all<{ id: string; label: string; instructions: string | null; required: number; allowed_formats: string; max_mb: number | null; condition_question: string | null; condition_equals: string | null }>(
       ctx.db, "SELECT * FROM template_items WHERE template_id = ? ORDER BY sort, rowid", t.id).map((i) => ({
@@ -132,6 +139,30 @@ export function listTemplates(ctx: PortalContext, admin: AdminSession | null): T
   }));
 }
 
+const FIELD_TYPES = ["text", "textarea", "number", "date", "tel", "email", "choice"] as const;
+function cleanFields(fields?: InfoField[]): InfoField[] {
+  const seen = new Set<string>();
+  return (fields ?? [])
+    .filter((f) => f.label?.trim())
+    .map((f) => {
+      let key = f.key || slugifyKey(f.label);
+      while (seen.has(key)) key += "_2";
+      seen.add(key);
+      const type = (FIELD_TYPES as readonly string[]).includes(f.type) ? f.type : "text";
+      return {
+        key,
+        label: f.label.trim().slice(0, 160),
+        type,
+        ...(type === "choice" ? { options: (f.options ?? []).map((o) => o.trim()).filter(Boolean).slice(0, 12) } : {}),
+        ...(f.unit ? { unit: f.unit.slice(0, 12) } : {}),
+        ...(f.required ? { required: true } : {}),
+        ...(f.hint ? { hint: f.hint.slice(0, 200) } : {}),
+      } as InfoField;
+    });
+}
+const cleanQuestions = (qs?: Question[]): Question[] =>
+  (qs ?? []).filter((q) => q.label.trim()).map((q) => ({ key: q.key || slugifyKey(q.label), label: q.label.trim(), type: q.type === "checkbox" ? "checkbox" : "yesno" }));
+
 function validateItems(items: TemplateItemInput[], questions: Question[]) {
   if (!items.length) throw new PortalError("invalid_input", "Au moins une pièce est nécessaire.");
   const keys = new Set(questions.map((q) => q.key));
@@ -146,17 +177,18 @@ export function saveTemplate(ctx: PortalContext, admin: AdminSession | null, inp
   assertAdmin(admin);
   if (!getProductBySlug(input.insuranceSlug)) throw new PortalError("invalid_input", "Assurance inconnue.");
   if (!input.name?.trim()) throw new PortalError("invalid_input", "Nom du modèle requis.");
-  const questions = (input.questions ?? []).filter((q) => q.label.trim()).map((q) => ({ key: q.key || slugifyKey(q.label), label: q.label.trim() }));
+  const questions = cleanQuestions(input.questions);
+  const fields = cleanFields(input.fields);
   validateItems(input.items, questions);
   return tx(ctx.db, () => {
     const id = input.id ?? newId();
     if (input.id) {
-      run(ctx.db, "UPDATE templates SET insurance_slug=?, name=?, description=?, instructions=?, questions=?, updated_at=? WHERE id=?",
-        input.insuranceSlug, input.name.trim(), input.description ?? null, input.instructions ?? null, JSON.stringify(questions), iso(ctx), id);
+      run(ctx.db, "UPDATE templates SET insurance_slug=?, name=?, description=?, instructions=?, questions=?, fields=?, updated_at=? WHERE id=?",
+        input.insuranceSlug, input.name.trim(), input.description ?? null, input.instructions ?? null, JSON.stringify(questions), JSON.stringify(fields), iso(ctx), id);
       run(ctx.db, "DELETE FROM template_items WHERE template_id = ?", id);
     } else {
-      run(ctx.db, "INSERT INTO templates(id, insurance_slug, name, description, instructions, questions, is_default, sort, updated_at) VALUES (?,?,?,?,?,?,0,999,?)",
-        id, input.insuranceSlug, input.name.trim(), input.description ?? null, input.instructions ?? null, JSON.stringify(questions), iso(ctx));
+      run(ctx.db, "INSERT INTO templates(id, insurance_slug, name, description, instructions, questions, fields, is_default, sort, updated_at) VALUES (?,?,?,?,?,?,?,0,999,?)",
+        id, input.insuranceSlug, input.name.trim(), input.description ?? null, input.instructions ?? null, JSON.stringify(questions), JSON.stringify(fields), iso(ctx));
     }
     input.items.forEach((it, i) =>
       run(ctx.db, "INSERT INTO template_items(id, template_id, label, instructions, required, sort, allowed_formats, max_mb, condition_question, condition_equals) VALUES (?,?,?,?,?,?,?,?,?,?)",
@@ -204,6 +236,7 @@ export interface CreateRequestInput {
   instructions?: string;
   items: TemplateItemInput[];
   questions?: Question[];
+  fields?: InfoField[];
   linkTtlDays?: number;
   isDemo?: boolean;
 }
@@ -221,7 +254,8 @@ export function createRequest(ctx: PortalContext, admin: AdminSession | null, in
   assertAdmin(admin);
   const product = getProductBySlug(input.insuranceSlug);
   if (!product) throw new PortalError("invalid_input", "Assurance inconnue.");
-  const questions = (input.questions ?? []).filter((q) => q.label.trim()).map((q) => ({ key: q.key || slugifyKey(q.label), label: q.label.trim() }));
+  const questions = cleanQuestions(input.questions);
+  const fields = cleanFields(input.fields);
   validateItems(input.items, questions);
   const ttl = input.linkTtlDays ?? LIMITS.defaultLinkTtlDays;
   if (!(ttl >= 1 && ttl <= 365)) throw new PortalError("invalid_input", "Durée de validité invalide.");
@@ -234,9 +268,9 @@ export function createRequest(ctx: PortalContext, admin: AdminSession | null, in
     const id = newId();
     const t = iso(ctx);
     run(ctx.db,
-      "INSERT INTO requests(id, client_id, insurance_slug, title, instructions, questions, answers, is_demo, created_at, updated_at, last_activity_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+      "INSERT INTO requests(id, client_id, insurance_slug, title, instructions, questions, answers, fields, info, is_demo, created_at, updated_at, last_activity_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
       id, clientId, input.insuranceSlug, input.title?.trim() || product.name, input.instructions?.trim() || null,
-      JSON.stringify(questions), "{}", input.isDemo ? 1 : 0, t, t, t);
+      JSON.stringify(questions), "{}", JSON.stringify(fields), "{}", input.isDemo ? 1 : 0, t, t, t);
     input.items.forEach((it, i) =>
       run(ctx.db,
         "INSERT INTO request_items(id, request_id, label, instructions, required, sort, allowed_formats, max_bytes, condition_question, condition_equals) VALUES (?,?,?,?,?,?,?,?,?,?)",
@@ -313,7 +347,7 @@ export interface RequestListRow {
 
 function toListRow(ctx: PortalContext, r: RequestRow & { full_name: string }): RequestListRow {
   const items = getItems(ctx, r.id);
-  const answers = parseJson<Answers>(r.answers, {});
+  const answers = answersOf(r);
   const p = computeProgress(items, answers);
   return {
     id: r.id,
@@ -405,6 +439,9 @@ export interface RequestDetail {
   progress: ReturnType<typeof computeProgress>;
   questions: Question[];
   answers: Answers;
+  fields: InfoField[];
+  info: Info;
+  infoMissing: InfoField[];
   events: EventRow[];
   reminders: { id: string; channel: string; missing_count: number; created_at: string }[];
 }
@@ -415,7 +452,7 @@ export function getRequestDetail(ctx: PortalContext, admin: AdminSession | null,
   const client = get<ClientRow>(ctx.db, "SELECT * FROM clients WHERE id = ?", request.client_id)!;
   const items = getItems(ctx, id);
   const files = getFiles(ctx, id);
-  const answers = parseJson<Answers>(request.answers, {});
+  const answers = answersOf(request);
   const progress = computeProgress(items, answers);
   const applicableIds = new Set(items.filter((i) => !i.condition_question || answers[i.condition_question] === i.condition_equals).map((i) => i.id));
   return {
@@ -428,6 +465,9 @@ export function getRequestDetail(ctx: PortalContext, admin: AdminSession | null,
     progress,
     questions: parseJson<Question[]>(request.questions, []),
     answers,
+    fields: parseJson<InfoField[]>(request.fields, []),
+    info: parseJson<Info>(request.info, {}),
+    infoMissing: missingInfo(parseJson<InfoField[]>(request.fields, []), parseJson<Info>(request.info, {})),
     events: all<EventRow>(ctx.db, "SELECT * FROM events WHERE request_id = ? ORDER BY created_at DESC, rowid DESC", id),
     reminders: all(ctx.db, "SELECT id, channel, missing_count, created_at FROM reminders WHERE request_id = ? ORDER BY created_at DESC", id),
   };

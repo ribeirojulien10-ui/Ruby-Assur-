@@ -9,6 +9,8 @@ import { mailtoLink, whatsappLink } from "@/lib/portal/messages";
 import { slugifyKey } from "@/lib/portal/rules";
 import type { TemplateView } from "@/lib/portal/admin";
 import { CopyButton } from "./CopyButton";
+import { FieldsEditor } from "./FieldsEditor";
+import type { InfoField } from "@/lib/portal/types";
 
 interface Row {
   key: string;
@@ -19,7 +21,7 @@ interface Row {
   conditionQuestion: string;
   conditionEquals: "yes" | "no";
 }
-interface Q { key: string; label: string }
+interface Q { key: string; label: string; type?: "yesno" | "checkbox" }
 
 const uid = () => crypto.randomUUID();
 // Clés déterministes au rendu initial (un identifiant aléatoire provoquerait une erreur d'hydratation) ;
@@ -53,6 +55,7 @@ export function NewRequestForm({
   const tpl = templates.find((t) => t.id === templateId);
   const [rows, setRows] = useState<Row[]>(() => toRows(forSlug[0]));
   const [questions, setQuestions] = useState<Q[]>(forSlug[0]?.questions ?? []);
+  const [fields, setFields] = useState<InfoField[]>(forSlug[0]?.fields ?? []);
   const [instructions, setInstructions] = useState(forSlug[0]?.instructions ?? "");
   const [ttl, setTtl] = useState<number>(DEFAULT_LINK_TTL_DAYS);
   const [error, setError] = useState("");
@@ -63,6 +66,7 @@ export function NewRequestForm({
     setTemplateId(t?.id ?? "");
     setRows(toRows(t));
     setQuestions(t?.questions ?? []);
+    setFields(t?.fields ?? []);
     setInstructions(t?.instructions ?? "");
   };
   const changeInsurance = (s: string) => {
@@ -83,6 +87,7 @@ export function NewRequestForm({
         title: tpl?.name, // le client voit le nom du modèle choisi (ex. « Moto », « PNO »)
         instructions,
         questions,
+        fields,
         linkTtlDays: ttl,
         items: rows.map((r) => ({
           label: r.label,
@@ -208,7 +213,9 @@ export function NewRequestForm({
                   </select>
                   {r.conditionQuestion && (
                     <select value={r.conditionEquals} onChange={(e) => patch(r.key, { conditionEquals: e.target.value as "yes" | "no" })} className="field !w-auto !py-1.5 text-[0.85rem]" aria-label="Réponse attendue">
-                      <option value="yes">réponse : oui</option><option value="no">réponse : non</option>
+                      {questions.find((q) => q.key === r.conditionQuestion)?.type === "checkbox"
+                        ? (<><option value="yes">si la case est cochée</option><option value="no">si la case n&apos;est pas cochée</option></>)
+                        : (<><option value="yes">réponse : oui</option><option value="no">réponse : non</option></>)}
                     </select>
                   )}
                 </div>
@@ -229,6 +236,13 @@ export function NewRequestForm({
             {questions.map((q) => <li key={q.key} className="flex items-center gap-2">« {q.label} » <button type="button" className="text-danger underline" onClick={() => { setQuestions((x) => x.filter((y) => y.key !== q.key)); setRows((x) => x.map((r) => (r.conditionQuestion === q.key ? { ...r, conditionQuestion: "" } : r))); }}>supprimer</button></li>)}
           </ul>
         )}
+      </section>
+
+      {/* Informations saisies par le client */}
+      <section className={card} aria-labelledby="s3b">
+        <h2 id="s3b" className="display text-display-sm text-night"><span className="mr-2 text-champagne-deep">3 bis.</span>Informations à saisir par le client</h2>
+        <p className="mt-1 text-[0.9rem] text-ink-muted">En plus des documents, le client peut renseigner ces informations (adresse, surface, profession…). Facultatif.</p>
+        <div className="mt-4"><FieldsEditor fields={fields} onChange={setFields} /></div>
       </section>
 
       {/* 4. Options */}

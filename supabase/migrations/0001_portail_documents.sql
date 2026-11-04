@@ -26,6 +26,7 @@ create table if not exists templates (
   description text,
   instructions text,
   questions jsonb not null default '[]',
+  fields jsonb not null default '[]',      -- informations que le client peut saisir
   is_default boolean not null default false,
   sort int not null default 0,
   updated_at timestamptz not null default now()
@@ -52,6 +53,8 @@ create table if not exists requests (
   instructions text,
   questions jsonb not null default '[]',
   answers jsonb not null default '{}',
+  fields jsonb not null default '[]',
+  info jsonb not null default '{}',        -- valeurs saisies par le client
   token_hash text unique,          -- SHA-256 du jeton : jamais le jeton en clair
   token_enc text,                  -- jeton chiffré (AES-GCM) pour que Julien puisse recopier le lien
   token_issued_at timestamptz,

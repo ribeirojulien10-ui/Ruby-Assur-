@@ -277,15 +277,25 @@ describe("Complétude, statuts et synchronisation", () => {
     expect(getRequestDetail(ctx, admin, id).items.some((i) => i.state === "validated")).toBe(false);
   });
 
-  it("une notification de complétude n'est préparée qu'une seule fois (aucun e-mail envoyé)", async () => {
+  it("Julien est prévenu à la CONFIRMATION du client (pas dès que des pièces sont reçues), une seule fois, sans donnée sensible", async () => {
     const { token, id } = newRequest(ctx);
     const items = itemsOf(ctx, id);
     for (const it of items.slice(0, 3)) await upload(ctx, token, it.id, `${it.id}.pdf`, fakePdf(it.id));
     await upload(ctx, token, items[3].id, "rib.pdf", fakePdf("rib"));
+    expect(ctx.db.prepare("SELECT * FROM outbox").all()).toHaveLength(0); // aucune notification « complet »
+    expect(getRequestDetail(ctx, admin, id).status).toBe("complete"); // « En cours »
+    submitRequest(ctx, token);
+    submitRequest(ctx, token); // un deuxième clic ne renvoie rien
     const rows = ctx.db.prepare("SELECT kind, request_ref, sent_at FROM outbox").all() as { kind: string; request_ref: string; sent_at: string | null }[];
     expect(rows).toHaveLength(1);
-    expect(rows[0].sent_at).toBeNull();
-    expect(JSON.stringify(rows)).not.toMatch(/permis|Client Fictif|@/); // aucune donnée sensible
+    expect(rows[0].kind).toBe("request_ready");
+    expect(rows[0].sent_at).toBeNull(); // aucun e-mail envoyé
+    expect(JSON.stringify(rows)).not.toMatch(/permis|Client Fictif|@/);
+  });
+
+  it("le vocabulaire des statuts ne parle plus de « complet »", async () => {
+    const { STATUS_LABEL } = await import("@/lib/portal/rules");
+    for (const label of Object.values(STATUS_LABEL)) expect(label.toLowerCase()).not.toContain("complet");
   });
 
   it("validation : tout validé → dossier validé ; un refus remet le dossier en incomplet", async () => {
@@ -503,5 +513,99 @@ describe("Modèles de documents initiaux", () => {
     expect(all.some((t) => t.name === "Mon modèle perso" && !t.isDefault)).toBe(true);
     expect(all.filter((t) => t.isDefault).length).toBeGreaterThanOrEqual(14);
     expect(all.filter((t) => t.isDefault && t.name === "Auto")).toHaveLength(1); // pas de doublon
+  });
+});
+
+
+describe("Informations saisies par le client", () => {
+  const fields = [
+    { key: "adresse", label: "Adresse", type: "textarea" as const },
+    { key: "surface", label: "Surface", type: "number" as const, unit: "m²" },
+    { key: "naissance", label: "Date de naissance", type: "date" as const },
+    { key: "type", label: "Type de bien", type: "choice" as const, options: ["Maison", "Appartement"] },
+    { key: "profession", label: "Profession", type: "text" as const, required: true },
+  ];
+
+  it("le client enregistre ses informations ; les champs inconnus sont ignorés", async () => {
+    const { saveInfo } = await import("@/lib/portal/client");
+    const { token, id } = newRequest(ctx, { fields });
+    saveInfo(ctx, token, { adresse: "1 rue Fictive", surface: "45,5", type: "Maison", pirate: "x" });
+    expect(getClientView(ctx, token).info).toEqual({ adresse: "1 rue Fictive", surface: "45,5", type: "Maison" });
+    expect(getRequestDetail(ctx, admin, id).info.pirate).toBeUndefined();
+    expect(getRequestDetail(ctx, admin, id).events.map((e) => e.type)).toContain("info_saved");
+  });
+
+  it("valide les types (nombre, date) et ignore un choix hors liste", async () => {
+    const { saveInfo } = await import("@/lib/portal/client");
+    const { token } = newRequest(ctx, { fields });
+    expect(await code(() => saveInfo(ctx, token, { surface: "beaucoup" }))).toBe("invalid_input");
+    expect(await code(() => saveInfo(ctx, token, { naissance: "12/05/1990" }))).toBe("invalid_input");
+    saveInfo(ctx, token, { type: "Château" });
+    expect(getClientView(ctx, token).info.type).toBeUndefined();
+  });
+
+  it("une information obligatoire vide garde le dossier « en attente du client »", async () => {
+    const { saveInfo } = await import("@/lib/portal/client");
+    const { token, id } = newRequest(ctx, { fields, items: [{ label: "Permis", required: true }] });
+    await upload(ctx, token, itemsOf(ctx, id)[0].id, "p.pdf", fakePdf());
+    expect(getRequestDetail(ctx, admin, id).status).toBe("incomplete");
+    expect(getRequestDetail(ctx, admin, id).infoMissing.map((f) => f.key)).toEqual(["profession"]);
+    expect(await code(() => submitRequest(ctx, token))).toBe("conflict");
+    saveInfo(ctx, token, { profession: "Boulanger fictif" });
+    expect(getRequestDetail(ctx, admin, id).status).toBe("complete");
+    expect(submitRequest(ctx, token)).toBe("to_review");
+  });
+
+  it("les valeurs saisies sont plafonnées (pas de contenu démesuré)", async () => {
+    const { saveInfo } = await import("@/lib/portal/client");
+    const { token } = newRequest(ctx, { fields });
+    saveInfo(ctx, token, { adresse: "x".repeat(10_000) });
+    expect(getClientView(ctx, token).info.adresse).toHaveLength(2000);
+  });
+});
+
+describe("Case « première assurance » (relevé d'information)", () => {
+  const q = [{ key: "premiere_assurance", label: "C'est ma première assurance", type: "checkbox" as const }];
+  const items = [
+    { label: "Carte grise", required: true },
+    { label: "Relevé d'information", required: true, conditionQuestion: "premiere_assurance", conditionEquals: "no" as const },
+  ];
+
+  it("par défaut (case décochée), le relevé est demandé et obligatoire, sans question bloquante", async () => {
+    const { token, id } = newRequest(ctx, { questions: q, items });
+    const view = getClientView(ctx, token);
+    expect(view.items.map((i) => i.label)).toEqual(["Carte grise", "Relevé d'information"]);
+    expect(view.unanswered).toEqual([]);
+    await upload(ctx, token, itemsOf(ctx, id)[0].id, "cg.pdf", fakePdf());
+    expect(getRequestDetail(ctx, admin, id).status).toBe("incomplete"); // le relevé manque
+  });
+
+  it("case cochée : le relevé n'est plus demandé et le dossier peut être confirmé", async () => {
+    const { saveAnswers } = await import("@/lib/portal/client");
+    const { token, id } = newRequest(ctx, { questions: q, items });
+    await upload(ctx, token, itemsOf(ctx, id)[0].id, "cg.pdf", fakePdf());
+    saveAnswers(ctx, token, { premiere_assurance: "yes" });
+    expect(getClientView(ctx, token).items.map((i) => i.label)).toEqual(["Carte grise"]);
+    expect(getRequestDetail(ctx, admin, id).status).toBe("complete");
+    expect(submitRequest(ctx, token)).toBe("to_review");
+    saveAnswers(ctx, token, { premiere_assurance: "no" }); // décochée : le relevé redevient obligatoire
+    expect(getRequestDetail(ctx, admin, id).status).toBe("incomplete");
+  });
+
+  it("modèles initiaux : relevé conditionnel, RIB facultatif, pièce d'identité obligatoire", async () => {
+    const { DEFAULT_TEMPLATES } = await import("@/lib/portal/default-templates");
+    for (const n of ["Auto", "Moto"]) {
+      const t = DEFAULT_TEMPLATES.find((x) => x.name === n)!;
+      expect(t.questions?.[0]).toMatchObject({ key: "premiere_assurance", type: "checkbox" });
+      const rel = t.items.find((i) => i.label === "Relevé d'information")!;
+      expect(rel.required).toBe(true);
+      expect(rel.conditionQuestion).toBe("premiere_assurance");
+    }
+    for (const t of DEFAULT_TEMPLATES) {
+      const ribItem = t.items.find((i) => i.label === "RIB");
+      if (ribItem) expect(ribItem.required, `RIB facultatif (${t.name})`).toBe(false);
+    }
+    for (const n of ["Auto", "Moto", "Habitation", "Propriétaire non occupant (PNO)", "Mutuelle santé", "Emprunteur", "Prévoyance", "Protection juridique"])
+      expect(DEFAULT_TEMPLATES.find((x) => x.name === n)!.items.find((i) => i.label === "Pièce d'identité")?.required, n).toBe(true);
   });
 });

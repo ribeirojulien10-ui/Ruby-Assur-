@@ -22,9 +22,12 @@ import {
   linkStateOf,
   parseJson,
   unansweredQuestions,
+  answersOf,
+  missingInfo,
   type Answers,
+  type Info,
 } from "./rules";
-import { PortalError, type ClientRow, type FileRow, type ItemRow, type Question, type RequestRow, type RequestStatus } from "./types";
+import { PortalError, type ClientRow, type FileRow, type InfoField, type ItemRow, type Question, type RequestRow, type RequestStatus } from "./types";
 
 /**
  * Parcours CLIENT : aucune session, l'accès repose uniquement sur le lien personnel.
@@ -80,6 +83,9 @@ export interface ClientView {
   questions: Question[];
   answers: Answers;
   unanswered: Question[];
+  fields: InfoField[];
+  info: Info;
+  infoMissing: number;
   items: ClientItemView[];
   progress: { requiredTotal: number; requiredDone: number; percent: number; missing: number; toReplace: number };
   canSubmit: boolean;
@@ -91,9 +97,11 @@ export function getClientView(ctx: PortalContext, token: string): ClientView {
   const client = get<ClientRow>(ctx.db, "SELECT * FROM clients WHERE id = ?", request.client_id)!;
   const items = getItems(ctx, request.id);
   const files = getFiles(ctx, request.id);
-  const answers = parseJson<Answers>(request.answers, {});
+  const answers = answersOf(request);
   const questions = parseJson<Question[]>(request.questions, []);
   const unanswered = unansweredQuestions(questions, items, answers);
+  const fields = parseJson<InfoField[]>(request.fields, []);
+  const info = parseJson<Info>(request.info, {});
   const p = computeProgress(items, answers);
   const status = deriveStatus(request, items);
   return {
@@ -107,6 +115,9 @@ export function getClientView(ctx: PortalContext, token: string): ClientView {
     questions,
     answers,
     unanswered,
+    fields,
+    info,
+    infoMissing: missingInfo(fields, info).length,
     items: applicableItems(items, answers).map((i) => ({
       id: i.id,
       label: i.label,
@@ -147,6 +158,26 @@ export function saveAnswers(ctx: PortalContext, token: string, answers: Record<s
   touch(ctx, request.id);
 }
 
+/** Enregistre les informations saisies par le client (champs définis par le modèle uniquement). */
+export function saveInfo(ctx: PortalContext, token: string, values: Record<string, unknown>) {
+  const request = need(ctx, token);
+  const fields = parseJson<InfoField[]>(request.fields, []);
+  const info = parseJson<Info>(request.info, {});
+  for (const f of fields) {
+    if (!(f.key in values)) continue;
+    let v = String(values[f.key] ?? "").trim().slice(0, f.type === "textarea" ? 2000 : 300);
+    if (f.type === "number" && v && !/^-?\d+([.,]\d+)?$/.test(v)) throw new PortalError("invalid_input", `« ${f.label} » doit être un nombre.`);
+    if (f.type === "date" && v && !/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new PortalError("invalid_input", `« ${f.label} » : date invalide.`);
+    if (f.type === "email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) throw new PortalError("invalid_input", `« ${f.label} » : adresse e-mail invalide.`);
+    if (f.type === "choice" && v && !(f.options ?? []).includes(v)) v = "";
+    if (v) info[f.key] = v;
+    else delete info[f.key];
+  }
+  run(ctx.db, "UPDATE requests SET info = ? WHERE id = ?", JSON.stringify(info), request.id);
+  logEvent(ctx, request.id, "client", "info_saved");
+  touch(ctx, request.id);
+}
+
 // ───────────────────────── Téléversement : intention → envoi → validation ─────────────────────────
 
 /** Étape 1 : le serveur vérifie tout et délivre une autorisation temporaire, à usage unique. */
@@ -159,7 +190,7 @@ export function createUploadIntent(
   const item = getItem(ctx, input.itemId);
   if (item.request_id !== request.id) throw new PortalError("not_found"); // pièce d'une AUTRE demande
   const items = getItems(ctx, request.id);
-  const answers = parseJson<Answers>(request.answers, {});
+  const answers = answersOf(request);
   if (!applicableItems(items, answers).some((i) => i.id === item.id)) throw new PortalError("not_found");
   if (item.state === "validated") throw new PortalError("conflict", "Cette pièce a déjà été validée.");
 
@@ -289,17 +320,7 @@ export async function completeUpload(ctx: PortalContext, token: string, uploadId
       logEvent(ctx, request.id, "client", isReplacement ? "file_replaced" : "file_uploaded", { label: freshItem.label }, item.id);
       touch(ctx, request.id);
 
-      // Première fois que toutes les pièces obligatoires sont là : on le note et on prépare une notification.
-      const items = getItems(ctx, request.id);
-      const current = get<RequestRow>(ctx.db, "SELECT * FROM requests WHERE id = ?", request.id)!;
-      const status = deriveStatus(current, items);
-      let completed = false;
-      if (!current.completed_notified_at && (status === "complete" || status === "to_review" || status === "validated")) {
-        run(ctx.db, "UPDATE requests SET completed_notified_at = ? WHERE id = ?", t, request.id);
-        logEvent(ctx, request.id, "system", "request_complete");
-        queueNotification(ctx, "request_complete", request.id);
-        completed = true;
-      }
+      const completed = false; // la notification à Julien se fait à la CONFIRMATION du client (voir submitRequest)
       return { completed, replacement: isReplacement };
     });
     await ctx.storage.promote(up.id, storageKey);
@@ -333,8 +354,14 @@ export function submitRequest(ctx: PortalContext, token: string): RequestStatus 
   const status = deriveStatus(request, items);
   if (status === "incomplete") throw new PortalError("conflict", "Il manque encore des pièces obligatoires.");
   const t = iso(ctx);
+  const firstTime = !request.submitted_at;
   run(ctx.db, "UPDATE requests SET submitted_at = ? WHERE id = ?", t, request.id);
   logEvent(ctx, request.id, "client", "request_submitted");
+  if (firstTime) {
+    // Julien est prévenu quand le CLIENT confirme son envoi (et non dès que des pièces sont reçues).
+    run(ctx.db, "UPDATE requests SET completed_notified_at = ? WHERE id = ?", t, request.id);
+    queueNotification(ctx, "request_ready", request.id);
+  }
   touch(ctx, request.id);
   return deriveStatus({ ...request, submitted_at: t }, items);
 }

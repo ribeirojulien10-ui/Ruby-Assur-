@@ -61,16 +61,35 @@ export default async function DossierPage({ params }: { params: Promise<{ id: st
           <li><strong className="text-night">{d.progress.toReplace.length}</strong> à remplacer</li>
           <li><strong className="text-night">{d.progress.requiredValidated}</strong> validée{d.progress.requiredValidated > 1 ? "s" : ""}</li>
         </ul>
-        {d.status === "complete" && <p className="text-[0.85rem] text-info sm:col-span-2">Toutes les pièces obligatoires sont reçues : le client n&apos;a pas encore confirmé son envoi. Recevoir ne veut pas dire valider : examinez chaque document.</p>}
+        {d.status === "complete" && <p className="text-[0.85rem] text-info sm:col-span-2">Les pièces demandées sont reçues, mais le client n&apos;a pas encore confirmé son envoi. Recevoir ne veut pas dire valider : examinez chaque document.</p>}
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-12">
         <div className="space-y-4 lg:col-span-8">
+          {d.fields.length > 0 && (
+            <section className="rounded-xl bg-white p-5 shadow-card sm:p-6" aria-labelledby="infos-client">
+              <h2 id="infos-client" className="display text-display-sm text-night">Informations saisies par le client</h2>
+              {d.infoMissing.length > 0 && (
+                <p className="mt-2 rounded-md bg-warn-soft px-3 py-2 text-[0.85rem] text-warn">Obligatoire encore vide : {d.infoMissing.map((f) => f.label).join(", ")}.</p>
+              )}
+              <dl className="mt-4 grid gap-x-8 sm:grid-cols-2">
+                {d.fields.map((f) => {
+                  const v = d.info[f.key];
+                  return (
+                    <div key={f.key} className="border-t border-line py-3">
+                      <dt className="text-[0.78rem] font-semibold uppercase tracking-[0.1em] text-ink-muted">{f.label}{f.required ? " *" : ""}</dt>
+                      <dd className={`mt-1 whitespace-pre-line text-[0.98rem] ${v ? "text-night" : "text-ink-faint"}`}>{v ? `${v}${f.unit ? ` ${f.unit}` : ""}` : "Non renseigné"}</dd>
+                    </div>
+                  );
+                })}
+              </dl>
+            </section>
+          )}
           <h2 className="display text-display-sm text-night">Documents demandés</h2>
 
           {d.questions.length > 0 && (
             <p className="rounded-md bg-ivory px-4 py-3 text-[0.88rem] text-ink-soft">
-              Réponses du client : {d.questions.map((q) => `« ${q.label} » → ${d.answers[q.key] === "yes" ? "oui" : d.answers[q.key] === "no" ? "non" : "pas encore répondu"}`).join(" ; ")}
+              Réponses du client : {d.questions.map((q) => (q.type === "checkbox" ? `« ${q.label} » → ${d.answers[q.key] === "yes" ? "case cochée" : "non cochée"}` : `« ${q.label} » → ${d.answers[q.key] === "yes" ? "oui" : d.answers[q.key] === "no" ? "non" : "pas encore répondu"}`)).join(" ; ")}
             </p>
           )}
 

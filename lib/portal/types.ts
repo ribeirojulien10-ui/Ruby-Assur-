@@ -2,9 +2,26 @@ export type ItemState = "to_provide" | "received" | "to_replace" | "validated";
 export type RequestStatus = "incomplete" | "complete" | "to_review" | "validated" | "closed";
 export type LinkState = "active" | "expired" | "revoked" | "none";
 
+/**
+ * Question posée au client avant la liste de pièces.
+ *  - "yesno"   : réponse obligatoire (oui / non) avant d'afficher les pièces conditionnelles ;
+ *  - "checkbox": case à cocher ; décochée = « non » par défaut (ex. « C'est ma première assurance »).
+ */
 export interface Question {
   key: string;
   label: string;
+  type?: "yesno" | "checkbox";
+}
+
+/** Information à saisir par le client (en plus des documents). */
+export interface InfoField {
+  key: string;
+  label: string;
+  type: "text" | "textarea" | "number" | "date" | "tel" | "email" | "choice";
+  options?: string[]; // pour « choice »
+  unit?: string; // ex. m²
+  required?: boolean;
+  hint?: string;
 }
 
 export interface ItemRow {
@@ -47,6 +64,8 @@ export interface RequestRow {
   instructions: string | null;
   questions: string;
   answers: string;
+  fields: string;
+  info: string;
   token_hash: string | null;
   token_enc: string | null;
   token_issued_at: string | null;

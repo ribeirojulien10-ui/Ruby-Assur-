@@ -158,6 +158,12 @@ CREATE INDEX IF NOT EXISTS idx_uploads_request ON uploads(request_id);
 
 export type Db = DatabaseSync;
 
+/** Migration légère : ajoute une colonne si elle manque (bases locales créées avant son introduction). */
+function addColumnIfMissing(db: Db, table: string, column: string, ddl: string) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
+  if (!cols.some((c) => c.name === column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${ddl}`);
+}
+
 export function openDatabase(file: string): Db {
   if (file !== ":memory:") fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
   const db = new DatabaseSync(file);
@@ -165,6 +171,10 @@ export function openDatabase(file: string): Db {
   db.exec("PRAGMA foreign_keys = ON;");
   db.exec("PRAGMA busy_timeout = 5000;");
   db.exec(SCHEMA);
+  // v2 : informations à saisir par le client (champs définis par le modèle, valeurs saisies sur la demande)
+  addColumnIfMissing(db, "templates", "fields", "TEXT NOT NULL DEFAULT '[]'");
+  addColumnIfMissing(db, "requests", "fields", "TEXT NOT NULL DEFAULT '[]'");
+  addColumnIfMissing(db, "requests", "info", "TEXT NOT NULL DEFAULT '{}'");
   return db;
 }
 

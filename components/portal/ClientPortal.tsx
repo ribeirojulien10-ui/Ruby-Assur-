@@ -238,6 +238,93 @@ function ItemCard({
   );
 }
 
+/** Informations à saisir (en plus des documents) : enregistrement automatique après chaque modification. */
+function InfoSection({ token, view }: { token: string; view: ClientView }) {
+  const router = useRouter();
+  const [values, setValues] = useState<Record<string, string>>(view.info);
+  const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [err, setErr] = useState("");
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const save = useCallback(
+    async (v: Record<string, string>) => {
+      setState("saving");
+      setErr("");
+      try {
+        await postJson(`/api/portal/${token}/info`, { values: v });
+        setState("saved");
+        router.refresh();
+      } catch (e) {
+        setState("error");
+        setErr((e as Error).message);
+      }
+    },
+    [token, router],
+  );
+
+  const change = (key: string, value: string, immediate = false) => {
+    const next = { ...values, [key]: value };
+    setValues(next);
+    setState("idle");
+    if (timer.current) clearTimeout(timer.current);
+    if (immediate) void save(next);
+    else timer.current = setTimeout(() => void save(next), 900);
+  };
+
+  const base = "field";
+  return (
+    <section className="mt-6 rounded-xl bg-white p-5 shadow-card sm:p-6" aria-labelledby="infos">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="infos" className="display text-[1.25rem] text-night">Vos informations</h2>
+        <p className="text-[0.82rem] text-ink-muted" aria-live="polite">
+          {state === "saving" ? "Enregistrement…" : state === "saved" ? "✓ Enregistré" : "Enregistrées automatiquement"}
+        </p>
+      </div>
+      <p className="mt-1 text-[0.88rem] text-ink-muted">Complétez ce que vous savez : cela permet à Ruby Assur&apos; d&apos;avancer plus vite. Rien n&apos;est obligatoire sauf indication contraire.</p>
+      <div className="mt-5 grid gap-x-5 gap-y-4 sm:grid-cols-2">
+        {view.fields.map((f) => {
+          const id = `info-${f.key}`;
+          const v = values[f.key] ?? "";
+          const wide = f.type === "textarea";
+          return (
+            <div key={f.key} className={wide ? "sm:col-span-2" : ""}>
+              <label htmlFor={id} className="mb-1.5 block text-[0.88rem] font-semibold text-night">
+                {f.label}
+                {f.unit ? ` (${f.unit})` : ""}
+                {f.required ? <span className="text-danger"> *</span> : null}
+              </label>
+              {f.type === "textarea" ? (
+                <textarea id={id} rows={3} value={v} onChange={(e) => change(f.key, e.target.value)} className={base} />
+              ) : f.type === "choice" ? (
+                <div role="radiogroup" aria-labelledby={id} className="flex flex-wrap gap-2">
+                  {(f.options ?? []).map((o) => (
+                    <label key={o} className={`cursor-pointer rounded-full border px-4 py-2 text-[0.9rem] font-semibold transition ${v === o ? "border-night bg-night text-white" : "border-night/25 text-night hover:border-night"}`}>
+                      <input type="radio" name={id} value={o} checked={v === o} onChange={() => change(f.key, v === o ? "" : o, true)} className="sr-only" />
+                      {o}
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                <input
+                  id={id}
+                  type={f.type === "number" ? "text" : f.type}
+                  inputMode={f.type === "number" ? "decimal" : undefined}
+                  value={v}
+                  onChange={(e) => change(f.key, e.target.value)}
+                  className={base}
+                />
+              )}
+              {f.hint && <p className="mt-1 text-[0.78rem] text-ink-muted">{f.hint}</p>}
+            </div>
+          );
+        })}
+      </div>
+      {state === "error" && <p role="alert" className="mt-3 text-[0.88rem] text-danger">{err}</p>}
+      {view.infoMissing > 0 && <p className="mt-4 text-[0.85rem] text-warn">{view.infoMissing} information{view.infoMissing > 1 ? "s" : ""} obligatoire{view.infoMissing > 1 ? "s" : ""} à compléter (*).</p>}
+    </section>
+  );
+}
+
 export function ClientPortal({ token, initial }: { token: string; initial: ClientView }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -295,29 +382,40 @@ export function ClientPortal({ token, initial }: { token: string; initial: Clien
               ? "Vos documents ont bien été transmis à Ruby Assur'. Julien pourra maintenant examiner votre dossier."
               : remaining > 0
                 ? `Il reste ${remaining} document${remaining > 1 ? "s" : ""} à fournir ou à remplacer.`
-                : needAnswers
-                  ? "Répondez aux questions ci-dessous pour voir la liste complète des documents."
-                  : "Tous les documents obligatoires sont là : vous pouvez confirmer l'envoi."}
+                : view.infoMissing > 0
+                  ? `Il reste ${view.infoMissing} information${view.infoMissing > 1 ? "s" : ""} obligatoire${view.infoMissing > 1 ? "s" : ""} à compléter.`
+                  : needAnswers
+                    ? "Répondez aux questions ci-dessous pour voir la liste des documents à fournir."
+                    : "Tous les documents obligatoires sont là : vous pouvez confirmer l'envoi."}
         </p>
       </div>
+
+      {view.fields.length > 0 && <InfoSection token={token} view={view} />}
 
       {view.questions.length > 0 && (
         <section className="mt-6 rounded-xl bg-white p-5 shadow-card sm:p-6" aria-labelledby="qs">
           <h2 id="qs" className="display text-[1.25rem] text-night">Quelques précisions</h2>
           <div className="mt-3 space-y-4">
-            {view.questions.map((q) => (
-              <fieldset key={q.key}>
-                <legend className="text-[0.98rem] font-medium text-night">{q.label}</legend>
-                <div className="mt-2 flex gap-2">
-                  {(["yes", "no"] as const).map((v) => (
-                    <label key={v} className={`cursor-pointer rounded-full border px-5 py-2 text-[0.92rem] font-semibold transition ${view.answers[q.key] === v ? "border-night bg-night text-white" : "border-night/25 text-night hover:border-night"}`}>
-                      <input type="radio" name={q.key} value={v} checked={view.answers[q.key] === v} onChange={() => answer(q.key, v)} className="sr-only" />
-                      {v === "yes" ? "Oui" : "Non"}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-            ))}
+            {view.questions.map((q) =>
+              q.type === "checkbox" ? (
+                <label key={q.key} className="flex cursor-pointer items-start gap-3 text-[1rem] leading-6 text-night">
+                  <input type="checkbox" checked={view.answers[q.key] === "yes"} onChange={(e) => answer(q.key, e.target.checked ? "yes" : "no")} className="mt-1 h-5 w-5 shrink-0 accent-[#0A1A35]" />
+                  {q.label}
+                </label>
+              ) : (
+                <fieldset key={q.key}>
+                  <legend className="text-[0.98rem] font-medium text-night">{q.label}</legend>
+                  <div className="mt-2 flex gap-2">
+                    {(["yes", "no"] as const).map((v) => (
+                      <label key={v} className={`cursor-pointer rounded-full border px-5 py-2 text-[0.92rem] font-semibold transition ${view.answers[q.key] === v ? "border-night bg-night text-white" : "border-night/25 text-night hover:border-night"}`}>
+                        <input type="radio" name={q.key} value={v} checked={view.answers[q.key] === v} onChange={() => answer(q.key, v)} className="sr-only" />
+                        {v === "yes" ? "Oui" : "Non"}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              ),
+            )}
           </div>
         </section>
       )}
@@ -341,10 +439,10 @@ export function ClientPortal({ token, initial }: { token: string; initial: Clien
             <h2 id="fin" className="display text-display-sm text-white">Terminer</h2>
             <p className="mt-2 text-white/70">
               {view.canSubmit
-                ? "Tous les documents obligatoires sont déposés. Confirmez pour prévenir Ruby Assur'."
-                : remaining > 0
-                  ? "Vous pourrez confirmer l'envoi une fois tous les documents obligatoires déposés."
-                  : "Complétez les précisions ci-dessus pour continuer."}
+                ? "Tout ce qui est demandé est là. Confirmez pour prévenir Ruby Assur'."
+                : remaining > 0 || view.infoMissing > 0
+                  ? "Vous pourrez confirmer l'envoi une fois les documents et informations obligatoires fournis."
+                  : "Répondez aux précisions ci-dessus pour continuer."}
             </p>
             <button type="button" onClick={submit} disabled={!view.canSubmit || submitting} className="btn-gold mt-5 w-full sm:w-auto">
               {submitting ? "Envoi…" : "Confirmer l'envoi de mes documents"}
