@@ -20,7 +20,8 @@ export default function ClaimsPage() {
         <h1 className="mt-3 text-4xl font-semibold text-ruby-navy sm:text-5xl">Une démarche claire en cas d’insatisfaction</h1>
         <p className="mt-5 max-w-3xl text-base leading-8 text-slate-700">
           Si vous souhaitez formuler une réclamation, précisez votre identité, vos coordonnées, l’objet de
-          votre demande et les éléments utiles à sa compréhension. Ruby Assur’ s’engage à vous répondre dans les meilleurs délais.
+          votre demande et les éléments utiles à sa compréhension. Les délais de référence applicables aux courtiers
+          en assurance sont rappelés ci-dessous.
         </p>
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
@@ -47,7 +48,28 @@ export default function ClaimsPage() {
           </article>
         </div>
 
-        <div className="mt-10 rounded-lg border border-ruby-line bg-ruby-sand p-6">
+        {/* Délais issus de la recommandation ACPR 2024-R-02 (intermédiaires d'assurance).
+            TODO propriétaire : ajouter ici le médiateur compétent et ses modalités de saisine
+            (information exigée par la même recommandation, points 3.2.1 à 3.2.3) — à NE PAS inventer. */}
+        <div className="mt-10 rounded-lg border border-ruby-line bg-ruby-frost p-6">
+          <h2 className="text-xl font-semibold text-ruby-navy">Délais de référence</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-700">
+            <li>
+              <strong>Accusé de réception</strong> : par écrit, dans un délai maximal de 10 jours ouvrables à compter de
+              l’envoi de votre réclamation écrite, sauf si une réponse écrite vous est apportée dans ce délai.
+            </li>
+            <li>
+              <strong>Réponse</strong> : au plus tard sous 2 mois, sauf dispositions législatives ou réglementaires
+              plus contraignantes.
+            </li>
+          </ul>
+          <p className="mt-3 text-xs leading-6 text-slate-500">
+            Source : recommandation de l’ACPR n° 2024-R-02 du 2 juillet 2024 sur le traitement des réclamations,
+            applicable notamment aux intermédiaires d’assurance.
+          </p>
+        </div>
+
+        <div className="mt-6 rounded-lg border border-ruby-line bg-ruby-sand p-6">
           <h2 className="text-xl font-semibold text-ruby-navy">Coordonnées</h2>
           <p className="mt-3 text-sm leading-7 text-slate-700">
             {legalInfo.name} — par e-mail : <a href={`mailto:${email}`} className="font-semibold text-ruby-navy underline">{email}</a> ou par téléphone : <a href={`tel:${phone}`} className="font-semibold text-ruby-navy underline">{phone.replace(/(\d{2})(?=\d)/g, "$1 ")}</a>
