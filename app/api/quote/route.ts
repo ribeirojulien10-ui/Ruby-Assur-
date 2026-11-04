@@ -6,7 +6,8 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const TO = "contact@rubyassur.fr";
 const FROM = "Ruby Assur' <contact@rubyassur.fr>";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
+// Aligné sur la limite Vercel (4,5 Mo par requête) : 4 Mo de pièces jointes au total.
+const MAX_TOTAL_SIZE = 4 * 1024 * 1024;
 const MAX_FILES = 5;
 const MAX_TEXT = 200;
 const MAX_MESSAGE = 3000;
@@ -79,8 +80,8 @@ export async function POST(req: NextRequest) {
   ) {
     return NextResponse.json({ error: "Format de fichier non accepté" }, { status: 400 });
   }
-  if (nonEmptyFiles.some(f => f.size > MAX_FILE_SIZE)) {
-    return NextResponse.json({ error: "Fichier trop volumineux (10 Mo max)" }, { status: 413 });
+  if (nonEmptyFiles.reduce((n, f) => n + f.size, 0) > MAX_TOTAL_SIZE) {
+    return NextResponse.json({ error: "Pièces jointes trop volumineuses (4 Mo max au total)" }, { status: 413 });
   }
 
   const attachments = await Promise.all(

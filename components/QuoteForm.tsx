@@ -4,7 +4,11 @@ import { products } from "@/lib/products";
 import { trackQuoteConversion } from "@/lib/ads";
 import { Paperclip, X } from "lucide-react";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
+// Vercel refuse toute requête > 4,5 Mo (erreur 413). On limite donc le TOTAL des pièces
+// jointes à 4 Mo, ce qui laisse une marge pour les champs texte et l'encodage multipart.
+const MAX_TOTAL_SIZE = 4 * 1024 * 1024; // 4 Mo au total
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contact@rubyassur.fr";
+const fmtMo = (bytes: number) => (bytes / (1024 * 1024)).toFixed(1).replace(".", ",");
 const PHONE_RE = /^0[0-9]{9}$/;
 const ALLOWED_EXT = ["pdf", "jpg", "jpeg", "png", "doc", "docx"];
 const extOf = (name: string) => name.split(".").pop()?.toLowerCase() ?? "";
@@ -30,22 +34,29 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
   function addFiles(incoming: FileList | null) {
     if (!incoming) return;
     const next = [...files];
-    const rejected: string[] = [];
+    let total = next.reduce((n, f) => n + f.size, 0);
+    const tooBig: string[] = [];
     const wrongType: string[] = [];
     Array.from(incoming).forEach(f => {
       if (!ALLOWED_EXT.includes(extOf(f.name))) {
         wrongType.push(f.name);
         return;
       }
-      if (f.size > MAX_FILE_SIZE) {
-        rejected.push(f.name);
+      if (next.find(x => x.name === f.name)) return;
+      if (total + f.size > MAX_TOTAL_SIZE) {
+        tooBig.push(f.name);
         return;
       }
-      if (!next.find(x => x.name === f.name)) next.push(f);
+      next.push(f);
+      total += f.size;
     });
     setFiles(next);
     const errors: string[] = [];
-    if (rejected.length > 0) errors.push(`Fichier trop volumineux (10 Mo max) : ${rejected.join(", ")}`);
+    if (tooBig.length > 0) {
+      errors.push(
+        `Taille totale limitée à 4 Mo (${tooBig.join(", ")} non ajouté). Pour des fichiers plus volumineux, envoyez-les par e-mail à ${CONTACT_EMAIL}.`
+      );
+    }
     if (wrongType.length > 0) errors.push(`Format non accepté (PDF, JPG, PNG, DOC, DOCX) : ${wrongType.join(", ")}`);
     setFileError(errors.join(" — "));
   }
@@ -73,7 +84,9 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
       const honeypot = (e.currentTarget as HTMLFormElement).elements.namedItem("website") as HTMLInputElement | null;
       fd.append("website", honeypot?.value ?? "");
       const res = await fetch("/api/quote", { method: "POST", body: fd });
-      if (res.ok) {
+      if (res.status === 413) {
+        setSubmitError(`Vos pièces jointes sont trop volumineuses (4 Mo maximum au total). Réduisez-les ou envoyez-les par e-mail à ${CONTACT_EMAIL}.`);
+      } else if (res.ok) {
         setSubmitted(true);
         trackQuoteConversion(); // uniquement si le serveur a confirmé l'envoi du devis
       } else {
@@ -152,7 +165,7 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
           </ul>
         )}
         {fileError && <p role="alert" className="mt-1.5 text-xs text-red-600">{fileError}</p>}
-        <p className="mt-1.5 text-xs text-slate-400">PDF, JPG, PNG, DOC, DOCX acceptés — 10 Mo max par fichier</p>
+        <p className="mt-1.5 text-xs text-slate-400">PDF, JPG, PNG, DOC, DOCX — {fmtMo(files.reduce((n, f) => n + f.size, 0))} / 4 Mo au total. Au-delà, envoyez-nous vos documents par e-mail.</p>
       </div>
 
       <button type="submit" disabled={loading} className="btn-primary w-full py-3.5">
