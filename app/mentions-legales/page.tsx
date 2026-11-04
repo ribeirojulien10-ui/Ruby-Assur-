@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { legalInfo } from "@/lib/site";
 
+const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
+const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contact@rubyassur.fr";
+
 export const metadata: Metadata = {
   title: "Mentions légales",
   description: "Mentions légales de Ruby Assur’, courtier en assurance indépendant, RCS Soissons, ORIAS 24007878.",
@@ -21,6 +24,8 @@ const entries = [
   ["Statut", legalInfo.status],
   ["Capital social", legalInfo.capital],
   ["TVA", legalInfo.vat],
+  ["E-mail", email],
+  ["Téléphone", phone.replace(/(\d{2})(?=\d)/g, "$1 ")],
   ["Directeur de la publication", legalInfo.president],
   ["Hébergeur du site", "Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis"],
   ["Autorité de contrôle", "Autorité de contrôle prudentiel et de résolution (ACPR), 4 place de Budapest, CS 92459, 75436 Paris Cedex 09"],

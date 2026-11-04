@@ -1,18 +1,29 @@
 "use client";
 
+/*
+ * ⚠️  AVIS NON VÉRIFIÉS — À CONFIRMER PAR LE PROPRIÉTAIRE  ⚠️
+ * Ces témoignages (nom, texte, 5 étoiles) sont écrits EN DUR dans le code : aucune source
+ * (Google, Trustpilot, e-mail de client, accord écrit) ne les atteste dans ce dépôt.
+ * Afficher de faux avis est une pratique commerciale trompeuse (Code de la consommation,
+ * art. L.121-2 et L.111-7-2). À FAIRE : confirmer l'origine de chaque avis et l'accord du
+ * client ; sinon les supprimer ou les remplacer par de vrais avis (ex. Google Business).
+ * Tant que `verified` vaut false, ne rien afficher de plus (note chiffrée, étoiles agrégées,
+ * balisage schema.org Review/AggregateRating) : AUCUN balisage d'avis n'est publié sur le site.
+ */
+
 import { useEffect, useState } from "react";
 
 const reviews = [
-  { name: "Marie T.", text: "Très professionnel, réponse rapide !" },
-  { name: "Thomas R.", text: "Mutuelle parfaite trouvée en 48h." },
-  { name: "Sophie M.", text: "Enfin un courtier qui explique clairement." },
-  { name: "Pierre L.", text: "Excellent pour mon assurance décennale." },
-  { name: "Camille D.", text: "Devis gratuit, sans pression. Très à l'écoute." },
-  { name: "Lucas B.", text: "J'ai économisé sur mon assurance auto sans rien sacrifier." },
-  { name: "Nathalie F.", text: "Super accompagnement pour notre assurance emprunteur." },
-  { name: "Karim A.", text: "RC Pro souscrite en 2 jours, impeccable." },
-  { name: "Julie M.", text: "On m'a expliqué chaque garantie, sans jargon." },
-  { name: "Romain C.", text: "Vraiment disponible, même le soir. Je recommande." },
+  { name: "Marie T.", text: "Très professionnel, réponse rapide !", verified: false },
+  { name: "Thomas R.", text: "Mutuelle parfaite trouvée en 48h.", verified: false },
+  { name: "Sophie M.", text: "Enfin un courtier qui explique clairement.", verified: false },
+  { name: "Pierre L.", text: "Excellent pour mon assurance décennale.", verified: false },
+  { name: "Camille D.", text: "Devis gratuit, sans pression. Très à l'écoute.", verified: false },
+  { name: "Lucas B.", text: "J'ai économisé sur mon assurance auto sans rien sacrifier.", verified: false },
+  { name: "Nathalie F.", text: "Super accompagnement pour notre assurance emprunteur.", verified: false },
+  { name: "Karim A.", text: "RC Pro souscrite en 2 jours, impeccable.", verified: false },
+  { name: "Julie M.", text: "On m'a expliqué chaque garantie, sans jargon.", verified: false },
+  { name: "Romain C.", text: "Vraiment disponible, même le soir. Je recommande.", verified: false },
 ];
 
 const doubled = [...reviews, ...reviews];

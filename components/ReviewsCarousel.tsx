@@ -1,13 +1,24 @@
 "use client";
 
+/*
+ * ⚠️  AVIS NON VÉRIFIÉS — À CONFIRMER PAR LE PROPRIÉTAIRE  ⚠️
+ * Ces témoignages (nom, texte, 5 étoiles) sont écrits EN DUR dans le code : aucune source
+ * (Google, Trustpilot, e-mail de client, accord écrit) ne les atteste dans ce dépôt.
+ * Afficher de faux avis est une pratique commerciale trompeuse (Code de la consommation,
+ * art. L.121-2 et L.111-7-2). À FAIRE : confirmer l'origine de chaque avis et l'accord du
+ * client ; sinon les supprimer ou les remplacer par de vrais avis (ex. Google Business).
+ * Tant que `verified` vaut false, ne rien afficher de plus (note chiffrée, étoiles agrégées,
+ * balisage schema.org Review/AggregateRating) : AUCUN balisage d'avis n'est publié sur le site.
+ */
+
 import { useEffect, useState } from "react";
 
 const reviews = [
-  { name: "Marie T.", text: "Très professionnel, réponse rapide. Je recommande vivement !", stars: 5 },
-  { name: "Thomas R.", text: "Ruby Assur' a trouvé une mutuelle parfaite pour ma famille en 48h.", stars: 5 },
-  { name: "Sophie M.", text: "Enfin un courtier qui explique clairement sans jargon.", stars: 5 },
-  { name: "Pierre L.", text: "Excellent accompagnement pour mon assurance décennale.", stars: 5 },
-  { name: "Camille D.", text: "Devis gratuit, sans pression. Très à l'écoute.", stars: 5 },
+  { name: "Marie T.", text: "Très professionnel, réponse rapide. Je recommande vivement !", stars: 5, verified: false },
+  { name: "Thomas R.", text: "Ruby Assur' a trouvé une mutuelle parfaite pour ma famille en 48h.", stars: 5, verified: false },
+  { name: "Sophie M.", text: "Enfin un courtier qui explique clairement sans jargon.", stars: 5, verified: false },
+  { name: "Pierre L.", text: "Excellent accompagnement pour mon assurance décennale.", stars: 5, verified: false },
+  { name: "Camille D.", text: "Devis gratuit, sans pression. Très à l'écoute.", stars: 5, verified: false },
 ];
 
 export function ReviewsCarousel() {
