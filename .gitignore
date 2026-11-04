@@ -26,3 +26,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# portail documentaire : données locales (base, fichiers, identifiants de démonstration)
+/.data/
+# fichier généré par le serveur de développement Next
+/AGENTS.md
