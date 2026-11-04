@@ -79,6 +79,38 @@ export default async function DashboardPage() {
           )}
         </section>
 
+        <section className="lg:col-span-12" aria-labelledby="encours">
+          <h2 id="encours" className="display text-display-sm text-night">Tous les dossiers en cours, même incomplets</h2>
+          <p className="mt-1 text-[0.9rem] text-ink-muted">Vous pouvez ouvrir un dossier à tout moment, prévisualiser ou télécharger un document : <strong className="text-night">le client n&apos;est jamais prévenu</strong>. Il ne voit que vos décisions (validé, à remplacer) et vos relances.</p>
+          {d.inProgress.length === 0 ? (
+            <p className="mt-4 rounded-lg bg-white p-6 text-ink-muted shadow-card">Aucun dossier en cours.</p>
+          ) : (
+            <ul className="mt-4 divide-y divide-line overflow-hidden rounded-lg bg-white shadow-card">
+              {d.inProgress.map((r) => {
+                const manque = [r.missingCount ? `${r.missingCount} pièce${r.missingCount > 1 ? "s" : ""}` : "", r.infoMissingCount ? `${r.infoMissingCount} information${r.infoMissingCount > 1 ? "s" : ""}` : "", r.toReplaceCount ? `${r.toReplaceCount} à remplacer` : ""].filter(Boolean).join(" · ");
+                return (
+                  <li key={r.id}>
+                    <Link href={`/espace-pro/dossiers/${r.id}`} className="grid gap-3 p-5 transition hover:bg-ivory-soft md:grid-cols-[1.3fr_1fr_1.2fr_1.2fr_auto] md:items-center">
+                      <span>
+                        <span className="block font-semibold text-night">{r.clientName}</span>
+                        <span className="text-[0.85rem] text-ink-muted">{r.insuranceName}</span>
+                      </span>
+                      <Progress done={r.received} total={r.expected} compact />
+                      <span className="text-[0.88rem] text-ink-soft">
+                        {manque ? <><span className="text-ink-muted">Manque : </span>{manque}</> : "Rien ne manque"}
+                      </span>
+                      <span className="text-[0.85rem] text-ink-muted">
+                        {r.lastClientActivityAt ? `Client actif : ${fmtDateTime(r.lastClientActivityAt)}` : "Le client n'a encore rien fait"}
+                      </span>
+                      <span className="flex items-center gap-3"><StatusBadge status={r.status} /><ArrowRight className="h-4 w-4 text-champagne-deep" aria-hidden="true" /></span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
         <section className="lg:col-span-4" aria-labelledby="activite">
           <h2 id="activite" className="display text-display-sm text-night">Dernière activité</h2>
           <ol className="mt-4 space-y-0 rounded-lg bg-white p-2 shadow-card">

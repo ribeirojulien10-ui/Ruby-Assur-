@@ -54,7 +54,12 @@ export default async function DossierPage({ params }: { params: Promise<{ id: st
         <StatusBadge status={d.status} />
       </header>
 
-      <div className="mt-6 grid gap-4 rounded-xl bg-white p-6 shadow-card sm:grid-cols-[1fr_auto] sm:items-center">
+      <p role="note" className="mt-5 rounded-md bg-ivory px-4 py-2.5 text-[0.85rem] leading-6 text-ink-soft">
+        <strong className="text-night">Consultation discrète :</strong> ouvrir ce dossier, prévisualiser ou télécharger un document ne prévient pas le client.
+        Il voit seulement ce que vous décidez (document <em>validé</em> ou <em>à remplacer</em>) et les relances que vous lui envoyez.
+      </p>
+
+      <div className="mt-4 grid gap-4 rounded-xl bg-white p-6 shadow-card sm:grid-cols-[1fr_auto] sm:items-center">
         <Progress done={d.progress.requiredDone} total={d.progress.requiredTotal} />
         <ul className="flex flex-wrap gap-x-6 gap-y-1 text-[0.88rem] text-ink-soft">
           <li><strong className="text-night">{d.progress.missing.length}</strong> manquante{d.progress.missing.length > 1 ? "s" : ""}</li>

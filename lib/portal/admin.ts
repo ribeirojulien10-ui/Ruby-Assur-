@@ -342,6 +342,10 @@ export interface RequestListRow {
   toReviewCount: number;
   toReplaceCount: number;
   missingCount: number;
+  /** Informations obligatoires encore vides. */
+  infoMissingCount: number;
+  /** Dernière action du CLIENT (dépôt, saisie, confirmation) ; null s'il n'a encore rien fait. */
+  lastClientActivityAt: string | null;
   isDemo: boolean;
 }
 
@@ -365,6 +369,8 @@ function toListRow(ctx: PortalContext, r: RequestRow & { full_name: string }): R
     toReviewCount: p.toReview.length,
     toReplaceCount: p.toReplace.length,
     missingCount: p.missing.length,
+    infoMissingCount: missingInfo(parseJson<InfoField[]>(r.fields, []), parseJson<Info>(r.info, {})).length,
+    lastClientActivityAt: get<{ t: string | null }>(ctx.db, "SELECT MAX(created_at) AS t FROM events WHERE request_id = ? AND actor = 'client'", r.id)?.t ?? null,
     isDemo: !!r.is_demo,
   };
 }
@@ -400,6 +406,8 @@ export function listRequests(ctx: PortalContext, admin: AdminSession | null, f: 
 export interface Dashboard {
   counts: Record<"incomplete" | "complete" | "to_review" | "toExamine" | "toReplace" | "closed" | "validated", number>;
   attention: RequestListRow[];
+  /** TOUS les dossiers non clôturés, même incomplets, le plus récemment actifs (côté client) d'abord. */
+  inProgress: RequestListRow[];
   activity: { id: string; requestId: string; clientName: string; title: string; actor: string; type: string; at: string }[];
 }
 
@@ -426,7 +434,11 @@ export function dashboard(ctx: PortalContext, admin: AdminSession | null): Dashb
       WHERE e.type NOT IN ('file_downloaded')
       ORDER BY e.created_at DESC, e.rowid DESC LIMIT 12`,
   ).map((e) => ({ id: e.id, requestId: e.request_id, clientName: e.full_name, title: e.title, actor: e.actor, type: e.type, at: e.created_at }));
-  return { counts, attention, activity };
+  const inProgress = rows
+    .filter((r) => r.status !== "closed")
+    .sort((a, b) => (b.lastClientActivityAt ?? "").localeCompare(a.lastClientActivityAt ?? "") || b.lastActivityAt.localeCompare(a.lastActivityAt))
+    .slice(0, 20);
+  return { counts, attention, inProgress, activity };
 }
 
 export interface RequestDetail {

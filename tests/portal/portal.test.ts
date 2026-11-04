@@ -648,3 +648,54 @@ describe("Informations obligatoires des modèles initiaux", () => {
     expect(hab.fields!.filter((f) => f.required).map((f) => f.key)).toEqual(["adresse", "type-bien", "surface", "pieces", "statut"]);
   });
 });
+
+describe("Consultation discrète des dossiers incomplets", () => {
+  const fields = [
+    { key: "adresse", label: "Adresse", type: "text" as const, required: true },
+    { key: "surface", label: "Surface", type: "number" as const, required: true },
+  ];
+
+  it("un dossier incomplet apparaît dans « en cours » avec ce qui manque et la dernière action du client", async () => {
+    const { saveInfo } = await import("@/lib/portal/client");
+    const untouched = newRequest(ctx, { newClient: { fullName: "Client Fictif Muet" }, fields });
+    const started = newRequest(ctx, { newClient: { fullName: "Client Fictif Début" }, fields });
+    saveInfo(ctx, started.token, { adresse: "1 rue Fictive" });
+    await upload(ctx, started.token, itemsOf(ctx, started.id)[0].id, "p.pdf", fakePdf());
+
+    const d = dashboard(ctx, admin);
+    const row = (id: string) => d.inProgress.find((r) => r.id === id)!;
+    expect(row(untouched.id)).toBeTruthy(); // visible même si le client n'a rien fait
+    expect(row(untouched.id).lastClientActivityAt).toBeNull();
+    expect(row(started.id).status).toBe("incomplete");
+    expect(row(started.id).infoMissingCount).toBe(1); // la surface manque
+    expect(row(started.id).missingCount).toBe(2); // 2 pièces obligatoires encore à fournir
+    expect(row(started.id).lastClientActivityAt).not.toBeNull();
+    // le dossier démarré remonte avant celui où le client n'a rien fait
+    expect(d.inProgress.findIndex((r) => r.id === started.id)).toBeLessThan(d.inProgress.findIndex((r) => r.id === untouched.id));
+  });
+
+  it("consulter, prévisualiser, télécharger ne change RIEN de ce que voit le client", async () => {
+    const { saveInfo } = await import("@/lib/portal/client");
+    const { id, token } = newRequest(ctx, { fields });
+    saveInfo(ctx, token, { adresse: "1 rue Fictive" });
+    await upload(ctx, token, itemsOf(ctx, id)[0].id, "p.pdf", fakePdf("discret"));
+    const file = ctx.db.prepare("SELECT id FROM files").get() as { id: string };
+
+    const clientBefore = JSON.stringify(getClientView(ctx, token));
+    const stateBefore = ctx.db.prepare("SELECT updated_at, last_activity_at, submitted_at FROM requests WHERE id = ?").get(id);
+    const reminders = ctx.db.prepare("SELECT COUNT(*) c FROM reminders").get();
+
+    // Julien consulte tout
+    getRequestDetail(ctx, admin, id);
+    listRequests(ctx, admin);
+    dashboard(ctx, admin);
+    prepareReminder(ctx, admin, id); // préparer un message ne l'envoie pas
+    await openFileForAdmin(ctx, admin, file.id);
+
+    expect(JSON.stringify(getClientView(ctx, token))).toBe(clientBefore);
+    expect(ctx.db.prepare("SELECT updated_at, last_activity_at, submitted_at FROM requests WHERE id = ?").get(id)).toEqual(stateBefore);
+    expect(ctx.db.prepare("SELECT COUNT(*) c FROM reminders").get()).toEqual(reminders);
+    // la vue client n'expose ni historique, ni relances, ni consultations de Julien
+    expect(clientBefore).not.toMatch(/file_downloaded|reminder|events|julien/i);
+  });
+});
