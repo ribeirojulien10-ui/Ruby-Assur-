@@ -13,7 +13,7 @@ const PHONE_RE = /^0[0-9]{9}$/;
 const ALLOWED_EXT = ["pdf", "jpg", "jpeg", "png", "doc", "docx"];
 const extOf = (name: string) => name.split(".").pop()?.toLowerCase() ?? "";
 
-const inputCls = "rounded-xl border border-off-gray px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy w-full";
+const inputCls = "field";
 
 export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string }) {
   const [submitted, setSubmitted] = useState(false);

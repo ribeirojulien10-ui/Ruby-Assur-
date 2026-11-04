@@ -1,16 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { Chatbot } from "@/components/Chatbot";
-import { JsonLd } from "@/components/JsonLd";
-import { Analytics } from "@vercel/analytics/react";
-import { GoogleTag } from "@/components/GoogleTag";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
+// Titres : Fraunces (serif expressive, avec italiques) — Interface : Inter (lisibilité maximale).
+const display = Fraunces({ subsets: ["latin"], variable: "--font-display", style: ["normal", "italic"], axes: ["opsz", "SOFT"], display: "swap" });
+const body = Inter({ subsets: ["latin"], variable: "--font-body", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rubyassur.fr"),
@@ -36,20 +30,11 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Mise en page racine volontairement MINIMALE : le site public (en-tête, pied de page, suivi publicitaire…)
+  // vit dans app/(site)/layout.tsx ; le portail documentaire (app/espace-pro, app/documents) n'en hérite pas.
   return (
-    <html lang="fr" className={`${inter.variable} ${manrope.variable}`}>
-      <head>
-        <JsonLd />
-      </head>
-      <body className="font-body">
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <WhatsAppButton />
-        <Chatbot />
-        <Analytics />
-        <GoogleTag />
-      </body>
+    <html lang="fr" className={`${display.variable} ${body.variable}`}>
+      <body className="font-body">{children}</body>
     </html>
   );
 }

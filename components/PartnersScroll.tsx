@@ -1,38 +1,28 @@
-"use client";
-
-const partners = [
-  { name: "AXA", color: "#00008F" },
-  { name: "Generali", color: "#c8102e" },
-  { name: "Swiss Life", color: "#b40000" },
-  { name: "CMAM", color: "#005792" },
-  { name: "Wakam", color: "#1a1a2e" },
-  { name: "Fidelidad", color: "#003865" },
-  { name: "April", color: "#e30613" },
-  { name: "Solly Azar", color: "#0057a8" },
-  { name: "Zéphir", color: "#1a3c6e" },
-];
-
-const doubled = [...partners, ...partners];
+/**
+ * Compagnies comparées — liste existante du site, présentée en mots-symboles sobres et homogènes
+ * (aucun logo officiel n'est utilisé : pas de faux partenariat suggéré par une charte graphique).
+ */
+const partners = ["AXA", "Generali", "Swiss Life", "CMAM", "Wakam", "Fidelidad", "April", "Solly Azar", "Zéphir"];
 
 export function PartnersScroll() {
+  const row = (hidden: boolean) => (
+    <ul className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
+      {partners.map((name) => (
+        <li key={name} className="display px-8 text-[1.35rem] text-night/55 transition-colors hover:text-night sm:px-12 sm:text-[1.6rem]">
+          {name}
+        </li>
+      ))}
+    </ul>
+  );
   return (
-    <div className="overflow-hidden bg-white py-8 border-y border-off-gray">
-      <p className="text-center text-xs font-bold uppercase tracking-widest text-gold mb-6">
-        Compagnies comparées
-      </p>
-      <div className="relative overflow-hidden">
-        <div className="flex animate-scroll items-center gap-8 whitespace-nowrap">
-          {doubled.map((p, i) => (
-            <span
-              key={i}
-              className="inline-flex h-10 items-center rounded-lg border border-gray-100 px-4 text-sm font-bold shadow-sm transition hover:shadow-md"
-              style={{ color: p.color, borderColor: `${p.color}22`, background: `${p.color}08` }}
-            >
-              {p.name}
-            </span>
-          ))}
+    <section aria-label="Compagnies comparées" className="border-y border-line bg-paper py-8">
+      <p className="eyebrow mb-5 text-center">Compagnies comparées</p>
+      <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
+        <div className="marquee">
+          {row(false)}
+          {row(true)}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
