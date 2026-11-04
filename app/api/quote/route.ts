@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { products } from "@/lib/products";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const TO = "contact@rubyassur.fr";
@@ -9,6 +10,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
 const MAX_FILES = 5;
 const MAX_TEXT = 200;
 const MAX_MESSAGE = 3000;
+const ALLOWED_EXT = ["pdf", "jpg", "jpeg", "png", "doc", "docx"];
 const PHONE_RE = /^0[0-9]{9}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -44,11 +46,12 @@ export async function POST(req: NextRequest) {
   const lastName = str(fd, "lastName");
   const phone = str(fd, "phone").replace(/[\s.\-]/g, "");
   const email = str(fd, "email");
-  const insurance = str(fd, "insurance");
+  const insuranceRaw = str(fd, "insurance");
+  const insurance = products.find(p => p.slug === insuranceRaw)?.name ?? insuranceRaw;
   const message = str(fd, "message");
   const fileEntries = fd.getAll("files").filter((f): f is File => f instanceof File);
 
-  if (!firstName || !lastName || !phone || !email || !insurance) {
+  if (!firstName || !lastName || !phone || !email || !insuranceRaw) {
     return NextResponse.json({ error: "Champs manquants" }, { status: 400 });
   }
   if (
@@ -71,13 +74,18 @@ export async function POST(req: NextRequest) {
   if (nonEmptyFiles.length > MAX_FILES) {
     return NextResponse.json({ error: "Trop de fichiers" }, { status: 400 });
   }
+  if (
+    nonEmptyFiles.some(f => !ALLOWED_EXT.includes(f.name.split(".").pop()?.toLowerCase() ?? ""))
+  ) {
+    return NextResponse.json({ error: "Format de fichier non accepté" }, { status: 400 });
+  }
   if (nonEmptyFiles.some(f => f.size > MAX_FILE_SIZE)) {
     return NextResponse.json({ error: "Fichier trop volumineux (10 Mo max)" }, { status: 413 });
   }
 
   const attachments = await Promise.all(
     nonEmptyFiles.map(async f => ({
-      filename: f.name,
+      filename: f.name.replace(/[^\w.\- ()]/g, "_").slice(0, 120),
       content: Buffer.from(await f.arrayBuffer()),
     }))
   );
@@ -106,7 +114,8 @@ export async function POST(req: NextRequest) {
   });
 
   if (error) {
-    console.error("Resend error:", error);
+    // Ne jamais journaliser les données du client : uniquement la nature de l'erreur.
+    console.error("Resend error:", error.name, error.message);
     return NextResponse.json({ error: "Erreur envoi email" }, { status: 500 });
   }
 

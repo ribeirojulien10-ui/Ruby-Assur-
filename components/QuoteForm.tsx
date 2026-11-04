@@ -5,6 +5,8 @@ import { Paperclip, X } from "lucide-react";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
 const PHONE_RE = /^0[0-9]{9}$/;
+const ALLOWED_EXT = ["pdf", "jpg", "jpeg", "png", "doc", "docx"];
+const extOf = (name: string) => name.split(".").pop()?.toLowerCase() ?? "";
 
 const inputCls = "rounded-xl border border-off-gray px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy w-full";
 
@@ -18,11 +20,22 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
   const [submitError, setSubmitError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Documents suggérés selon l'assurance choisie (et non plus toujours auto).
+  const selected = products.find(p => p.slug === form.insurance);
+  const docsHint = selected
+    ? `Joindre des documents (${selected.requiredDocuments.slice(0, 3).map(d => d.charAt(0).toLowerCase() + d.slice(1)).join(", ")}…)`
+    : "Joindre des documents utiles à votre demande";
+
   function addFiles(incoming: FileList | null) {
     if (!incoming) return;
     const next = [...files];
     const rejected: string[] = [];
+    const wrongType: string[] = [];
     Array.from(incoming).forEach(f => {
+      if (!ALLOWED_EXT.includes(extOf(f.name))) {
+        wrongType.push(f.name);
+        return;
+      }
       if (f.size > MAX_FILE_SIZE) {
         rejected.push(f.name);
         return;
@@ -30,11 +43,10 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
       if (!next.find(x => x.name === f.name)) next.push(f);
     });
     setFiles(next);
-    setFileError(
-      rejected.length > 0
-        ? `Fichier trop volumineux (10 Mo max) : ${rejected.join(", ")}`
-        : ""
-    );
+    const errors: string[] = [];
+    if (rejected.length > 0) errors.push(`Fichier trop volumineux (10 Mo max) : ${rejected.join(", ")}`);
+    if (wrongType.length > 0) errors.push(`Format non accepté (PDF, JPG, PNG, DOC, DOCX) : ${wrongType.join(", ")}`);
+    setFileError(errors.join(" — "));
   }
 
   function removeFile(name: string) {
@@ -115,7 +127,7 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
           className="flex items-center gap-2 rounded-xl border border-dashed border-off-gray px-4 py-3 text-sm text-slate-500 hover:border-navy hover:text-navy transition w-full"
         >
           <Paperclip className="h-4 w-4 shrink-0" />
-          Joindre des documents (permis, carte grise, relevé…)
+          {docsHint}
         </button>
         <input
           ref={fileRef}
@@ -138,7 +150,7 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
           </ul>
         )}
         {fileError && <p role="alert" className="mt-1.5 text-xs text-red-600">{fileError}</p>}
-        <p className="mt-1.5 text-xs text-slate-400">PDF, JPG, PNG acceptés — 10 Mo max par fichier</p>
+        <p className="mt-1.5 text-xs text-slate-400">PDF, JPG, PNG, DOC, DOCX acceptés — 10 Mo max par fichier</p>
       </div>
 
       <button type="submit" disabled={loading} className="btn-primary w-full py-3.5">
