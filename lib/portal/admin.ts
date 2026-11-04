@@ -242,7 +242,7 @@ export function linkUrl(ctx: PortalContext, token: string): string {
   return `${ctx.baseUrl.replace(/\/$/, "")}/documents/${token}`;
 }
 
-export function regenerateLink(ctx: PortalContext, admin: AdminSession | null, requestId: string, ttlDays = LIMITS.defaultLinkTtlDays): string {
+export function regenerateLink(ctx: PortalContext, admin: AdminSession | null, requestId: string, ttlDays: number = LIMITS.defaultLinkTtlDays): string {
   assertAdmin(admin);
   const r = getRequest(ctx, requestId);
   if (r.closed_at) throw new PortalError("closed");
