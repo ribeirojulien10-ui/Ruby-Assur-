@@ -12,3 +12,8 @@ export const REJECT_REASONS = {
   autre: "Autre raison",
 } as const;
 export type RejectReason = keyof typeof REJECT_REASONS;
+
+/** Formats acceptés (vérifiés sur le contenu réel du fichier, pas seulement l'extension). */
+export const ALL_FORMATS = ["pdf", "jpg", "jpeg", "png", "webp", "heic"] as const;
+export type FileFormat = (typeof ALL_FORMATS)[number];
+export const DEFAULT_FORMATS: FileFormat[] = ["pdf", "jpg", "jpeg", "png", "heic"];

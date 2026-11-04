@@ -30,7 +30,7 @@ export const products: Product[] = [
       "Tous niveaux de couverture : tiers, intermédiaire, tous risques",
       "Résiliation à tout moment (loi Hamon)",
     ],
-    requiredDocuments: ["Permis de conduire", "Carte grise du véhicule", "Relevé d'informations (ancien assureur)", "Bonus/malus actuel", "RIB pour prélèvement"],
+    requiredDocuments: ["Carte grise du véhicule", "Permis de conduire (permis A / A2 ou justificatif de formation pour une moto)", "Relevé d'information", "Pièce d'identité", "RIB"],
     faq: [
       { question: "J'ai un malus élevé, puis-je quand même être assuré ?", answer: "Oui. Ruby Assur' travaille avec des compagnies spécialisées dans les profils à risque. Même avec un coefficient supérieur à 1,50, des solutions existent." },
       { question: "Qu'est-ce que l'assurance temporaire ?", answer: "C'est un contrat à durée courte (1 à 31 jours) utile pour un déplacement ponctuel, un test de véhicule ou un prêt entre particuliers. Il n'impacte pas votre bonus/malus principal." },
@@ -53,7 +53,7 @@ export const products: Product[] = [
       "Garantie relogement d'urgence",
       "Résiliation facilitée en cas de déménagement",
     ],
-    requiredDocuments: ["Adresse du logement", "Surface en m²", "Statut (locataire / propriétaire / bailleur)", "Liste des équipements de valeur", "Ancien contrat si résiliation"],
+    requiredDocuments: ["Pièce d'identité", "Adresse du logement", "Surface et nombre de pièces", "Statut (propriétaire ou locataire)", "RIB", "Pour un bien loué (PNO) : usage du logement et informations sur les éventuels locataires"],
     faq: [
       { question: "Qu'est-ce que la PNO ?", answer: "L'assurance Propriétaire Non Occupant couvre un logement que vous louez ou laissez vacant. Elle protège votre responsabilité en tant que propriétaire, même si votre locataire est assuré." },
       { question: "L'assurance scolaire est-elle obligatoire ?", answer: "Elle n'est pas légalement obligatoire pour les activités scolaires obligatoires, mais elle est fortement conseillée et souvent demandée pour les activités périscolaires et sorties." },
@@ -74,7 +74,7 @@ export const products: Product[] = [
       "Remboursements optique et dentaire renforcés",
       "Délais de carence négociés",
     ],
-    requiredDocuments: ["Carte Vitale", "Attestation Ameli (droits Sécu)", "Relevé des dépenses santé actuelles", "Ancien contrat mutuelle si résiliation"],
+    requiredDocuments: ["Pièce d'identité", "Attestation de droits Sécurité sociale", "RIB", "Coordonnées et date de naissance des bénéficiaires"],
     faq: [
       { question: "Quelle différence entre mutuelle et prévoyance ?", answer: "La mutuelle rembourse vos frais de santé (médecin, pharmacie, optique…). La prévoyance vous protège en cas d'arrêt de travail, d'invalidité ou de décès." },
       { question: "Puis-je inclure mes enfants dans mon contrat ?", answer: "Oui, la plupart des contrats permettent d'ajouter des ayants droit (conjoint, enfants) avec une cotisation adaptée." },
@@ -95,7 +95,7 @@ export const products: Product[] = [
       "Responsabilité civile incluse (selon formule)",
       "Formules adaptées à l'âge et à la race",
     ],
-    requiredDocuments: ["Carnet de santé de l'animal", "Race, âge et poids", "Attestation de vaccination à jour", "Numéro de tatouage ou puce électronique"],
+    requiredDocuments: ["Identification de l'animal (puce ou tatouage)", "Date de naissance et race", "Carnet de santé", "RIB"],
     faq: [
       { question: "À partir de quel âge peut-on assurer son animal ?", answer: "La plupart des contrats acceptent les animaux dès 2 mois. Certains assureurs posent une limite d'âge à l'entrée (souvent 8-10 ans)." },
       { question: "Les maladies préexistantes sont-elles couvertes ?", answer: "Généralement non. Les conditions antérieures à la souscription sont souvent exclues. Il est conseillé d'assurer son animal le plus tôt possible." },
@@ -116,7 +116,7 @@ export const products: Product[] = [
       "Accompagnement pour la substitution",
       "Réponse rapide pour ne pas bloquer votre crédit",
     ],
-    requiredDocuments: ["Offre de prêt bancaire", "Tableau d'amortissement", "Questionnaire médical (selon couverture)", "Relevé d'identité bancaire"],
+    requiredDocuments: ["Offre de prêt", "Tableau d'amortissement", "Pièce d'identité", "Justificatif de revenus", "Profession et date de naissance", "Questionnaire de santé (selon les conditions légales)"],
     faq: [
       { question: "Puis-je changer d'assurance emprunteur en cours de crédit ?", answer: "Oui, depuis la loi Lemoine (2022), vous pouvez résilier et changer à tout moment, sans frais, à condition que le nouveau contrat offre des garanties équivalentes." },
       { question: "Qu'est-ce que la délégation d'assurance ?", answer: "C'est le droit de souscrire votre assurance emprunteur auprès d'un autre assureur que votre banque. Cela peut générer 20 à 50 % d'économies." },
@@ -139,7 +139,7 @@ export const products: Product[] = [
       "RC exploitation intégrée",
       "Un seul interlocuteur pour tous vos sinistres",
     ],
-    requiredDocuments: ["Kbis ou extrait SIREN", "Adresse et surface des locaux", "Valeur du matériel et des stocks", "Chiffre d'affaires N-1", "Historique sinistres 3 ans"],
+    requiredDocuments: ["Kbis ou extrait SIREN", "Activité exercée et adresse professionnelle", "Chiffre d'affaires et effectif", "Superficie des locaux", "RIB"],
     faq: [
       { question: "La perte d'exploitation est-elle toujours incluse ?", answer: "Pas automatiquement. C'est une option importante qui couvre le manque à gagner si votre activité est interrompue après un sinistre." },
       { question: "Mon matériel hors des locaux est-il couvert ?", answer: "Cela dépend des clauses. Des extensions peuvent couvrir le matériel en déplacement, sur chantier ou chez le client." },
@@ -181,7 +181,7 @@ export const products: Product[] = [
       "Mise en conformité rapide pour les appels d'offres",
       "Attestation d'assurance délivrée sous 48h",
     ],
-    requiredDocuments: ["Kbis ou extrait SIREN", "Description précise de l'activité", "Chiffre d'affaires N-1 ou prévisionnel", "Historique sinistres (3 ans)"],
+    requiredDocuments: ["Kbis ou extrait SIREN", "Description précise de l'activité", "Chiffre d'affaires et effectif", "Antécédents d'assurance et de sinistres"],
     faq: [
       { question: "La RC Pro est-elle obligatoire ?", answer: "Elle est obligatoire pour certaines professions réglementées (avocats, architectes, agents immobiliers…). Pour les autres, elle est fortement recommandée." },
       { question: "Quelle différence avec la RC exploitation ?", answer: "La RC exploitation couvre les dommages liés à l'exploitation. La RC Pro couvre les dommages liés aux prestations fournies à vos clients." },
@@ -202,7 +202,7 @@ export const products: Product[] = [
       "Mutuelle collective pour vos salariés",
       "Déductible fiscalement selon statut",
     ],
-    requiredDocuments: ["Kbis ou SIREN", "Statut (TNS, gérant, salarié)", "Nombre de salariés si applicable", "Relevé de protection sociale actuelle"],
+    requiredDocuments: ["Pièce d'identité", "Profession et statut professionnel", "Justificatif de revenus ou dernier avis d'imposition", "Questionnaire médical (selon le contrat)"],
     faq: [
       { question: "Un TNS est-il bien couvert par la Sécu ?", answer: "Non, la protection sociale des travailleurs non-salariés est nettement inférieure à celle des salariés. Une prévoyance complémentaire est indispensable." },
       { question: "La mutuelle collective est-elle obligatoire ?", answer: "Oui, dès le premier salarié en CDI. L'employeur doit participer à hauteur de 50 % minimum de la cotisation." },

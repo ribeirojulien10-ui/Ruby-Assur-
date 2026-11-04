@@ -23,7 +23,7 @@ import {
   closeRequest,
   createRequest,
   deleteRequestPermanently,
-  ensureDefaultTemplates,
+  resetDefaultTemplates,
   listTemplates,
   reviewItem,
   type TemplateItemInput,
@@ -113,7 +113,7 @@ async function main() {
   } else console.log(`• Compte administrateur déjà présent (${ADMIN_EMAIL}).`);
 
   // 2) Modèles
-  ensureDefaultTemplates(ctx);
+  resetDefaultTemplates(ctx); // aligne les modèles initiaux sur lib/portal/default-templates.ts
   console.log(`✔ Modèles de checklists : ${listTemplates(ctx, seedAdmin).length}`);
 
   // 3) Dossiers de démonstration

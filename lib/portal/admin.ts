@@ -76,19 +76,32 @@ const cleanFormats = (f?: string[]): string[] => {
   return ok.length ? Array.from(new Set(ok)) : [...DEFAULT_FORMATS];
 };
 
+function insertDefaultTemplates(ctx: PortalContext) {
+  DEFAULT_TEMPLATES.forEach((t, ti) => {
+    const id = newId();
+    run(ctx.db, "INSERT INTO templates(id, insurance_slug, name, description, instructions, questions, is_default, sort, updated_at) VALUES (?,?,?,?,?,?,?,?,?)",
+      id, t.insuranceSlug, t.name, t.description, t.instructions ?? null, "[]", 1, ti, iso(ctx));
+    t.items.forEach((it, i) => {
+      run(ctx.db, "INSERT INTO template_items(id, template_id, label, instructions, required, sort, allowed_formats) VALUES (?,?,?,?,?,?,?)",
+        newId(), id, it.label, it.instructions ?? null, it.required ? 1 : 0, i, cleanFormats(it.formats).join(","));
+    });
+  });
+}
+
 export function ensureDefaultTemplates(ctx: PortalContext) {
   const count = get<{ c: number }>(ctx.db, "SELECT COUNT(*) AS c FROM templates")?.c ?? 0;
   if (count > 0) return;
+  tx(ctx.db, () => insertDefaultTemplates(ctx));
+}
+
+/**
+ * Remplace les modèles INITIAUX par la version courante de default-templates.ts.
+ * Les modèles créés ou dupliqués par Julien (is_default = 0) et les demandes déjà créées ne sont pas touchés.
+ */
+export function resetDefaultTemplates(ctx: PortalContext) {
   tx(ctx.db, () => {
-    DEFAULT_TEMPLATES.forEach((t, ti) => {
-      const id = newId();
-      run(ctx.db, "INSERT INTO templates(id, insurance_slug, name, description, instructions, questions, is_default, sort, updated_at) VALUES (?,?,?,?,?,?,?,?,?)",
-        id, t.insuranceSlug, t.name, t.description, t.instructions ?? null, "[]", 1, ti, iso(ctx));
-      t.items.forEach((it, i) => {
-        run(ctx.db, "INSERT INTO template_items(id, template_id, label, instructions, required, sort, allowed_formats) VALUES (?,?,?,?,?,?,?)",
-          newId(), id, it.label, it.instructions ?? null, it.required ? 1 : 0, i, cleanFormats(it.formats).join(","));
-      });
-    });
+    run(ctx.db, "DELETE FROM templates WHERE is_default = 1");
+    insertDefaultTemplates(ctx);
   });
 }
 

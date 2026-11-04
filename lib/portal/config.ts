@@ -1,7 +1,7 @@
 import path from "node:path";
 import { DEFAULT_LINK_TTL_DAYS, LINK_TTL_CHOICES } from "./constants";
 
-export { REJECT_REASONS, type RejectReason } from "./constants";
+export { ALL_FORMATS, DEFAULT_FORMATS, REJECT_REASONS, type FileFormat, type RejectReason } from "./constants";
 
 /**
  * Configuration du portail documentaire.
@@ -30,8 +30,3 @@ export const LIMITS = {
   /** Durées proposées dans l'interface. */
   linkTtlChoices: LINK_TTL_CHOICES,
 } as const;
-
-/** Formats acceptés (vérifiés sur le contenu réel du fichier, pas seulement l'extension). */
-export const ALL_FORMATS = ["pdf", "jpg", "jpeg", "png", "webp", "heic"] as const;
-export type FileFormat = (typeof ALL_FORMATS)[number];
-export const DEFAULT_FORMATS: FileFormat[] = ["pdf", "jpg", "jpeg", "png", "heic"];

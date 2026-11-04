@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import { products } from "@/lib/products";
+import { DEFAULT_TEMPLATES } from "@/lib/portal/default-templates";
 import { trackQuoteConversion } from "@/lib/ads";
 import { Paperclip, X } from "lucide-react";
 
@@ -25,10 +26,11 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
   const [submitError, setSubmitError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // Documents suggérés selon l'assurance choisie (et non plus toujours auto).
-  const selected = products.find(p => p.slug === form.insurance);
-  const docsHint = selected
-    ? `Joindre des documents (${selected.requiredDocuments.slice(0, 3).map(d => d.charAt(0).toLowerCase() + d.slice(1)).join(", ")}…)`
+  // Fichiers suggérés selon l'assurance choisie : uniquement de vrais documents (carte grise, RIB…),
+  // pas les informations à saisir (adresse, surface, profession…).
+  const fileNames = DEFAULT_TEMPLATES.find((t) => t.insuranceSlug === form.insurance)?.items.map((i) => i.label) ?? [];
+  const docsHint = fileNames.length
+    ? `Joindre des documents (${fileNames.slice(0, 3).map(d => (/^[A-Z]{2,}/.test(d) ? d : d.charAt(0).toLowerCase() + d.slice(1))).join(", ")}…)`
     : "Joindre des documents utiles à votre demande";
 
   function addFiles(incoming: FileList | null) {

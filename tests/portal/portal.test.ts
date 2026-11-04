@@ -476,3 +476,32 @@ describe("Limiteur de débit", () => {
     expect(rateLimit("k", 3, 1000, 2500)).toBe(true);
   });
 });
+
+describe("Modèles de documents initiaux", () => {
+  it("reprennent la liste de Julien et pointent tous vers une assurance existante", async () => {
+    const { DEFAULT_TEMPLATES } = await import("@/lib/portal/default-templates");
+    const { getProductBySlug } = await import("@/lib/products");
+    for (const t of DEFAULT_TEMPLATES) {
+      expect(getProductBySlug(t.insuranceSlug), t.name).toBeTruthy();
+      expect(t.items.length, t.name).toBeGreaterThan(0);
+    }
+    const names = DEFAULT_TEMPLATES.map((t) => t.name);
+    for (const n of ["Auto", "Moto", "Habitation", "Propriétaire non occupant (PNO)", "Mutuelle santé", "Prévoyance", "Multirisque professionnelle", "Responsabilité civile professionnelle", "Emprunteur", "Animaux", "Protection juridique"])
+      expect(names).toContain(n);
+    const labels = (n: string) => DEFAULT_TEMPLATES.find((t) => t.name === n)!.items.map((i) => i.label);
+    expect(labels("Auto")).toEqual(["Carte grise", "Permis de conduire", "Relevé d'information", "Pièce d'identité", "RIB"]);
+    expect(labels("Moto")).toContain("Permis A / A2 (ou justificatif de formation)");
+    expect(labels("Emprunteur")).toEqual(expect.arrayContaining(["Offre de prêt", "Tableau d'amortissement", "Justificatif de revenus"]));
+  });
+
+  it("le remplacement des modèles initiaux conserve les modèles personnels de Julien", async () => {
+    const { ensureDefaultTemplates, resetDefaultTemplates, saveTemplate, listTemplates } = await import("@/lib/portal/admin");
+    ensureDefaultTemplates(ctx);
+    saveTemplate(ctx, admin, { insuranceSlug: "rc-pro", name: "Mon modèle perso", items: [{ label: "Un document", required: true }] });
+    resetDefaultTemplates(ctx);
+    const all = listTemplates(ctx, admin);
+    expect(all.some((t) => t.name === "Mon modèle perso" && !t.isDefault)).toBe(true);
+    expect(all.filter((t) => t.isDefault).length).toBeGreaterThanOrEqual(14);
+    expect(all.filter((t) => t.isDefault && t.name === "Auto")).toHaveLength(1); // pas de doublon
+  });
+});
