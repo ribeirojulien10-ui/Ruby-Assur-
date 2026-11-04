@@ -4,18 +4,15 @@ import { allSlugs } from "@/lib/products";
 const baseUrl = "https://rubyassur.fr";
 
 // Pages statiques réellement indexables (liées dans la navigation).
-// Les redirections (assurance-auto, flotte-vtc, creation-entreprise) et
-// les doublons non liés (services, nos-assurances, confidentialite,
-// pourquoi-nous) sont volontairement exclus.
+// Exclus volontairement : redirections (assurance-auto, flotte-vtc,
+// creation-entreprise), doublons non liés (services, nos-assurances,
+// confidentialite, pourquoi-nous) et pages légales (peu de valeur SEO).
 const staticRoutes = [
   "",
   "/particuliers",
   "/professionnels",
   "/a-propos",
   "/contact",
-  "/mentions-legales",
-  "/politique-confidentialite",
-  "/reclamations",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
