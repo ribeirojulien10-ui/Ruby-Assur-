@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
-const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "ruby.assur@gmail.com";
+const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contact@rubyassur.fr";
 
 export default function ContactPage() {
   return (

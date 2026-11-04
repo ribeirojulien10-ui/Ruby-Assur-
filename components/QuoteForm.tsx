@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import { products } from "@/lib/products";
+import { trackQuoteConversion } from "@/lib/ads";
 import { Paperclip, X } from "lucide-react";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
@@ -74,6 +75,7 @@ export function QuoteForm({ defaultInsurance = "" }: { defaultInsurance?: string
       const res = await fetch("/api/quote", { method: "POST", body: fd });
       if (res.ok) {
         setSubmitted(true);
+        trackQuoteConversion(); // uniquement si le serveur a confirmé l'envoi du devis
       } else {
         setSubmitError("Une erreur est survenue. Réessayez ou appelez le 06 71 55 19 31.");
       }

@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Manrope } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -8,6 +7,7 @@ import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { Chatbot } from "@/components/Chatbot";
 import { JsonLd } from "@/components/JsonLd";
 import { Analytics } from "@vercel/analytics/react";
+import { GoogleTag } from "@/components/GoogleTag";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
@@ -39,13 +39,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${inter.variable} ${manrope.variable}`}>
       <head>
-        <Script async src="https://www.googletagmanager.com/gtag/js?id=AW-18231437121" strategy="afterInteractive" />
-        <Script id="google-analytics" strategy="afterInteractive">{`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'AW-18231437121');
-        `}</Script>
         <JsonLd />
       </head>
       <body className="font-body">
@@ -55,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <WhatsAppButton />
         <Chatbot />
         <Analytics />
+        <GoogleTag />
       </body>
     </html>
   );

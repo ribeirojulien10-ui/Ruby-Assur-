@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { CookieSettingsButton } from "./CookieSettingsButton";
 import { Phone, Mail, MapPin, Facebook } from "lucide-react";
 
 const phone = process.env.NEXT_PUBLIC_PHONE ?? "0671551931";
-const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "ruby.assur@gmail.com";
+const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contact@rubyassur.fr";
 
 const navLinks: [string, string][] = [
   ["Particuliers", "/particuliers"],
@@ -54,6 +55,7 @@ export function Footer() {
           {legalLinks.map(([l, h]) => (
             <Link key={h} href={h} className="block py-1 text-sm text-white/70 transition hover:text-white">{l}</Link>
           ))}
+          <CookieSettingsButton />
           <p className="mt-4 text-xs text-white/40">
             ORIAS 24007878 — SIREN 933 756 074<br />© {new Date().getFullYear()} Ruby Assur&apos;
           </p>
