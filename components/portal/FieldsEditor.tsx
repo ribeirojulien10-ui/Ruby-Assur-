@@ -10,6 +10,7 @@ const TYPES: { value: InfoField["type"]; label: string }[] = [
   { value: "number", label: "Nombre" },
   { value: "date", label: "Date" },
   { value: "choice", label: "Choix" },
+  { value: "persons", label: "Personnes (nom + naissance)" },
   { value: "tel", label: "Téléphone" },
   { value: "email", label: "E-mail" },
 ];

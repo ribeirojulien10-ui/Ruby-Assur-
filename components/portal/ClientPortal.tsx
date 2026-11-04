@@ -6,6 +6,7 @@ import { AlertCircle, CheckCircle2, CircleDashed, FileCheck2, FileText, Loader2,
 import { REJECT_REASONS } from "@/lib/portal/constants";
 import type { ClientItemView, ClientView } from "@/lib/portal/client";
 import { fmtBytes, fmtDate } from "@/lib/portal/ui";
+import { parsePersons } from "@/lib/portal/rules";
 import { Progress } from "./Progress";
 
 /**
@@ -238,6 +239,39 @@ function ItemCard({
   );
 }
 
+/** Liste de personnes (ex. bénéficiaires d'une mutuelle) : une ligne par personne, nom + date de naissance. */
+function PersonsInput({ id, value, onChange }: { id: string; value: string; onChange: (json: string) => void }) {
+  const rows = parsePersons(value);
+  const list = rows.length ? rows : [{ name: "", birth: "" }];
+  const emit = (next: { name: string; birth: string }[]) => onChange(next.some((p) => p.name || p.birth) ? JSON.stringify(next) : "");
+  return (
+    <div className="space-y-3">
+      {list.map((p, i) => (
+        <div key={i} className="grid items-end gap-2 sm:grid-cols-[1.6fr_1fr_auto]">
+          <div>
+            <label htmlFor={`${id}-n${i}`} className="mb-1 block text-[0.8rem] text-ink-muted">Personne {i + 1} — nom et prénom</label>
+            <input id={`${id}-n${i}`} value={p.name} onChange={(e) => emit(list.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))} className="field" />
+          </div>
+          <div>
+            <label htmlFor={`${id}-b${i}`} className="mb-1 block text-[0.8rem] text-ink-muted">Date de naissance</label>
+            <input id={`${id}-b${i}`} type="date" value={p.birth} onChange={(e) => emit(list.map((x, j) => (j === i ? { ...x, birth: e.target.value } : x)))} className="field" />
+          </div>
+          {list.length > 1 && (
+            <button type="button" aria-label={`Retirer la personne ${i + 1}`} onClick={() => emit(list.filter((_, j) => j !== i))} className="grid h-11 w-11 place-items-center rounded-full text-ink-muted transition hover:bg-danger-soft hover:text-danger">
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      ))}
+      {list.length < 8 && (
+        <button type="button" className="btn-outline btn-sm" onClick={() => emit([...list, { name: "", birth: "" }])}>
+          + Ajouter une personne
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** Informations à saisir (en plus des documents) : enregistrement automatique après chaque modification. */
 function InfoSection({ token, view }: { token: string; view: ClientView }) {
   const router = useRouter();
@@ -285,7 +319,7 @@ function InfoSection({ token, view }: { token: string; view: ClientView }) {
         {view.fields.map((f) => {
           const id = `info-${f.key}`;
           const v = values[f.key] ?? "";
-          const wide = f.type === "textarea";
+          const wide = f.type === "textarea" || f.type === "persons";
           return (
             <div key={f.key} className={wide ? "sm:col-span-2" : ""}>
               <label htmlFor={id} className="mb-1.5 block text-[0.88rem] font-semibold text-night">
@@ -293,7 +327,9 @@ function InfoSection({ token, view }: { token: string; view: ClientView }) {
                 {f.unit ? ` (${f.unit})` : ""}
                 {f.required ? <span className="text-danger"> *</span> : null}
               </label>
-              {f.type === "textarea" ? (
+              {f.type === "persons" ? (
+                <PersonsInput id={id} value={v} onChange={(json) => change(f.key, json)} />
+              ) : f.type === "textarea" ? (
                 <textarea id={id} rows={3} value={v} onChange={(e) => change(f.key, e.target.value)} className={base} />
               ) : f.type === "choice" ? (
                 <div role="radiogroup" aria-labelledby={id} className="flex flex-wrap gap-2">

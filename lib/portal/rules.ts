@@ -1,4 +1,4 @@
-import type { InfoField, ItemRow, ItemState, Question, RequestRow, RequestStatus } from "./types";
+import type { InfoField, ItemRow, Person, ItemState, Question, RequestRow, RequestStatus } from "./types";
 
 /** Règles métier PURES (sans accès base) : faciles à tester et sans effet de bord. */
 
@@ -65,9 +65,22 @@ export function answersOf(req: Pick<RequestRow, "questions" | "answers">): Answe
 
 export type Info = Record<string, string>;
 
+/** Lit la valeur d'un champ « personnes » (JSON) ; toute valeur invalide donne une liste vide. */
+export function parsePersons(raw: string | undefined): Person[] {
+  const v = parseJson<unknown>(raw, []);
+  return Array.isArray(v)
+    ? v
+        .filter((p): p is Person => !!p && typeof (p as Person).name === "string")
+        .map((p) => ({ name: p.name, birth: typeof p.birth === "string" ? p.birth : "" }))
+    : [];
+}
+
+const isFilled = (f: InfoField, info: Info): boolean =>
+  f.type === "persons" ? parsePersons(info[f.key]).some((p) => p.name.trim()) : !!(info[f.key] ?? "").trim();
+
 /** Informations OBLIGATOIRES encore vides. */
 export function missingInfo(fields: InfoField[], info: Info): InfoField[] {
-  return fields.filter((f) => f.required && !(info[f.key] ?? "").trim());
+  return fields.filter((f) => f.required && !isFilled(f, info));
 }
 
 export interface Progress {

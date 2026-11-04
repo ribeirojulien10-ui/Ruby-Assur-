@@ -24,6 +24,7 @@ import {
   unansweredQuestions,
   answersOf,
   missingInfo,
+  parsePersons,
   type Answers,
   type Info,
 } from "./rules";
@@ -165,6 +166,17 @@ export function saveInfo(ctx: PortalContext, token: string, values: Record<strin
   const info = parseJson<Info>(request.info, {});
   for (const f of fields) {
     if (!(f.key in values)) continue;
+    if (f.type === "persons") {
+      const raw = values[f.key];
+      const list = (Array.isArray(raw) ? raw : parsePersons(typeof raw === "string" ? raw : undefined))
+        .map((p) => ({ name: String((p as { name?: unknown }).name ?? "").trim().slice(0, 120), birth: String((p as { birth?: unknown }).birth ?? "").trim() }))
+        .filter((p) => p.name || p.birth)
+        .slice(0, 8);
+      for (const p of list) if (p.birth && !/^\d{4}-\d{2}-\d{2}$/.test(p.birth)) throw new PortalError("invalid_input", `« ${f.label} » : date de naissance invalide.`);
+      if (list.length) info[f.key] = JSON.stringify(list);
+      else delete info[f.key];
+      continue;
+    }
     let v = String(values[f.key] ?? "").trim().slice(0, f.type === "textarea" ? 2000 : 300);
     if (f.type === "number" && v && !/^-?\d+([.,]\d+)?$/.test(v)) throw new PortalError("invalid_input", `« ${f.label} » doit être un nombre.`);
     if (f.type === "date" && v && !/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new PortalError("invalid_input", `« ${f.label} » : date invalide.`);

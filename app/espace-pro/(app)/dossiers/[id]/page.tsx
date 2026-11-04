@@ -11,6 +11,7 @@ import { ReviewControls } from "@/components/portal/ReviewControls";
 import { ItemBadge, StatusBadge } from "@/components/portal/StatusBadge";
 import { requireAdmin } from "@/lib/auth-guard";
 import { getActiveLink, getRequestDetail, prepareReminder } from "@/lib/portal/admin";
+import { parsePersons } from "@/lib/portal/rules";
 import { REJECT_REASONS } from "@/lib/portal/config";
 import { defaultContext } from "@/lib/portal/context";
 import { ACTOR_LABEL, EVENT_LABEL, fmtBytes, fmtDateTime } from "@/lib/portal/ui";
@@ -76,9 +77,15 @@ export default async function DossierPage({ params }: { params: Promise<{ id: st
                 {d.fields.map((f) => {
                   const v = d.info[f.key];
                   return (
-                    <div key={f.key} className="border-t border-line py-3">
+                    <div key={f.key} className={`border-t border-line py-3 ${f.type === "persons" || f.type === "textarea" ? "sm:col-span-2" : ""}`}>
                       <dt className="text-[0.78rem] font-semibold uppercase tracking-[0.1em] text-ink-muted">{f.label}{f.required ? " *" : ""}</dt>
-                      <dd className={`mt-1 whitespace-pre-line text-[0.98rem] ${v ? "text-night" : "text-ink-faint"}`}>{v ? `${v}${f.unit ? ` ${f.unit}` : ""}` : "Non renseigné"}</dd>
+                      <dd className={`mt-1 whitespace-pre-line text-[0.98rem] ${v ? "text-night" : "text-ink-faint"}`}>
+                        {!v
+                          ? "Non renseigné"
+                          : f.type === "persons"
+                            ? parsePersons(v).map((p) => `${p.name}${p.birth ? ` — né(e) le ${new Date(p.birth).toLocaleDateString("fr-FR")}` : ""}`).join("\n")
+                            : `${v}${f.unit ? ` ${f.unit}` : ""}`}
+                      </dd>
                     </div>
                   );
                 })}

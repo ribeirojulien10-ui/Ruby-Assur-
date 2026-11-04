@@ -139,7 +139,7 @@ export function listTemplates(ctx: PortalContext, admin: AdminSession | null): T
   }));
 }
 
-const FIELD_TYPES = ["text", "textarea", "number", "date", "tel", "email", "choice"] as const;
+const FIELD_TYPES = ["text", "textarea", "number", "date", "tel", "email", "choice", "persons"] as const;
 function cleanFields(fields?: InfoField[]): InfoField[] {
   const seen = new Set<string>();
   return (fields ?? [])

@@ -609,3 +609,42 @@ describe("Case « première assurance » (relevé d'information)", () => {
       expect(DEFAULT_TEMPLATES.find((x) => x.name === n)!.items.find((i) => i.label === "Pièce d'identité")?.required, n).toBe(true);
   });
 });
+
+describe("Champ « personnes » (ex. bénéficiaires d'une mutuelle)", () => {
+  const fields = [{ key: "benef", label: "Bénéficiaires", type: "persons" as const, required: true }];
+
+  it("obligatoire : vide ou sans nom = manquant ; une personne nommée suffit", async () => {
+    const { saveInfo } = await import("@/lib/portal/client");
+    const { token } = newRequest(ctx, { fields });
+    expect(getClientView(ctx, token).infoMissing).toBe(1);
+    saveInfo(ctx, token, { benef: [{ name: "", birth: "1990-01-01" }] });
+    expect(getClientView(ctx, token).infoMissing).toBe(1); // date seule : toujours manquant
+    saveInfo(ctx, token, { benef: [{ name: "Personne Fictive", birth: "1990-01-01" }] });
+    expect(getClientView(ctx, token).infoMissing).toBe(0);
+  });
+
+  it("accepte la forme JSON, nettoie les lignes vides, plafonne à 8 personnes et refuse une date invalide", async () => {
+    const { saveInfo } = await import("@/lib/portal/client");
+    const { token } = newRequest(ctx, { fields });
+    saveInfo(ctx, token, { benef: JSON.stringify([{ name: "A", birth: "" }, { name: "", birth: "" }]) });
+    expect(JSON.parse(getClientView(ctx, token).info.benef)).toEqual([{ name: "A", birth: "" }]);
+    saveInfo(ctx, token, { benef: Array.from({ length: 20 }, (_, i) => ({ name: `P${i}`, birth: "" })) });
+    expect(JSON.parse(getClientView(ctx, token).info.benef)).toHaveLength(8);
+    expect(await code(() => saveInfo(ctx, token, { benef: [{ name: "A", birth: "12/05/1990" }] }))).toBe("invalid_input");
+    saveInfo(ctx, token, { benef: [] });
+    expect(getClientView(ctx, token).info.benef).toBeUndefined();
+  });
+});
+
+describe("Informations obligatoires des modèles initiaux", () => {
+  it("chaque modèle à informations indique au moins l'essentiel comme obligatoire (sauf négoce et décennale)", async () => {
+    const { DEFAULT_TEMPLATES } = await import("@/lib/portal/default-templates");
+    for (const t of DEFAULT_TEMPLATES) {
+      const fieldsOf = t.fields ?? [];
+      if (!fieldsOf.length || ["Négoce automobile", "Assurance décennale"].includes(t.name)) continue;
+      expect(fieldsOf.some((f) => f.required), t.name).toBe(true);
+    }
+    const hab = DEFAULT_TEMPLATES.find((t) => t.name === "Habitation")!;
+    expect(hab.fields!.filter((f) => f.required).map((f) => f.key)).toEqual(["adresse", "type-bien", "surface", "pieces", "statut"]);
+  });
+});

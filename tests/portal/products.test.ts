@@ -18,6 +18,7 @@ const sample = (f: InfoField): string => {
     case "tel": return "0600000000";
     case "email": return "fictif@example.invalid";
     case "textarea": return `${f.label} — texte fictif`;
+    case "persons": return JSON.stringify([{ name: "Personne Fictive", birth: "1990-05-12" }, { name: "Autre Fictive", birth: "2015-03-01" }]);
     default: return "Exemple fictif";
   }
 };
@@ -101,11 +102,28 @@ describe.each(DEFAULT_TEMPLATES.map((t) => [t.name, t] as const))("Produit : %s"
     report.push({
       produit: t.name,
       "documents (oblig./total)": `${t.items.filter((i) => i.required).length}/${t.items.length}`,
-      "infos à saisir": t.fields?.length ?? 0,
+      "infos à saisir (oblig.)": `${t.fields?.length ?? 0} (${(t.fields ?? []).filter((f) => f.required).length})`,
       "case/question": t.questions?.length ? t.questions.map((q) => q.type).join(",") : "—",
       "statut final": fiche.status,
     });
   });
+
+  const requiredFields = (t.fields ?? []).filter((f) => f.required);
+  if (requiredFields.length > 0) {
+    it(`les informations obligatoires (${requiredFields.map((f) => f.label).join(", ").slice(0, 80)}) empêchent la confirmation tant qu'elles manquent`, async () => {
+      const { id, token } = create();
+      const rows = itemsOf(ctx, id);
+      for (const it of getClientView(ctx, token).items.filter((i) => i.required)) await upload(ctx, token, rows.find((r) => r.label === it.label)!.id, "p.pdf", fakePdf(it.label));
+      // toutes les pièces sont là, mais pas les informations obligatoires
+      expect(getRequestDetail(ctx, admin, id).status).toBe("incomplete");
+      expect(getClientView(ctx, token).infoMissing).toBe(requiredFields.length);
+      expect(() => submitRequest(ctx, token)).toThrow();
+      // seules les obligatoires suffisent
+      saveInfo(ctx, token, Object.fromEntries(requiredFields.map((f) => [f.key, sample(f)])));
+      expect(getClientView(ctx, token).infoMissing).toBe(0);
+      expect(submitRequest(ctx, token)).toBe("to_review");
+    });
+  }
 
   if (t.questions?.some((q) => q.type === "checkbox")) {
     it("case « première assurance » : le relevé disparaît quand elle est cochée et revient si on la décoche", async () => {

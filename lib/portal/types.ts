@@ -17,11 +17,17 @@ export interface Question {
 export interface InfoField {
   key: string;
   label: string;
-  type: "text" | "textarea" | "number" | "date" | "tel" | "email" | "choice";
+  type: "text" | "textarea" | "number" | "date" | "tel" | "email" | "choice" | "persons";
   options?: string[]; // pour « choice »
   unit?: string; // ex. m²
   required?: boolean;
   hint?: string;
+}
+
+/** Valeur d'un champ « persons » (ex. bénéficiaires d'une mutuelle), stockée en JSON dans `info`. */
+export interface Person {
+  name: string;
+  birth: string;
 }
 
 export interface ItemRow {
