@@ -26,9 +26,24 @@ const homeFaq = [
   { question: "Que se passe-t-il en cas de sinistre ?", answer: "Ruby Assur' vous accompagne dans la déclaration et le suivi du sinistre auprès de votre assureur. Avoir un courtier à vos côtés simplifie considérablement les démarches." },
 ];
 
+// Texte strictement identique aux réponses affichées dans le composant FAQ.
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: homeFaq.map(({ question, answer }) => ({
+    "@type": "Question",
+    name: question,
+    acceptedAnswer: { "@type": "Answer", text: answer },
+  })),
+};
+
 export default function Home() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Hero */}
       <section className="relative isolate flex min-h-[70svh] items-start overflow-hidden bg-navy pt-6 pb-16 text-white sm:min-h-[calc(100svh-64px)] sm:pt-10 sm:pb-20">
         <Image
