@@ -5,8 +5,6 @@ import { TrustBadges } from "@/components/TrustBadges";
 import { FAQ } from "@/components/FAQ";
 import { BookingButton } from "@/components/BookingEmbed";
 import { PartnersScroll } from "@/components/PartnersScroll";
-import { ReviewsCarousel } from "@/components/ReviewsCarousel";
-import { HeroReviews, HeroReviewsMobile } from "@/components/HeroReviews";
 import { Home as HomeIcon, Building2, Shield, BarChart3, User, CheckCircle } from "lucide-react";
 import { getProductsByAudience } from "@/lib/products";
 
@@ -105,10 +103,13 @@ export default function Home() {
             <div className="mt-5">
               <TrustBadges />
             </div>
-            {/* Avis — tous écrans, inline sous les badges */}
-            <div className="mt-5">
-              <HeroReviewsMobile />
-            </div>
+            {/*
+              AVIS CLIENTS MASQUÉS TEMPORAIREMENT : les 10 témoignages (components/HeroReviews.tsx,
+              components/ReviewsCarousel.tsx) n'ont pas de source vérifiable. Ils sont conservés dans le
+              projet mais ne sont plus affichés tant que le propriétaire n'a pas confirmé leur authenticité.
+              Pour les réactiver : réimporter { HeroReviewsMobile } de "@/components/HeroReviews" et remettre
+              <div className="mt-5"><HeroReviewsMobile /></div> ici, sous <TrustBadges />.
+            */}
           </div>
         </div>
       </section>
