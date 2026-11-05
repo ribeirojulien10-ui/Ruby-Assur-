@@ -1,4 +1,4 @@
-import { DEFAULT_FORMATS } from "./constants";
+import { DEFAULT_FORMATS, PAPER_QUESTION_KEY } from "./constants";
 import type { InfoField, Question } from "./types";
 
 /**
@@ -41,7 +41,11 @@ const rib = (): DefaultItem =>
 
 const f = (key: string, label: string, type: InfoField["type"] = "text", extra: Partial<InfoField> = {}): InfoField => ({ key, label, type, ...extra });
 
-/** Case « première assurance » : décochée, le relevé d'information est demandé ; cochée, il ne l'est plus. */
+/** Message libre pour Ruby Assur' (par exemple si un document n'est pas disponible). */
+const message = (hint = "Facultatif : une précision, ou la raison si un document n'est pas disponible."): InfoField =>
+  f("message", "Message pour Ruby Assur'", "textarea", { hint });
+
+// ───────── Véhicules : documents obligatoires, relevé d'information sauf première assurance ─────────
 const FIRST_INSURANCE: Question = {
   key: "premiere_assurance",
   label: "C'est ma première assurance (je n'ai pas de relevé d'information)",
@@ -50,19 +54,38 @@ const FIRST_INSURANCE: Question = {
 const releve = (): DefaultItem => ({
   label: "Relevé d'information",
   required: true,
-  instructions: "À demander à votre assureur actuel ou précédent.",
+  instructions:
+    "Vous n'avez pas de relevé d'information ? Si c'est votre première assurance, cochez la case « C'est ma première assurance » en haut de page. Sinon, demandez-le à votre assureur actuel ou précédent, ou écrivez-nous un message ci-dessous.",
   conditionQuestion: "premiere_assurance",
   conditionEquals: "no",
 });
+const vehicleMessage = () =>
+  message("Facultatif : par exemple si vous avez du mal à obtenir votre relevé d'information.");
+
+// ───────── Habitation / PNO : mini questionnaire à remplir en ligne OU à imprimer ─────────
+const PAPER: Question = {
+  key: PAPER_QUESTION_KEY,
+  label: "Je préfère imprimer le questionnaire, le remplir à la main et le renvoyer en photo ou en scan",
+  type: "checkbox",
+};
+const online = (key: string, label: string, type: InfoField["type"] = "text", extra: Partial<InfoField> = {}): InfoField =>
+  f(key, label, type, { ...extra, condition: { question: PAPER_QUESTION_KEY, equals: "no" } });
+const paperDoc = (): DefaultItem => ({
+  label: "Questionnaire rempli (photo ou scan)",
+  required: true,
+  instructions: "Imprimez le questionnaire avec le bouton ci-dessus, remplissez-le à la main, puis envoyez-le ici en photo ou en scan.",
+  conditionQuestion: PAPER_QUESTION_KEY,
+  conditionEquals: "yes",
+});
 
 export const DEFAULT_TEMPLATES: DefaultTemplate[] = [
-  // ───────── Particuliers (règles de Julien : identité obligatoire, RIB facultatif au départ,
-  //           relevé d'information obligatoire sauf première assurance) ─────────
+  // ═════════ Particuliers ═════════
   {
     insuranceSlug: "assurance-auto-moto",
     name: "Auto",
     description: "Assurance auto.",
     questions: [FIRST_INSURANCE],
+    fields: [vehicleMessage()],
     items: [doc("Carte grise", true), doc("Permis de conduire", true, "Recto et verso, lisibles."), releve(), doc("Pièce d'identité", true), rib()],
   },
   {
@@ -70,61 +93,83 @@ export const DEFAULT_TEMPLATES: DefaultTemplate[] = [
     name: "Moto",
     description: "Assurance moto.",
     questions: [FIRST_INSURANCE],
+    fields: [vehicleMessage()],
     items: [doc("Carte grise", true), doc("Permis A / A2 (ou justificatif de formation)", true), releve(), doc("Pièce d'identité", true), rib()],
+  },
+  {
+    insuranceSlug: "assurance-auto-moto",
+    name: "Véhicule terrestre à moteur (VTM)",
+    description: "Véhicule terrestre à moteur (quad, buggy, engin…).",
+    questions: [FIRST_INSURANCE],
+    fields: [vehicleMessage()],
+    items: [doc("Carte grise", true), doc("Permis de conduire", true, "Recto et verso, lisibles."), releve(), doc("Pièce d'identité", true), rib()],
   },
   {
     insuranceSlug: "assurance-habitation",
     name: "Habitation",
     description: "Assurance habitation.",
+    questions: [PAPER],
     fields: [
-      f("adresse", "Adresse complète du logement", "textarea", { required: true }),
-      f("type-bien", "Type de bien", "choice", { options: ["Maison", "Appartement"], required: true }),
-      f("surface", "Surface habitable", "number", { unit: "m²", required: true }),
-      f("pieces", "Nombre de pièces principales", "number", { required: true }),
-      f("annee", "Année de construction (approximative)", "number"),
-      f("statut", "Vous êtes", "choice", { options: ["Locataire", "Propriétaire occupant"], required: true }),
-      f("commentaires", "Commentaires complémentaires", "textarea"),
+      online("adresse", "Adresse complète du logement", "textarea", { required: true }),
+      online("type-bien", "Type de bien", "choice", { options: ["Maison", "Appartement"], required: true }),
+      online("surface", "Surface habitable", "number", { unit: "m²", required: true }),
+      online("pieces", "Nombre de pièces principales", "number", { required: true }),
+      online("statut", "Vous êtes", "choice", { options: ["Locataire", "Propriétaire occupant"], required: true }),
+      online("annee", "Année de construction (approximative)", "number"),
+      online("commentaires", "Commentaires complémentaires", "textarea"),
     ],
-    items: [doc("Pièce d'identité", true), rib()],
+    items: [doc("Pièce d'identité", true), paperDoc(), rib()],
   },
   {
     insuranceSlug: "assurance-habitation",
     name: "Propriétaire non occupant (PNO)",
     description: "Assurance propriétaire non occupant.",
+    questions: [PAPER],
     fields: [
-      f("adresse", "Adresse complète du bien", "textarea", { required: true }),
-      f("type-bien", "Type de bien", "choice", { options: ["Maison", "Appartement"], required: true }),
-      f("surface", "Surface habitable", "number", { unit: "m²", required: true }),
-      f("pieces", "Nombre de pièces principales", "number", { required: true }),
-      f("usage", "Usage du logement", "choice", { options: ["Logement loué", "Vacant", "Résidence secondaire"], required: true }),
-      f("location", "Type de location", "choice", { options: ["Location nue", "Location meublée"] }),
-      f("locataires", "Informations sur les éventuels locataires", "textarea"),
-      f("commentaires", "Commentaires complémentaires", "textarea"),
+      online("adresse", "Adresse complète du bien", "textarea", { required: true }),
+      online("type-bien", "Type de bien", "choice", { options: ["Maison", "Appartement"], required: true }),
+      online("surface", "Surface habitable", "number", { unit: "m²", required: true }),
+      online("pieces", "Nombre de pièces principales", "number", { required: true }),
+      online("usage", "Usage du logement", "choice", { options: ["Logement loué", "Vacant", "Résidence secondaire"], required: true }),
+      online("location", "Type de location", "choice", { options: ["Location nue", "Location meublée"] }),
+      online("locataires", "Informations sur les éventuels locataires", "textarea"),
     ],
-    items: [doc("Pièce d'identité", true), rib()],
+    items: [doc("Pièce d'identité", true), paperDoc(), rib()],
   },
   {
     insuranceSlug: "mutuelle-sante",
     name: "Mutuelle santé",
-    description: "Mutuelle santé.",
+    description: "Mutuelle santé (assuré, conjoint et enfants possibles).",
+    questions: [
+      { key: "ajout_conjoint", label: "J'ajoute mon conjoint ou partenaire", type: "checkbox" },
+      { key: "ajout_enfants", label: "J'ajoute un ou plusieurs enfants", type: "checkbox" },
+    ],
     fields: [
-      f("contrat", "Type de contrat", "choice", { options: ["Individuel", "Couple", "Famille"], required: true }),
-      f("beneficiaires", "Bénéficiaires (nom, prénom et date de naissance de chacun)", "persons", { required: true }),
-      f("statut", "Statut", "choice", { options: ["Salarié", "Indépendant", "Retraité", "Sans activité", "Étudiant", "Autre"] }),
-      f("cp", "Code postal de résidence"),
-      f("commune", "Commune de résidence"),
-      f("familiale", "Situation familiale"),
+      f("statut", "Votre statut", "choice", { options: ["Salarié", "Indépendant", "Retraité", "Sans activité", "Étudiant", "Autre"], required: true }),
+      f("naissance", "Votre date de naissance", "date", { required: true }),
+      f("cp", "Code postal de résidence", "text", { required: true }),
+      f("commune", "Commune de résidence", "text", { required: true }),
+      f("conjoint", "Conjoint ou partenaire", "persons", { required: true, birthRequired: true, max: 1, condition: { question: "ajout_conjoint", equals: "yes" } }),
+      f("enfants", "Enfants", "persons", { required: true, birthRequired: true, max: 8, condition: { question: "ajout_enfants", equals: "yes" } }),
       f("effet", "Date souhaitée de prise d'effet", "date"),
       f("mutuelle-actuelle", "Mutuelle actuelle", "choice", { options: ["Oui", "Non"] }),
     ],
-    items: [doc("Pièce d'identité", true), doc("Attestation de droits Sécurité sociale", true), rib()],
+    items: [doc("Pièce d'identité (CNI)", true), doc("Attestation de droits Sécurité sociale", true), rib()],
   },
   {
+    // Produit DÉCLARATIF : aucun document, uniquement un questionnaire.
     insuranceSlug: "assurance-animaux",
     name: "Animaux",
-    description: "Assurance chien / chat.",
-    fields: [f("naissance", "Date de naissance de l'animal", "date", { required: true }), f("race", "Race", "text", { required: true })],
-    items: [doc("Identification de l'animal (puce ou tatouage)", true), doc("Carnet de santé", true), rib()],
+    description: "Assurance chien / chat (questionnaire seul, sans document).",
+    fields: [
+      f("nom", "Nom de l'animal", "text", { required: true }),
+      f("espece", "Espèce", "choice", { options: ["Chien", "Chat"], required: true }),
+      f("race", "Race", "text", { required: true }),
+      f("naissance", "Date de naissance de l'animal", "date", { required: true }),
+      f("identification", "Type d'identification", "choice", { options: ["Puce électronique", "Tatouage", "Aucune"], required: true }),
+      f("numero", "Numéro d'identification", "text", { hint: "Facultatif : numéro de puce ou de tatouage." }),
+    ],
+    items: [],
   },
   {
     insuranceSlug: "assurance-emprunteur",
@@ -140,12 +185,12 @@ export const DEFAULT_TEMPLATES: DefaultTemplate[] = [
     ],
   },
 
-  // ───────── Professionnels (liste fournie par Julien) ─────────
+  // ═════════ Professionnels : documents obligatoires + message possible ═════════
   {
     insuranceSlug: "sante-prevoyance-pro",
     name: "Prévoyance",
     description: "Prévoyance.",
-    fields: [f("profession", "Profession", "text", { required: true }), f("statut", "Statut professionnel", "text", { required: true })],
+    fields: [f("profession", "Profession", "text", { required: true }), f("statut", "Statut professionnel", "text", { required: true }), message()],
     items: [
       doc("Pièce d'identité", true),
       doc("Justificatif de revenus ou dernier avis d'imposition", true),
@@ -162,6 +207,7 @@ export const DEFAULT_TEMPLATES: DefaultTemplate[] = [
       f("ca", "Chiffre d'affaires", "text", { unit: "€" }),
       f("effectif", "Effectif", "number"),
       f("superficie", "Superficie des locaux", "number", { unit: "m²" }),
+      message(),
     ],
     items: [doc("Kbis ou extrait SIREN", true), rib()],
   },
@@ -173,6 +219,7 @@ export const DEFAULT_TEMPLATES: DefaultTemplate[] = [
       f("activite", "Description précise de l'activité", "textarea", { required: true }),
       f("ca", "Chiffre d'affaires", "text", { unit: "€" }),
       f("effectif", "Effectif", "number"),
+      message(),
     ],
     items: [doc("Kbis ou extrait SIREN", true), doc("Antécédents d'assurance et de sinistres", true)],
   },
@@ -180,16 +227,14 @@ export const DEFAULT_TEMPLATES: DefaultTemplate[] = [
     insuranceSlug: "autres-risques-pro",
     name: "Protection juridique",
     description: "Protection juridique (rattachée à « Autres risques »).",
-    fields: [f("situation", "Votre activité ou situation personnelle (selon le contrat)", "textarea", { required: true })],
+    fields: [f("situation", "Votre activité ou situation personnelle (selon le contrat)", "textarea", { required: true }), message()],
     items: [doc("Pièce d'identité", true)],
   },
-
-  // ───────── Inchangés (non concernés par la liste de Julien) ─────────
   {
     insuranceSlug: "negoce-automobile",
     name: "Négoce automobile",
     description: "Pièces courantes pour une assurance de négociant automobile.",
-    fields: [f("parc", "Surface du parc automobile", "number", { unit: "m²" })],
+    fields: [f("parc", "Surface du parc automobile", "number", { unit: "m²" }), message()],
     items: [
       doc("Kbis", true),
       doc("Carte professionnelle de commerçant en véhicules", true),
@@ -201,7 +246,7 @@ export const DEFAULT_TEMPLATES: DefaultTemplate[] = [
     insuranceSlug: "assurance-decennale",
     name: "Assurance décennale",
     description: "Pièces courantes pour une assurance décennale.",
-    fields: [f("ca", "Chiffre d'affaires N-1 ou prévisionnel", "text", { unit: "€" })],
+    fields: [f("ca", "Chiffre d'affaires N-1 ou prévisionnel", "text", { unit: "€" }), message()],
     items: [
       doc("Kbis ou extrait SIREN", true),
       doc("Qualification professionnelle (Qualibat, RGE…)", true),
@@ -213,7 +258,7 @@ export const DEFAULT_TEMPLATES: DefaultTemplate[] = [
     insuranceSlug: "autres-risques-pro",
     name: "Autres risques professionnels",
     description: "Pièces courantes pour un risque professionnel spécifique.",
-    fields: [f("activite", "Description détaillée de l'activité", "textarea", { required: true }), f("ca", "Chiffre d'affaires N-1", "text", { unit: "€" })],
+    fields: [f("activite", "Description détaillée de l'activité", "textarea", { required: true }), f("ca", "Chiffre d'affaires N-1", "text", { unit: "€" }), message()],
     items: [
       doc("Kbis ou extrait SIREN", true),
       doc("Contrats en cours (si résiliation)", false),

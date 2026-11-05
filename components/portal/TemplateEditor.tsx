@@ -85,11 +85,11 @@ export function TemplateEditor({ template, insurances }: { template: TemplateVie
 
       <div>
         <p className="text-[0.85rem] font-semibold text-night">Informations que le client peut saisir</p>
-        <div className="mt-2"><FieldsEditor fields={fields} onChange={setFields} /></div>
+        <div className="mt-2"><FieldsEditor fields={fields} onChange={setFields} questions={questions} /></div>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="button" className="btn-primary btn-sm" disabled={pending || !name.trim() || rows.length === 0} onClick={save}><Save className="h-4 w-4" aria-hidden="true" /> Enregistrer</button>
+        <button type="button" className="btn-primary btn-sm" disabled={pending || !name.trim() || (rows.length === 0 && fields.length === 0)} onClick={save}><Save className="h-4 w-4" aria-hidden="true" /> Enregistrer</button>
         {template && !template.isDefault && (
           <button type="button" className="btn-outline btn-sm !text-danger" disabled={pending} onClick={() => { if (window.confirm("Supprimer ce modèle ? Les demandes déjà créées ne sont pas affectées.")) start(async () => { const r = await deleteTemplateAction(template.id); if (!r.ok) setMsg({ ok: false, text: r.error }); }); }}>Supprimer le modèle</button>
         )}

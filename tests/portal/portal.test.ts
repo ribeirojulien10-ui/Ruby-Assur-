@@ -493,7 +493,7 @@ describe("Modèles de documents initiaux", () => {
     const { getProductBySlug } = await import("@/lib/products");
     for (const t of DEFAULT_TEMPLATES) {
       expect(getProductBySlug(t.insuranceSlug), t.name).toBeTruthy();
-      expect(t.items.length, t.name).toBeGreaterThan(0);
+      expect(t.items.length + (t.fields?.length ?? 0), t.name).toBeGreaterThan(0);
     }
     const names = DEFAULT_TEMPLATES.map((t) => t.name);
     for (const n of ["Auto", "Moto", "Habitation", "Propriétaire non occupant (PNO)", "Mutuelle santé", "Prévoyance", "Multirisque professionnelle", "Responsabilité civile professionnelle", "Emprunteur", "Animaux", "Protection juridique"])
@@ -606,7 +606,7 @@ describe("Case « première assurance » (relevé d'information)", () => {
       if (ribItem) expect(ribItem.required, `RIB facultatif (${t.name})`).toBe(false);
     }
     for (const n of ["Auto", "Moto", "Habitation", "Propriétaire non occupant (PNO)", "Mutuelle santé", "Emprunteur", "Prévoyance", "Protection juridique"])
-      expect(DEFAULT_TEMPLATES.find((x) => x.name === n)!.items.find((i) => i.label === "Pièce d'identité")?.required, n).toBe(true);
+      expect(DEFAULT_TEMPLATES.find((x) => x.name === n)!.items.find((i) => i.label.startsWith("Pièce d'identité"))?.required, n).toBe(true);
   });
 });
 
@@ -641,7 +641,7 @@ describe("Informations obligatoires des modèles initiaux", () => {
     const { DEFAULT_TEMPLATES } = await import("@/lib/portal/default-templates");
     for (const t of DEFAULT_TEMPLATES) {
       const fieldsOf = t.fields ?? [];
-      if (!fieldsOf.length || ["Négoce automobile", "Assurance décennale"].includes(t.name)) continue;
+      if (!fieldsOf.length || ["Négoce automobile", "Assurance décennale", "Auto", "Moto", "Véhicule terrestre à moteur (VTM)"].includes(t.name)) continue;
       expect(fieldsOf.some((f) => f.required), t.name).toBe(true);
     }
     const hab = DEFAULT_TEMPLATES.find((t) => t.name === "Habitation")!;

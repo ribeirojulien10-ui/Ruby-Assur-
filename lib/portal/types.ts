@@ -22,6 +22,12 @@ export interface InfoField {
   unit?: string; // ex. m²
   required?: boolean;
   hint?: string;
+  /** Champ affiché (et obligatoire) seulement selon la réponse à une question / case à cocher. */
+  condition?: { question: string; equals: "yes" | "no" };
+  /** « persons » : date de naissance obligatoire pour chaque personne. */
+  birthRequired?: boolean;
+  /** « persons » : nombre maximal de personnes (8 par défaut). */
+  max?: number;
 }
 
 /** Valeur d'un champ « persons » (ex. bénéficiaires d'une mutuelle), stockée en JSON dans `info`. */

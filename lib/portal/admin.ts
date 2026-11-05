@@ -25,6 +25,7 @@ import {
   slugifyKey,
   answersOf,
   missingInfo,
+  visibleFields,
   type Answers,
   type Info,
 } from "./rules";
@@ -157,14 +158,18 @@ function cleanFields(fields?: InfoField[]): InfoField[] {
         ...(f.unit ? { unit: f.unit.slice(0, 12) } : {}),
         ...(f.required ? { required: true } : {}),
         ...(f.hint ? { hint: f.hint.slice(0, 200) } : {}),
+        ...(f.condition?.question ? { condition: { question: f.condition.question, equals: f.condition.equals === "no" ? "no" : "yes" } } : {}),
+        ...(type === "persons" && f.birthRequired ? { birthRequired: true } : {}),
+        ...(type === "persons" && f.max ? { max: Math.min(Math.max(1, Math.floor(f.max)), 8) } : {}),
       } as InfoField;
     });
 }
 const cleanQuestions = (qs?: Question[]): Question[] =>
   (qs ?? []).filter((q) => q.label.trim()).map((q) => ({ key: q.key || slugifyKey(q.label), label: q.label.trim(), type: q.type === "checkbox" ? "checkbox" : "yesno" }));
 
-function validateItems(items: TemplateItemInput[], questions: Question[]) {
-  if (!items.length) throw new PortalError("invalid_input", "Au moins une pièce est nécessaire.");
+function validateItems(items: TemplateItemInput[], questions: Question[], fieldsCount = 0) {
+  // Un produit « déclaratif » (ex. animaux) peut n'avoir aucun document, à condition d'avoir un questionnaire.
+  if (!items.length && !fieldsCount) throw new PortalError("invalid_input", "Au moins une pièce ou une information à saisir est nécessaire.");
   const keys = new Set(questions.map((q) => q.key));
   for (const it of items) {
     if (!it.label?.trim()) throw new PortalError("invalid_input", "Chaque pièce doit avoir un nom.");
@@ -179,7 +184,7 @@ export function saveTemplate(ctx: PortalContext, admin: AdminSession | null, inp
   if (!input.name?.trim()) throw new PortalError("invalid_input", "Nom du modèle requis.");
   const questions = cleanQuestions(input.questions);
   const fields = cleanFields(input.fields);
-  validateItems(input.items, questions);
+  validateItems(input.items, questions, fields.length);
   return tx(ctx.db, () => {
     const id = input.id ?? newId();
     if (input.id) {
@@ -256,7 +261,7 @@ export function createRequest(ctx: PortalContext, admin: AdminSession | null, in
   if (!product) throw new PortalError("invalid_input", "Assurance inconnue.");
   const questions = cleanQuestions(input.questions);
   const fields = cleanFields(input.fields);
-  validateItems(input.items, questions);
+  validateItems(input.items, questions, fields.length);
   const ttl = input.linkTtlDays ?? LIMITS.defaultLinkTtlDays;
   if (!(ttl >= 1 && ttl <= 365)) throw new PortalError("invalid_input", "Durée de validité invalide.");
 
@@ -369,7 +374,7 @@ function toListRow(ctx: PortalContext, r: RequestRow & { full_name: string }): R
     toReviewCount: p.toReview.length,
     toReplaceCount: p.toReplace.length,
     missingCount: p.missing.length,
-    infoMissingCount: missingInfo(parseJson<InfoField[]>(r.fields, []), parseJson<Info>(r.info, {})).length,
+    infoMissingCount: missingInfo(parseJson<InfoField[]>(r.fields, []), parseJson<Info>(r.info, {}), answers).length,
     lastClientActivityAt: get<{ t: string | null }>(ctx.db, "SELECT MAX(created_at) AS t FROM events WHERE request_id = ? AND actor = 'client'", r.id)?.t ?? null,
     isDemo: !!r.is_demo,
   };
@@ -477,9 +482,9 @@ export function getRequestDetail(ctx: PortalContext, admin: AdminSession | null,
     progress,
     questions: parseJson<Question[]>(request.questions, []),
     answers,
-    fields: parseJson<InfoField[]>(request.fields, []),
+    fields: visibleFields(parseJson<InfoField[]>(request.fields, []), answers),
     info: parseJson<Info>(request.info, {}),
-    infoMissing: missingInfo(parseJson<InfoField[]>(request.fields, []), parseJson<Info>(request.info, {})),
+    infoMissing: missingInfo(parseJson<InfoField[]>(request.fields, []), parseJson<Info>(request.info, {}), answers),
     events: all<EventRow>(ctx.db, "SELECT * FROM events WHERE request_id = ? ORDER BY created_at DESC, rowid DESC", id),
     reminders: all(ctx.db, "SELECT id, channel, missing_count, created_at FROM reminders WHERE request_id = ? ORDER BY created_at DESC", id),
   };

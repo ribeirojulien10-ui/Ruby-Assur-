@@ -242,7 +242,7 @@ export function NewRequestForm({
       <section className={card} aria-labelledby="s3b">
         <h2 id="s3b" className="display text-display-sm text-night"><span className="mr-2 text-champagne-deep">3 bis.</span>Informations à saisir par le client</h2>
         <p className="mt-1 text-[0.9rem] text-ink-muted">En plus des documents, le client peut renseigner ces informations (adresse, surface, profession…). Facultatif.</p>
-        <div className="mt-4"><FieldsEditor fields={fields} onChange={setFields} /></div>
+        <div className="mt-4"><FieldsEditor fields={fields} onChange={setFields} questions={questions} /></div>
       </section>
 
       {/* 4. Options */}
@@ -264,7 +264,7 @@ export function NewRequestForm({
 
       {error && <p role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-[0.92rem] text-danger">{error}</p>}
       <div className="flex flex-wrap items-center gap-4">
-        <button type="submit" disabled={pending || rows.length === 0} className="btn-primary">{pending ? "Création…" : "Créer la demande et générer le lien"}</button>
+        <button type="submit" disabled={pending || (rows.length === 0 && fields.length === 0)} className="btn-primary">{pending ? "Création…" : "Créer la demande et générer le lien"}</button>
         <p className="text-[0.85rem] text-ink-muted">{rows.filter((r) => r.required).length} pièce(s) obligatoire(s) sur {rows.length}</p>
       </div>
     </form>

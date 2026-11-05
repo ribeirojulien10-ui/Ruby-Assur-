@@ -17,3 +17,10 @@ export type RejectReason = keyof typeof REJECT_REASONS;
 export const ALL_FORMATS = ["pdf", "jpg", "jpeg", "png", "webp", "heic"] as const;
 export type FileFormat = (typeof ALL_FORMATS)[number];
 export const DEFAULT_FORMATS: FileFormat[] = ["pdf", "jpg", "jpeg", "png", "heic"];
+
+/**
+ * Convention : une case à cocher de clé « questionnaire_papier » propose au client d'IMPRIMER le questionnaire,
+ * de le remplir à la main et de le renvoyer en photo ou scan. Cochée, les champs conditionnés par « non » disparaissent
+ * et la pièce conditionnée par « oui » (le questionnaire rempli) devient obligatoire.
+ */
+export const PAPER_QUESTION_KEY = "questionnaire_papier";

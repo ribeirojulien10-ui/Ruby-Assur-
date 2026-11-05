@@ -16,7 +16,7 @@ const TYPES: { value: InfoField["type"]; label: string }[] = [
 ];
 
 /** Éditeur des informations que le client peut saisir (aucun code à modifier). */
-export function FieldsEditor({ fields, onChange }: { fields: InfoField[]; onChange: (f: InfoField[]) => void }) {
+export function FieldsEditor({ fields, onChange, questions = [] }: { fields: InfoField[]; onChange: (f: InfoField[]) => void; questions?: { key: string; label: string; type?: "yesno" | "checkbox" }[] }) {
   const patch = (i: number, p: Partial<InfoField>) => onChange(fields.map((f, j) => (j === i ? { ...f, ...p } : f)));
   return (
     <div>
@@ -44,6 +44,30 @@ export function FieldsEditor({ fields, onChange }: { fields: InfoField[]; onChan
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
+            {f.type === "persons" && (
+              <div className="mt-2 flex flex-wrap items-center gap-4 text-[0.85rem] text-ink-soft">
+                <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.birthRequired} onChange={(e) => patch(i, { birthRequired: e.target.checked })} className="h-4 w-4 accent-night" /> Date de naissance obligatoire</label>
+                <label className="flex items-center gap-2">Maximum
+                  <input type="number" min={1} max={8} value={f.max ?? 8} onChange={(e) => patch(i, { max: Number(e.target.value) || 8 })} className="field !w-20 !py-1.5 text-[0.85rem]" />
+                </label>
+              </div>
+            )}
+            {questions.length > 0 && (
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[0.82rem] text-ink-muted">
+                Afficher seulement si
+                <select value={f.condition?.question ?? ""} onChange={(e) => patch(i, { condition: e.target.value ? { question: e.target.value, equals: f.condition?.equals ?? "yes" } : undefined })} className="field !w-auto !py-1 text-[0.82rem]" aria-label="Condition d'affichage">
+                  <option value="">— toujours —</option>
+                  {questions.map((q) => <option key={q.key} value={q.key}>{q.label}</option>)}
+                </select>
+                {f.condition && (
+                  <select value={f.condition.equals} onChange={(e) => patch(i, { condition: { question: f.condition!.question, equals: e.target.value as "yes" | "no" } })} className="field !w-auto !py-1 text-[0.82rem]" aria-label="Valeur attendue">
+                    {questions.find((q) => q.key === f.condition!.question)?.type === "checkbox"
+                      ? (<><option value="yes">case cochée</option><option value="no">case non cochée</option></>)
+                      : (<><option value="yes">oui</option><option value="no">non</option></>)}
+                  </select>
+                )}
+              </div>
+            )}
             {f.type === "choice" && (
               <input
                 value={(f.options ?? []).join(", ")}

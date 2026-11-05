@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { DatabaseSync } from "node:sqlite";
+import type { DatabaseSync } from "node:sqlite";
 import { dataDir } from "./config";
 
 /**
@@ -166,7 +166,10 @@ function addColumnIfMissing(db: Db, table: string, column: string, ddl: string) 
 
 export function openDatabase(file: string): Db {
   if (file !== ":memory:") fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
-  const db = new DatabaseSync(file);
+  // Chargement paresseux : le module n'est lu que si le portail est réellement utilisé
+  // (évite tout échec au build ou en production quand le portail est désactivé).
+  const { DatabaseSync: Sqlite } = process.getBuiltinModule("node:sqlite") as typeof import("node:sqlite");
+  const db = new Sqlite(file);
   db.exec("PRAGMA journal_mode = WAL;");
   db.exec("PRAGMA foreign_keys = ON;");
   db.exec("PRAGMA busy_timeout = 5000;");

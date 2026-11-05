@@ -30,7 +30,7 @@ export const products: Product[] = [
       "Tous niveaux de couverture : tiers, intermédiaire, tous risques",
       "Résiliation à tout moment (loi Hamon)",
     ],
-    requiredDocuments: ["Carte grise du véhicule", "Permis de conduire (permis A / A2 ou justificatif de formation pour une moto)", "Relevé d'information", "Pièce d'identité", "RIB"],
+    requiredDocuments: ["Carte grise du véhicule", "Permis de conduire (permis A / A2 ou justificatif de formation pour une moto)", "Relevé d'information (si c'est votre première assurance, cochez simplement la case : vous n'en avez pas besoin)", "Pièce d'identité", "RIB (seulement si vous acceptez le devis)", "Moto, quad, buggy et autres véhicules terrestres à moteur : mêmes pièces"],
     faq: [
       { question: "J'ai un malus élevé, puis-je quand même être assuré ?", answer: "Oui. Ruby Assur' travaille avec des compagnies spécialisées dans les profils à risque. Même avec un coefficient supérieur à 1,50, des solutions existent." },
       { question: "Qu'est-ce que l'assurance temporaire ?", answer: "C'est un contrat à durée courte (1 à 31 jours) utile pour un déplacement ponctuel, un test de véhicule ou un prêt entre particuliers. Il n'impacte pas votre bonus/malus principal." },
@@ -53,7 +53,7 @@ export const products: Product[] = [
       "Garantie relogement d'urgence",
       "Résiliation facilitée en cas de déménagement",
     ],
-    requiredDocuments: ["Pièce d'identité", "Adresse du logement", "Surface et nombre de pièces", "Statut (propriétaire ou locataire)", "RIB", "Pour un bien loué (PNO) : usage du logement et informations sur les éventuels locataires"],
+    requiredDocuments: ["Pièce d'identité", "Mini-questionnaire sur le logement (adresse, surface, pièces, statut) à remplir en ligne, ou à imprimer puis nous renvoyer en photo", "RIB (seulement si vous acceptez le devis)", "Pour un bien loué (PNO) : usage du logement et informations sur les éventuels locataires"],
     faq: [
       { question: "Qu'est-ce que la PNO ?", answer: "L'assurance Propriétaire Non Occupant couvre un logement que vous louez ou laissez vacant. Elle protège votre responsabilité en tant que propriétaire, même si votre locataire est assuré." },
       { question: "L'assurance scolaire est-elle obligatoire ?", answer: "Elle n'est pas légalement obligatoire pour les activités scolaires obligatoires, mais elle est fortement conseillée et souvent demandée pour les activités périscolaires et sorties." },
@@ -74,7 +74,7 @@ export const products: Product[] = [
       "Remboursements optique et dentaire renforcés",
       "Délais de carence négociés",
     ],
-    requiredDocuments: ["Pièce d'identité", "Attestation de droits Sécurité sociale", "RIB", "Coordonnées et date de naissance des bénéficiaires"],
+    requiredDocuments: ["Pièce d'identité (CNI)", "Statut (salarié, indépendant, retraité…)", "Attestation de droits Sécurité sociale", "Lieu de résidence", "Conjoint et enfants à assurer (facultatif), avec leur date de naissance", "RIB (seulement si vous acceptez le devis)"],
     faq: [
       { question: "Quelle différence entre mutuelle et prévoyance ?", answer: "La mutuelle rembourse vos frais de santé (médecin, pharmacie, optique…). La prévoyance vous protège en cas d'arrêt de travail, d'invalidité ou de décès." },
       { question: "Puis-je inclure mes enfants dans mon contrat ?", answer: "Oui, la plupart des contrats permettent d'ajouter des ayants droit (conjoint, enfants) avec une cotisation adaptée." },
@@ -95,7 +95,7 @@ export const products: Product[] = [
       "Responsabilité civile incluse (selon formule)",
       "Formules adaptées à l'âge et à la race",
     ],
-    requiredDocuments: ["Identification de l'animal (puce ou tatouage)", "Date de naissance et race", "Carnet de santé", "RIB"],
+    requiredDocuments: ["Questionnaire en ligne uniquement, sans document : nom, espèce, race, date de naissance, type d'identification (puce ou tatouage) et numéro"],
     faq: [
       { question: "À partir de quel âge peut-on assurer son animal ?", answer: "La plupart des contrats acceptent les animaux dès 2 mois. Certains assureurs posent une limite d'âge à l'entrée (souvent 8-10 ans)." },
       { question: "Les maladies préexistantes sont-elles couvertes ?", answer: "Généralement non. Les conditions antérieures à la souscription sont souvent exclues. Il est conseillé d'assurer son animal le plus tôt possible." },

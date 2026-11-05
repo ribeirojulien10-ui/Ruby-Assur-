@@ -1,5 +1,6 @@
 import { getProductBySlug } from "@/lib/products";
 import { LIMITS } from "./config";
+import { PAPER_QUESTION_KEY } from "./constants";
 import {
   deleteFileRecord,
   getFiles,
@@ -25,6 +26,7 @@ import {
   answersOf,
   missingInfo,
   parsePersons,
+  visibleFields,
   type Answers,
   type Info,
 } from "./rules";
@@ -85,6 +87,8 @@ export interface ClientView {
   answers: Answers;
   unanswered: Question[];
   fields: InfoField[];
+  /** Champs à reproduire sur le questionnaire imprimable (vide si le produit ne propose pas l'impression). */
+  printFields: InfoField[];
   info: Info;
   infoMissing: number;
   items: ClientItemView[];
@@ -101,7 +105,8 @@ export function getClientView(ctx: PortalContext, token: string): ClientView {
   const answers = answersOf(request);
   const questions = parseJson<Question[]>(request.questions, []);
   const unanswered = unansweredQuestions(questions, items, answers);
-  const fields = parseJson<InfoField[]>(request.fields, []);
+  const allFields = parseJson<InfoField[]>(request.fields, []);
+  const fields = visibleFields(allFields, answers);
   const info = parseJson<Info>(request.info, {});
   const p = computeProgress(items, answers);
   const status = deriveStatus(request, items);
@@ -117,8 +122,11 @@ export function getClientView(ctx: PortalContext, token: string): ClientView {
     answers,
     unanswered,
     fields,
+    printFields: questions.some((q) => q.key === PAPER_QUESTION_KEY)
+      ? allFields.filter((f) => !f.condition || f.condition.question === PAPER_QUESTION_KEY)
+      : [],
     info,
-    infoMissing: missingInfo(fields, info).length,
+    infoMissing: missingInfo(allFields, info, answers).length,
     items: applicableItems(items, answers).map((i) => ({
       id: i.id,
       label: i.label,
@@ -171,7 +179,7 @@ export function saveInfo(ctx: PortalContext, token: string, values: Record<strin
       const list = (Array.isArray(raw) ? raw : parsePersons(typeof raw === "string" ? raw : undefined))
         .map((p) => ({ name: String((p as { name?: unknown }).name ?? "").trim().slice(0, 120), birth: String((p as { birth?: unknown }).birth ?? "").trim() }))
         .filter((p) => p.name || p.birth)
-        .slice(0, 8);
+        .slice(0, f.max ?? 8);
       for (const p of list) if (p.birth && !/^\d{4}-\d{2}-\d{2}$/.test(p.birth)) throw new PortalError("invalid_input", `« ${f.label} » : date de naissance invalide.`);
       if (list.length) info[f.key] = JSON.stringify(list);
       else delete info[f.key];

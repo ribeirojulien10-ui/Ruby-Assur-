@@ -7,6 +7,7 @@ import { REJECT_REASONS } from "@/lib/portal/constants";
 import type { ClientItemView, ClientView } from "@/lib/portal/client";
 import { fmtBytes, fmtDate } from "@/lib/portal/ui";
 import { parsePersons } from "@/lib/portal/rules";
+import { PAPER_QUESTION_KEY } from "@/lib/portal/constants";
 import { Progress } from "./Progress";
 
 /**
@@ -240,7 +241,7 @@ function ItemCard({
 }
 
 /** Liste de personnes (ex. bénéficiaires d'une mutuelle) : une ligne par personne, nom + date de naissance. */
-function PersonsInput({ id, value, onChange }: { id: string; value: string; onChange: (json: string) => void }) {
+function PersonsInput({ id, value, onChange, max = 8, birthRequired = false, singular = "Personne" }: { id: string; value: string; onChange: (json: string) => void; max?: number; birthRequired?: boolean; singular?: string }) {
   const rows = parsePersons(value);
   const list = rows.length ? rows : [{ name: "", birth: "" }];
   const emit = (next: { name: string; birth: string }[]) => onChange(next.some((p) => p.name || p.birth) ? JSON.stringify(next) : "");
@@ -249,11 +250,11 @@ function PersonsInput({ id, value, onChange }: { id: string; value: string; onCh
       {list.map((p, i) => (
         <div key={i} className="grid items-end gap-2 sm:grid-cols-[1.6fr_1fr_auto]">
           <div>
-            <label htmlFor={`${id}-n${i}`} className="mb-1 block text-[0.8rem] text-ink-muted">Personne {i + 1} — nom et prénom</label>
+            <label htmlFor={`${id}-n${i}`} className="mb-1 block text-[0.8rem] text-ink-muted">{singular} {max > 1 ? i + 1 : ""} — nom et prénom</label>
             <input id={`${id}-n${i}`} value={p.name} onChange={(e) => emit(list.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))} className="field" />
           </div>
           <div>
-            <label htmlFor={`${id}-b${i}`} className="mb-1 block text-[0.8rem] text-ink-muted">Date de naissance</label>
+            <label htmlFor={`${id}-b${i}`} className="mb-1 block text-[0.8rem] text-ink-muted">Date de naissance{birthRequired ? <span className="text-danger"> *</span> : null}</label>
             <input id={`${id}-b${i}`} type="date" value={p.birth} onChange={(e) => emit(list.map((x, j) => (j === i ? { ...x, birth: e.target.value } : x)))} className="field" />
           </div>
           {list.length > 1 && (
@@ -263,7 +264,7 @@ function PersonsInput({ id, value, onChange }: { id: string; value: string; onCh
           )}
         </div>
       ))}
-      {list.length < 8 && (
+      {list.length < max && (
         <button type="button" className="btn-outline btn-sm" onClick={() => emit([...list, { name: "", birth: "" }])}>
           + Ajouter une personne
         </button>
@@ -328,7 +329,7 @@ function InfoSection({ token, view }: { token: string; view: ClientView }) {
                 {f.required ? <span className="text-danger"> *</span> : null}
               </label>
               {f.type === "persons" ? (
-                <PersonsInput id={id} value={v} onChange={(json) => change(f.key, json)} />
+                <PersonsInput id={id} value={v} onChange={(json) => change(f.key, json)} max={f.max ?? 8} birthRequired={!!f.birthRequired} singular={(f.max ?? 8) === 1 ? "Conjoint" : f.key.includes("enfant") ? "Enfant" : "Personne"} />
               ) : f.type === "textarea" ? (
                 <textarea id={id} rows={3} value={v} onChange={(e) => change(f.key, e.target.value)} className={base} />
               ) : f.type === "choice" ? (
@@ -410,7 +411,11 @@ export function ClientPortal({ token, initial }: { token: string; initial: Clien
       {view.instructions && <p className="mt-4 rounded-lg bg-white p-4 text-[0.95rem] leading-6 text-ink-soft shadow-card">{view.instructions}</p>}
 
       <div className="mt-6 rounded-xl bg-white p-5 shadow-card sm:p-6">
-        <Progress done={p.requiredDone} total={p.requiredTotal} label={p.requiredTotal > 1 ? "documents obligatoires reçus" : "document obligatoire reçu"} />
+        {p.requiredTotal > 0 ? (
+          <Progress done={p.requiredDone} total={p.requiredTotal} label={p.requiredTotal > 1 ? "documents obligatoires reçus" : "document obligatoire reçu"} />
+        ) : (
+          <p className="text-[0.95rem] font-semibold text-night">Aucun document à fournir : un questionnaire à compléter suffit.</p>
+        )}
         <p className="mt-3 text-[0.9rem] text-ink-soft" aria-live="polite">
           {view.status === "validated"
             ? "Vos documents ont été examinés et validés. Merci !"
@@ -422,11 +427,11 @@ export function ClientPortal({ token, initial }: { token: string; initial: Clien
                   ? `Il reste ${view.infoMissing} information${view.infoMissing > 1 ? "s" : ""} obligatoire${view.infoMissing > 1 ? "s" : ""} à compléter.`
                   : needAnswers
                     ? "Répondez aux questions ci-dessous pour voir la liste des documents à fournir."
-                    : "Tous les documents obligatoires sont là : vous pouvez confirmer l'envoi."}
+                    : p.requiredTotal === 0
+                      ? "Tout est renseigné : vous pouvez confirmer l'envoi."
+                      : "Tous les documents obligatoires sont là : vous pouvez confirmer l'envoi."}
         </p>
       </div>
-
-      {view.fields.length > 0 && <InfoSection token={token} view={view} />}
 
       {view.questions.length > 0 && (
         <section className="mt-6 rounded-xl bg-white p-5 shadow-card sm:p-6" aria-labelledby="qs">
@@ -455,6 +460,16 @@ export function ClientPortal({ token, initial }: { token: string; initial: Clien
           </div>
         </section>
       )}
+
+      {view.answers[PAPER_QUESTION_KEY] === "yes" && view.printFields.length > 0 && (
+        <section className="mt-6 rounded-xl bg-white p-5 shadow-card sm:p-6" aria-labelledby="imprimer">
+          <h2 id="imprimer" className="display text-[1.25rem] text-night">Imprimer le questionnaire</h2>
+          <p className="mt-2 text-[0.92rem] leading-6 text-ink-soft">Imprimez la fiche, remplissez-la à la main, puis envoyez-la en photo ou en scan dans « Questionnaire rempli » ci-dessous.</p>
+          <a href={`/documents/${token}/questionnaire`} target="_blank" rel="noopener noreferrer" className="btn-primary mt-4">Ouvrir le questionnaire à imprimer</a>
+        </section>
+      )}
+
+      {view.fields.length > 0 && <InfoSection key={view.fields.map((f) => f.key).join("|")} token={token} view={view} />}
 
       <h2 className="sr-only">Documents à transmettre</h2>
       <ol className="mt-6 space-y-4">

@@ -18,9 +18,17 @@ const sample = (f: InfoField): string => {
     case "tel": return "0600000000";
     case "email": return "fictif@example.invalid";
     case "textarea": return `${f.label} — texte fictif`;
-    case "persons": return JSON.stringify([{ name: "Personne Fictive", birth: "1990-05-12" }, { name: "Autre Fictive", birth: "2015-03-01" }]);
+    case "persons": return JSON.stringify([{ name: "Personne Fictive", birth: "1990-05-12" }, { name: "Autre Fictive", birth: "2015-03-01" }].slice(0, f.max ?? 8));
     default: return "Exemple fictif";
   }
+};
+
+/** Par défaut (cases décochées = « non »), un champ ou une pièce conditionné par « oui » est masqué. */
+const shownByDefault = (c?: { question?: string; equals?: string } | { conditionQuestion?: string | null; conditionEquals?: string | null }): boolean => {
+  if (!c) return true;
+  const eq = "equals" in c ? c.equals : (c as { conditionEquals?: string | null }).conditionEquals;
+  const q = "question" in c ? c.question : (c as { conditionQuestion?: string | null }).conditionQuestion;
+  return !q || eq === "no";
 };
 
 let ctx: TestCtx;
@@ -46,7 +54,8 @@ describe.each(DEFAULT_TEMPLATES.map((t) => [t.name, t] as const))("Produit : %s"
 
   it("pointe vers une page d'assurance existante et demande au moins un document obligatoire", () => {
     expect(getProductBySlug(t.insuranceSlug)).toBeTruthy();
-    expect(t.items.some((i) => i.required)).toBe(true);
+    // au moins un document obligatoire, OU (produit déclaratif) un questionnaire avec des champs obligatoires
+    expect(t.items.some((i) => i.required) || (t.fields ?? []).some((f) => f.required), t.name).toBe(true);
     expect(new Set(t.items.map((i) => i.label)).size).toBe(t.items.length); // pas de doublon
     expect(new Set((t.fields ?? []).map((f) => f.key)).size).toBe((t.fields ?? []).length);
   });
@@ -56,15 +65,17 @@ describe.each(DEFAULT_TEMPLATES.map((t) => [t.name, t] as const))("Produit : %s"
     const v = getClientView(ctx, token);
     expect(v.title).toBe(t.name);
     expect(v.status).toBe("incomplete");
-    const expected = t.items.filter((i) => !i.conditionQuestion || (t.questions ?? []).some((q) => q.type === "checkbox" && i.conditionEquals === "no")).map((i) => i.label);
-    expect(v.items.map((i) => i.label)).toEqual(expected);
-    expect(v.fields.map((f) => f.label)).toEqual((t.fields ?? []).map((f) => f.label));
+    expect(v.items.map((i) => i.label)).toEqual(t.items.filter((i) => shownByDefault(i)).map((i) => i.label));
+    expect(v.fields.map((f) => f.label)).toEqual((t.fields ?? []).filter((f) => shownByDefault(f.condition)).map((f) => f.label));
     expect(v.unanswered).toEqual([]); // aucune question bloquante au départ
   });
 
   it("parcours complet : informations → pièces → confirmation → Julien est prévenu une seule fois", async () => {
     const { id, token } = create();
     const before = (ctx.db.prepare("SELECT COUNT(*) c FROM outbox").get() as { c: number }).c;
+
+    // au départ, le dossier attend le client (sauf si rien n'est obligatoire)
+    expect(getRequestDetail(ctx, admin, id).status).toBe("incomplete");
 
     // le client saisit toutes ses informations (valeurs valides pour chaque type)
     const values = Object.fromEntries((t.fields ?? []).map((f) => [f.key, sample(f)]));
@@ -76,7 +87,6 @@ describe.each(DEFAULT_TEMPLATES.map((t) => [t.name, t] as const))("Produit : %s"
     // il dépose chaque pièce obligatoire demandée
     const view = getClientView(ctx, token);
     const required = view.items.filter((i) => i.required);
-    expect(getRequestDetail(ctx, admin, id).status).toBe("incomplete");
     const dbItems = itemsOf(ctx, id);
     for (const [n, it] of required.entries()) {
       const row = dbItems.find((d) => d.label === it.label)!;
@@ -86,7 +96,7 @@ describe.each(DEFAULT_TEMPLATES.map((t) => [t.name, t] as const))("Produit : %s"
     }
     const d = getRequestDetail(ctx, admin, id);
     expect(d.status).toBe("complete"); // « En cours » : rien ne dit « complet »
-    expect(d.progress.percent).toBe(100);
+    if (required.length > 0) expect(d.progress.percent).toBe(100);
     expect(ctx.db.prepare("SELECT COUNT(*) c FROM outbox").get()).toEqual({ c: before }); // pas d'alerte avant confirmation
 
     // il confirme : Julien est prévenu, une seule fois
@@ -108,7 +118,7 @@ describe.each(DEFAULT_TEMPLATES.map((t) => [t.name, t] as const))("Produit : %s"
     });
   });
 
-  const requiredFields = (t.fields ?? []).filter((f) => f.required);
+  const requiredFields = (t.fields ?? []).filter((f) => f.required && shownByDefault(f.condition));
   if (requiredFields.length > 0) {
     it(`les informations obligatoires (${requiredFields.map((f) => f.label).join(", ").slice(0, 80)}) empêchent la confirmation tant qu'elles manquent`, async () => {
       const { id, token } = create();
@@ -125,7 +135,7 @@ describe.each(DEFAULT_TEMPLATES.map((t) => [t.name, t] as const))("Produit : %s"
     });
   }
 
-  if (t.questions?.some((q) => q.type === "checkbox")) {
+  if (t.questions?.[0]?.key === "premiere_assurance") {
     it("case « première assurance » : le relevé disparaît quand elle est cochée et revient si on la décoche", async () => {
       const { id, token } = create();
       const key = t.questions![0].key;

@@ -75,12 +75,23 @@ export function parsePersons(raw: string | undefined): Person[] {
     : [];
 }
 
-const isFilled = (f: InfoField, info: Info): boolean =>
-  f.type === "persons" ? parsePersons(info[f.key]).some((p) => p.name.trim()) : !!(info[f.key] ?? "").trim();
+/** Champs réellement applicables : ceux dont la condition (case cochée / réponse) est remplie. */
+export function visibleFields(fields: InfoField[], answers: Answers): InfoField[] {
+  return fields.filter((f) => !f.condition || answers[f.condition.question] === f.condition.equals);
+}
 
-/** Informations OBLIGATOIRES encore vides. */
-export function missingInfo(fields: InfoField[], info: Info): InfoField[] {
-  return fields.filter((f) => f.required && !isFilled(f, info));
+/** Une liste de personnes est complète si elle contient au moins une personne nommée (et, si demandé, une date de naissance pour chacune). */
+function personsComplete(raw: string | undefined, birthRequired: boolean): boolean {
+  const list = parsePersons(raw);
+  return list.length > 0 && list.every((p) => p.name.trim() && (!birthRequired || p.birth));
+}
+
+const isFilled = (f: InfoField, info: Info): boolean =>
+  f.type === "persons" ? personsComplete(info[f.key], !!f.birthRequired) : !!(info[f.key] ?? "").trim();
+
+/** Informations OBLIGATOIRES encore vides (parmi les champs applicables). */
+export function missingInfo(fields: InfoField[], info: Info, answers: Answers = {}): InfoField[] {
+  return visibleFields(fields, answers).filter((f) => f.required && !isFilled(f, info));
 }
 
 export interface Progress {
@@ -130,7 +141,7 @@ export function deriveStatus(
   const answers = answersOf(req);
   const questions = parseJson<Question[]>(req.questions, []);
   const p = computeProgress(items, answers);
-  const infoMissing = missingInfo(parseJson<InfoField[]>(req.fields, []), parseJson<Info>(req.info, {}));
+  const infoMissing = missingInfo(parseJson<InfoField[]>(req.fields, []), parseJson<Info>(req.info, {}), answers);
   const blocked =
     p.missing.length > 0 ||
     p.toReplace.length > 0 ||

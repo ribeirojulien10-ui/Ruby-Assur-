@@ -81,3 +81,13 @@ h1 em, h2 em, h3 em, .display em { font-style: italic; font-weight: 400; color: 
   .marquee { animation: none !important; flex-wrap: wrap; width: auto; justify-content: center; }
   .marquee > [aria-hidden="true"] { display: none; }
 }
+
+/* ───────────────────────── Impression (questionnaire papier) ─────────────────────────
+   Papier : fond blanc, sans en-tête ni pied de page du site / du portail ni boutons flottants. */
+@media print {
+  @page { size: A4; margin: 14mm; }
+  html, body { background: #fff !important; }
+  body { font-size: 11pt; }
+  header, footer, #menu-mobile, .fixed, [role="dialog"] { display: none !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
