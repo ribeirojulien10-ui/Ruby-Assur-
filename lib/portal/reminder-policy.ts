@@ -12,10 +12,10 @@ import type { LinkState, RequestStatus } from "./types";
  */
 export interface ReminderConfig {
   enabled: boolean;
-  /** Délai avant la première relance, en jours, depuis la dernière activité du client. */
-  firstAfterDays: number;
-  /** Délai minimal entre deux relances, en jours. */
-  repeatEveryDays: number;
+  /** Délai avant la première relance, en heures, depuis la dernière activité du client. */
+  firstAfterHours: number;
+  /** Délai minimal entre deux relances, en heures. */
+  repeatEveryHours: number;
   /** Nombre maximal de relances automatiques par dossier. */
   maxReminders: number;
 }
@@ -32,7 +32,10 @@ export interface Candidate {
   lastReminderAt: string | null;
 }
 
-const DAY = 86_400_000;
+const HOUR = 3_600_000;
+
+/** Réglage voulu par Julien : relance à 24 h, puis à 48 h après l'activité (soit 24 h plus tard), 2 relances maximum. */
+export const DEFAULT_REMINDER_CONFIG: ReminderConfig = { enabled: false, firstAfterHours: 24, repeatEveryHours: 24, maxReminders: 2 };
 
 export function selectDueReminders(candidates: Candidate[], cfg: ReminderConfig, now: Date): string[] {
   if (!cfg.enabled) return [];
@@ -44,9 +47,9 @@ export function selectDueReminders(candidates: Candidate[], cfg: ReminderConfig,
       if (!c.hasMissingOrToReplace) return false;
       if (c.remindersSent >= cfg.maxReminders) return false;
       const since = now.getTime() - new Date(c.lastClientActivityAt).getTime();
-      if (c.remindersSent === 0) return since >= cfg.firstAfterDays * DAY;
+      if (c.remindersSent === 0) return since >= cfg.firstAfterHours * HOUR;
       const sinceLast = now.getTime() - new Date(c.lastReminderAt ?? c.lastClientActivityAt).getTime();
-      return sinceLast >= cfg.repeatEveryDays * DAY;
+      return sinceLast >= cfg.repeatEveryHours * HOUR;
     })
     .map((c) => c.id);
 }
