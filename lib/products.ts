@@ -74,7 +74,7 @@ export const products: Product[] = [
       "Remboursements optique et dentaire renforcés",
       "Délais de carence négociés",
     ],
-    requiredDocuments: ["Pièce d'identité (CNI)", "Statut (salarié, indépendant, retraité…)", "Attestation de droits Sécurité sociale", "Lieu de résidence", "Conjoint et enfants à assurer (facultatif), avec leur date de naissance", "RIB (seulement si vous acceptez le devis)"],
+    requiredDocuments: ["Pièce d'identité (CNI)", "Statut (salarié, indépendant, retraité…)", "Attestation de droits Sécurité sociale (facultative pour le devis)", "Lieu de résidence", "Conjoint et enfants à assurer (facultatif), avec leur date de naissance", "RIB (seulement si vous acceptez le devis)"],
     faq: [
       { question: "Quelle différence entre mutuelle et prévoyance ?", answer: "La mutuelle rembourse vos frais de santé (médecin, pharmacie, optique…). La prévoyance vous protège en cas d'arrêt de travail, d'invalidité ou de décès." },
       { question: "Puis-je inclure mes enfants dans mon contrat ?", answer: "Oui, la plupart des contrats permettent d'ajouter des ayants droit (conjoint, enfants) avec une cotisation adaptée." },

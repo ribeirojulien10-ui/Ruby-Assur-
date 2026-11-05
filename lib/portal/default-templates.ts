@@ -154,7 +154,7 @@ export const DEFAULT_TEMPLATES: DefaultTemplate[] = [
       f("effet", "Date souhaitée de prise d'effet", "date"),
       f("mutuelle-actuelle", "Mutuelle actuelle", "choice", { options: ["Oui", "Non"] }),
     ],
-    items: [doc("Pièce d'identité (CNI)", true), doc("Attestation de droits Sécurité sociale", true), rib()],
+    items: [doc("Pièce d'identité (CNI)", true), doc("Attestation de droits Sécurité sociale", false, "Facultative pour obtenir un devis ; elle sera nécessaire pour la souscription."), rib()],
   },
   {
     // Produit DÉCLARATIF : aucun document, uniquement un questionnaire.
